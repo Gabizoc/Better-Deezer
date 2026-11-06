@@ -85,6 +85,11 @@ html[data-bd="on"] [data-bd="rail"] :is(div, nav, section, ul, li) {
   background-image: none !important;
 }
 
+html[data-bd="on"] [data-bd="rail"] [data-bd-role="rail-sticky"] {
+  z-index: 2;
+  background-color: var(--bd-surface-1) !important;
+}
+
 html[data-bd="on"] [data-bd="rail"] :is(a, button) {
   position: relative;
   border-radius: var(--bd-r-card) !important;
