@@ -114,6 +114,33 @@ await page.click('[data-testid^="volume_button"]', { modifiers: ["Alt"] });
 check("Alt+click keeps Deezer's mute", (await vol()).mutes === 1);
 await page.click('[data-testid^="volume_button"]', { modifiers: ["Alt"] });
 
+// ---------- 3. Rail ----------
+const railBox = () => $eval(() => {
+  const r = document.querySelector('[data-bd="rail"]');
+  const b = r.getBoundingClientRect();
+  const links = [...r.querySelectorAll("a, button")].filter((a) => a.getBoundingClientRect().width).map((a) => { const x = a.getBoundingClientRect(); return x.left + x.width / 2; });
+  return { collapsed: r.dataset.bdCollapsed, top: b.top, bottom: b.bottom, cx: b.left + b.width / 2, links, height: b.height };
+});
+await page.waitForTimeout(400);
+let rb = await railBox();
+const areaMid = (900 - 80 - 12) / 2;
+check("collapsed rail is detected", rb.collapsed === "true");
+check("collapsed rail is centered vertically", Math.abs((rb.top + rb.bottom) / 2 - areaMid) < 8 && rb.height < 600, `mid ${((rb.top + rb.bottom) / 2).toFixed(0)} vs ${areaMid}, h ${rb.height.toFixed(0)}`);
+check("collapsed rail entries are centered horizontally", rb.links.every((x) => Math.abs(x - rb.cx) < 2), rb.links.map((x) => x.toFixed(0)).join(","));
+check("active page marked in the rail", (await $eval(() => document.querySelector('[data-bd="rail"] [data-bd-active="true"]')?.getAttribute("href"))) === "/fr/");
+check("no css-xxxx class in our stylesheet", !(await $eval(() => /\.css-[a-z0-9]/i.test(document.getElementById("bd-style").textContent))));
+const hoverLink = page.locator('[data-bd="rail"] a[href="/fr/channels/explore"]');
+await hoverLink.hover();
+await page.waitForTimeout(250);
+check("rail hover paints surface-2", (await hoverLink.evaluate((a) => getComputedStyle(a).backgroundColor)) === "rgb(28, 26, 31)");
+await shot("3-rail-collapsed");
+await $eval(() => __expandSidebar(true));
+await page.waitForTimeout(500);
+rb = await railBox();
+check("expanded rail floats full height", rb.collapsed === "false" && rb.top <= 14 && rb.height > 700, JSON.stringify({ top: rb.top, h: rb.height }));
+await shot("3-rail-expanded");
+await $eval(() => __expandSidebar(false));
+
 //@@CHECKS@@
 
 check("no page errors", errors.length === 0, errors.join(" | "));
