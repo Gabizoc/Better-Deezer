@@ -235,6 +235,11 @@ html[data-bd="on"] [data-bd="modal"] {
   overflow: hidden;
 }
 
+/* Deezer nests its own dialog box inside the modal: one surface only */
+html[data-bd="on"] [data-bd="modal"] :is([role="dialog"], header, footer, .chakra-modal__body, [data-testid="modal_body"]) {
+  background: transparent !important;
+}
+
 html[data-bd="on"] [data-bd="modal"] [data-testid="modal_header"],
 html[data-bd="on"] [data-bd="modal"] .chakra-modal__header {
   border-bottom: 0 !important;
@@ -282,6 +287,15 @@ html[data-bd="on"] [data-bd="modal"] [data-bd-role="secondary"] {
 
 html[data-bd="on"] [data-bd="modal"] [data-bd-role="secondary"]:hover {
   background: var(--bd-surface-3) !important;
+}
+
+/* Deezer's switches: a visible track when off, accent when on */
+html[data-bd="on"] [data-bd-role="switch-track"] {
+  background: var(--bd-surface-4) !important;
+}
+
+html[data-bd="on"] [data-bd-role="switch-track"]:is([data-checked], [aria-checked="true"]) {
+  background: var(--bd-accent) !important;
 }
 
 /* ---------- Toasts: light pill ---------- */

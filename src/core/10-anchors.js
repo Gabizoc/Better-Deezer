@@ -31,7 +31,8 @@ BD.optionalAnchors = new Set([
   "masthead",
   "pageToolbar",
   "trackGrid",
-  "homeSections"
+  "homeSections",
+  "switchTracks"
 ]);
 
 BD.anchors = {
@@ -180,6 +181,9 @@ BD.anchors = {
   trackGrid: () => BD.q('#page_content [role="grid"]'),
   /** One section of Deezer's home / dynamic pages. */
   homeSections: () => BD.qa('#page_content [data-testid="section-renderer"]'),
+
+  /** Chakra switches (Deezer's toggles): the track, last-resort library class. */
+  switchTracks: () => BD.qa('[role="switch"] + *, .chakra-switch__track').filter((el) => el.matches(".chakra-switch__track, [data-checked], span")),
 
   // ---- Overlays (Chakra UI renders them in portals at the end of <body>) ----
   modals: () => BD.qa('[role="dialog"][aria-modal="true"], [role="alertdialog"]'),
