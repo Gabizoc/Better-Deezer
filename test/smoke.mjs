@@ -69,7 +69,7 @@ const bodyBg = () => $eval(() => getComputedStyle(document.body).backgroundColor
 check("Tempo tokens bridged to --bd-* (dark)", (await bodyBg()) === "rgb(11, 10, 12)", await bodyBg());
 await shot("1-dark");
 await $eval(() => window.__betterDeezer.theme("light"));
-check("light theme applies live", (await bodyBg()) === "rgb(246, 245, 247)", await bodyBg());
+check("light theme applies live", (await bodyBg()) === "rgb(245, 243, 240)", await bodyBg());
 await shot("1-light");
 await page.emulateMedia({ colorScheme: "dark" });
 await $eval(() => window.__betterDeezer.theme("system"));
@@ -108,10 +108,14 @@ await page.waitForTimeout(400);
 v = await vol();
 check("dragging/clicking the slider sets the volume", v.volume > 0.8, JSON.stringify(v));
 check("Deezer's hover popup is hidden", await $eval(() => { const m = document.querySelector('[data-testid="volume_menu"]'); return !m || getComputedStyle(m.closest('[data-bd="volume-native"]') || m).opacity === "0"; }));
+check("bubble shows the percentage while adjusting", (await $eval(() => document.querySelector(".bd-volume-bubble").textContent)).endsWith("%"));
+await page.click('[data-testid^="volume_button"]');
+check("re-click while open = Deezer's mute", (await vol()).mutes === 1 && (await vol()).open === "true");
+await page.click('[data-testid^="volume_button"]');
 await page.keyboard.press("Escape");
 check("Escape folds it back", (await vol()).open === "false");
 await page.click('[data-testid^="volume_button"]', { modifiers: ["Alt"] });
-check("Alt+click keeps Deezer's mute", (await vol()).mutes === 1);
+check("Alt+click keeps Deezer's mute", (await vol()).mutes === 3);
 await page.click('[data-testid^="volume_button"]', { modifiers: ["Alt"] });
 
 // ---------- 3. Rail ----------

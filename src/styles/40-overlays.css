@@ -61,22 +61,21 @@ html[data-bd="on"] [role="menuitem"]:focus {
   opacity: 0.72;
 }
 
-/* ---------- Volume (features/volume.js) ----------
+/* ---------- Volume (features/volume.js, artboard "Overlays") ----------
  * .bd-volume sits right before Deezer's volume button. Closed: zero width.
- * Open: the track unfolds to the left; ::before draws the surface-2 pill that
- * runs under the button (--bd-volume-overlap is measured by JS).
+ * Open: a 140px track unfolds to the left; ::before draws the 48px surface-2
+ * pill that runs under the button (--bd-volume-overlap is measured by JS).
  */
 .bd-volume {
   position: relative;
   isolation: isolate;
   display: inline-flex;
-  flex-direction: row-reverse;
   align-items: center;
-  gap: 8px;
-  height: 40px;
+  height: 48px;
   width: 0;
+  flex: none;
   overflow: visible;
-  transition: width var(--bd-t-base) var(--bd-ease), padding var(--bd-t-base) var(--bd-ease);
+  transition: width var(--bd-t-layout) var(--bd-ease), padding var(--bd-t-layout) var(--bd-ease);
 }
 
 .bd-volume::before {
@@ -86,7 +85,7 @@ html[data-bd="on"] [role="menuitem"]:focus {
   top: 0;
   bottom: 0;
   left: 0;
-  right: calc(-1 * var(--bd-volume-overlap, 40px));
+  right: calc(-1 * var(--bd-volume-overlap, 40px) - 8px);
   border-radius: var(--bd-r-pill);
   background: var(--bd-surface-2);
   opacity: 0;
@@ -95,8 +94,8 @@ html[data-bd="on"] [role="menuitem"]:focus {
 }
 
 .bd-volume[data-open="true"] {
-  width: 152px;
-  padding-left: 14px;
+  width: 156px;
+  padding-left: 16px;
 }
 
 .bd-volume[data-open="true"]::before {
@@ -123,15 +122,26 @@ html[data-bd="on"] [role="menuitem"]:focus {
   cursor: pointer;
   background: linear-gradient(
     90deg,
-    var(--bd-accent) 0 var(--bd-volume, 50%),
+    var(--bd-text) 0 var(--bd-volume, 50%),
     var(--bd-line-strong) var(--bd-volume, 50%) 100%
   );
   opacity: 0;
-  transition: opacity var(--bd-t-fast) var(--bd-ease);
+  transition: opacity var(--bd-t-fast) var(--bd-ease), height var(--bd-t-fast) var(--bd-ease);
 }
 
 .bd-volume[data-open="true"] input {
   opacity: 1;
+}
+
+/* Adjusting: 6px accent track */
+.bd-volume[data-active="true"] input,
+.bd-volume input:active {
+  height: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--bd-accent) 0 var(--bd-volume, 50%),
+    var(--bd-line-strong) var(--bd-volume, 50%) 100%
+  );
 }
 
 .bd-volume input::-webkit-slider-thumb {
@@ -158,28 +168,38 @@ html[data-bd="on"] [role="menuitem"]:focus {
   transform: scale(1);
 }
 
-.bd-volume-value {
-  width: 0;
-  overflow: hidden;
-  color: var(--bd-text-3);
+/* "70 %" bubble above the thumb while adjusting */
+.bd-volume-bubble {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: calc(22px + (128px * var(--bd-volume-n, 0.5)));
+  padding: 4px 8px;
+  border-radius: var(--bd-r-chip);
+  background: var(--bd-text);
+  color: var(--bd-bg);
   font: 600 12px/1 var(--bd-font-ui);
   font-variant-numeric: tabular-nums;
-  text-align: right;
+  white-space: nowrap;
+  transform: translate(-50%, 4px);
   opacity: 0;
-  transition: opacity var(--bd-t-fast) var(--bd-ease);
+  pointer-events: none;
+  transition: opacity var(--bd-t-fast) var(--bd-ease), transform var(--bd-t-fast) var(--bd-ease);
 }
 
-.bd-volume[data-open="true"] .bd-volume-value {
-  width: 24px;
-  flex: none;
+.bd-volume[data-open="true"][data-active="true"] .bd-volume-bubble {
   opacity: 1;
+  transform: translate(-50%, 0);
 }
 
-/* The icon keeps its place on the right, ringed in accent while open */
+/* The icon keeps its place on the right: surface-3 dot on hover, 2px accent ring while open */
 html[data-bd="on"] [data-bd-role="volume-button"] {
   position: relative;
   z-index: 1;
   border-radius: var(--bd-r-pill) !important;
+}
+
+html[data-bd="on"] [data-bd="dock"] [data-bd-role="volume-button"]:hover {
+  background-color: var(--bd-surface-3) !important;
 }
 
 html[data-bd="on"] [data-bd-role="volume-button"][data-bd-volume-open="true"] {
