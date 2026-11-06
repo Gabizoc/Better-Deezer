@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+    tags-ignore: ["v*"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build
+        run: npm run build
+      - name: Syntax check of the outputs
+        run: |
+          node --check dist/extension/better-deezer.js
+          node --check dist/better-deezer.user.js
+      - name: Smoke test (Chromium, fixture with Deezer's anchors)
+        run: |
+          npm install --no-save --no-package-lock playwright@1.48.2
+          npx playwright install --with-deps chromium
+          node test/smoke.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-screenshots
+          path: test/.out/
+          if-no-files-found: ignore
+
+  powershell:
+    # Windows PowerShell 5.1 is what users have: parse with it, then lint.
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse with Windows PowerShell 5.1
+        shell: powershell
+        run: |
+          $failed = $false
+          Get-ChildItem desktop -Filter *.ps1 | ForEach-Object {
+            $tokens = $null; $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$tokens, [ref]$errors) | Out-Null
+            if ($errors) { $failed = $true; $errors | ForEach-Object { Write-Host "::error file=desktop/$($_.Extent.File | Split-Path -Leaf),line=$($_.Extent.StartLineNumber)::$($_.Message)" } }
+            else { Write-Host "ok $($_.Name)" }
+          }
+          if ($failed) { exit 1 }
+      - name: PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Install-Module PSScriptAnalyzer -Force -Scope CurrentUser
+          $issues = Invoke-ScriptAnalyzer -Path desktop -Recurse -Severity Error,Warning -ExcludeRule PSAvoidUsingWriteHost,PSUseShouldProcessForStateChangingFunctions
+          $issues | Format-Table -AutoSize | Out-String -Width 200 | Write-Host
+          if ($issues | Where-Object Severity -eq 'Error') { exit 1 }
+      - name: install.ps1 must stay ASCII (irm | iex)
+        shell: pwsh
+        run: |
+          $bytes = [IO.File]::ReadAllBytes("desktop/install.ps1")
+          if ($bytes | Where-Object { $_ -gt 127 }) { Write-Host "::error file=desktop/install.ps1::non-ASCII byte"; exit 1 }
