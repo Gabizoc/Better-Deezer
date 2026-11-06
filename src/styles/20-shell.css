@@ -54,6 +54,17 @@ html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"] :is(div, nav, ul, 
   align-items: center !important;
 }
 
+/* A scrollbar would eat a few pixels on one side and shift every icon off center:
+   hide it in the compact rail (wheel and touchpad scrolling still work). */
+html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"],
+html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"] * {
+  scrollbar-width: none !important;
+}
+
+html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"] ::-webkit-scrollbar {
+  display: none !important;
+}
+
 html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"] :is(a, button) {
   justify-content: center !important;
   width: 44px !important;

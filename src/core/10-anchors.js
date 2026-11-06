@@ -168,7 +168,12 @@ BD.anchors = {
 
   // ---- Pages ----
   /** Album / playlist / artist header: cover + title + subtitle (data-testid="masthead"). */
-  masthead: () => BD.q('#page_content [data-testid="masthead"]') || BD.q('[data-testid="page-masthead"]'),
+  masthead: () =>
+    BD.q('#page_content [data-testid="masthead"]') ||
+    BD.q('#page_content [data-testid="page-masthead"]') ||
+    // Profile pages have no masthead test id: the block holding the user cover and the h1/h2.
+    BD.q('#page_content [data-testid="user-cover"]')?.parentElement?.parentElement ||
+    null,
   /** Action row under the masthead (play, like, share, more). */
   pageToolbar: () => BD.q('#page_content [data-testid="toolbar"]'),
   /** Track list grid of album / playlist pages. */

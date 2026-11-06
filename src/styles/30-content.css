@@ -75,6 +75,11 @@ html[data-bd="on"] [data-bd-role="page-cover"] img {
   border-radius: var(--bd-r-card) !important;
 }
 
+html[data-bd="on"] [data-bd-role="page-cover"][data-bd-round="true"],
+html[data-bd="on"] [data-bd-role="page-cover"][data-bd-round="true"] img {
+  border-radius: 50% !important;
+}
+
 html[data-bd="on"] [data-bd-role="page-cover"] {
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35) !important;
   overflow: hidden !important;

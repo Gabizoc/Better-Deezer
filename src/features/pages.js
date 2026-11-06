@@ -28,7 +28,11 @@ BD.feature({
       BD.mark(title, len > 40 ? "xl" : len > 22 ? "l" : "m", "data-bd-len");
     }
     const cover = BD.q('[data-testid$="-cover"], [data-testid="cover"]', head);
-    if (cover) BD.mark(cover, "page-cover", "data-bd-role");
+    if (cover) {
+      BD.mark(cover, "page-cover", "data-bd-role");
+      // Artists and profiles get a round picture, like most players.
+      BD.mark(cover, String(/\/(artist|profile)\//.test(location.pathname)), "data-bd-round");
+    }
   },
 
   trackList() {
@@ -130,18 +134,24 @@ BD.feature({
     });
 
     const first = sections[0]?.el;
-    if (!first || (old && old.nextElementSibling === first)) return;
-    old?.remove();
-    const name = BD.q('[data-testid="topbar-profile"] img')?.getAttribute("alt") || "";
-    const date = new Date().toLocaleDateString(BD.lang() === "fr" ? "fr-FR" : undefined, { weekday: "long", day: "numeric", month: "long" });
-    first.before(
-      BD.h(
-        "div",
-        { class: "bd-greeting" },
-        BD.h("p", { class: "bd-greeting-date" }, date),
-        BD.h("h1", { class: "bd-greeting-title" }, name ? `${this.greeting()}, ${name}` : this.greeting())
-      )
-    );
+    if (!first) return;
+    const name = (BD.q('[data-testid="topbar-profile"] img')?.getAttribute("alt") || "").trim();
+    const text = name ? `${this.greeting()}, ${name}` : this.greeting();
+    let greeting = old;
+    if (!greeting || greeting.nextElementSibling !== first) {
+      old?.remove();
+      const date = new Date().toLocaleDateString(BD.lang() === "fr" ? "fr-FR" : undefined, { weekday: "long", day: "numeric", month: "long" });
+      greeting = BD.h("div", { class: "bd-greeting" }, BD.h("p", { class: "bd-greeting-date" }, date), BD.h("h1", { class: "bd-greeting-title" }, text));
+      first.before(greeting);
+    }
+    const title = BD.q(".bd-greeting-title", greeting);
+    if (title.textContent !== text) title.textContent = text; // the avatar (name) may load later
+    // Line up with the sections' titles, whatever padding Deezer gives them.
+    const ref = BD.q('[data-testid="section_title"]', first);
+    if (ref) {
+      const pad = Math.max(0, Math.round(ref.getBoundingClientRect().left - greeting.getBoundingClientRect().left));
+      if (greeting.style.paddingLeft !== `${pad}px`) greeting.style.paddingLeft = `${pad}px`;
+    }
   }
 });
 

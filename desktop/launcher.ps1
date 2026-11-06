@@ -47,7 +47,7 @@ $DataDir = Join-Path $env:LOCALAPPDATA 'BetterDeezer'
 $null = New-Item -ItemType Directory -Force -Path $DataDir
 $LogFile = Join-Path $DataDir 'launcher.log'
 
-function Write-Log {
+function Write-BdLog {
   param([string]$Message)
   $line = '{0}  {1}' -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $Message
   Add-Content -Path $LogFile -Value $line -Encoding UTF8
@@ -65,7 +65,7 @@ function Find-Deezer {
     try {
       $saved = (Get-Content -Raw -Encoding UTF8 $config | ConvertFrom-Json).DeezerPath
       if ($saved -and (Test-Path $saved)) { return $saved }
-    } catch { Write-Log "config.json unreadable: $_" }
+    } catch { Write-BdLog "config.json unreadable: $_" }
   }
   $candidates = @(
     (Join-Path $env:LOCALAPPDATA 'Programs\deezer-desktop\Deezer.exe'),
@@ -172,13 +172,13 @@ try {
   $source = Get-Content -Raw -Encoding UTF8 $Payload
   # One JSON string literal, reused for every injection.
   $sourceJson = ConvertTo-Json -InputObject $source -Compress
-  Write-Log "start: $DeezerPath, payload $([math]::Round($source.Length / 1KB)) KB"
+  Write-BdLog "start: $DeezerPath, payload $([math]::Round($source.Length / 1KB)) KB"
 
   $running = @(Get-Process -Name 'Deezer' -ErrorAction SilentlyContinue)
   if ($running.Count -gt 0) {
     if ($KeepRunning) { throw 'Deezer is already running. Close it (also from the tray icon) and start Better Deezer again.' }
-    Write-Log "closing the running Deezer ($($running.Count) processes)"
-    foreach ($p in $running) { try { $null = $p.CloseMainWindow() } catch { Write-Log "CloseMainWindow: $_" } }
+    Write-BdLog "closing the running Deezer ($($running.Count) processes)"
+    foreach ($p in $running) { try { $null = $p.CloseMainWindow() } catch { Write-BdLog "CloseMainWindow: $_" } }
     $deadline = (Get-Date).AddSeconds(5)
     while ((Get-Date) -lt $deadline -and @(Get-Process -Name 'Deezer' -ErrorAction SilentlyContinue).Count -gt 0) {
       Start-Sleep -Milliseconds 250
@@ -191,7 +191,7 @@ try {
   $origin = "http://127.0.0.1:$port"
   $arguments = @("--remote-debugging-port=$port", "--remote-allow-origins=$origin")
   $null = Start-Process -FilePath $DeezerPath -ArgumentList $arguments -WorkingDirectory (Split-Path -Parent $DeezerPath) -PassThru
-  Write-Log "Deezer started, DevTools on 127.0.0.1:$port"
+  Write-BdLog "Deezer started, DevTools on 127.0.0.1:$port"
 
   $endpoint = "$origin/json/list"
   $sockets = @{}
@@ -208,7 +208,7 @@ try {
       $alive = @(Get-Process -Name 'Deezer' -ErrorAction SilentlyContinue).Count -gt 0
       # Give Deezer 60 s to open its port; afterwards, stop once it is gone.
       if ((-not $alive -and ((Get-Date) - $started).TotalSeconds -gt 10) -or ($failures -gt 30 -and ((Get-Date) - $started).TotalSeconds -gt 60)) {
-        Write-Log 'Deezer closed, launcher exits'
+        Write-BdLog 'Deezer closed, launcher exits'
         break
       }
       Start-Sleep -Seconds 2
@@ -227,14 +227,14 @@ try {
           # (verified by test/cdp-inject.mjs against Chromium).
           $null = Invoke-Cdp $ws 'Page.enable'
           $null = Invoke-Cdp $ws 'Page.addScriptToEvaluateOnNewDocument' ('{"source":' + $sourceJson + '}')
-          Write-Log "attached to $($t.id) $($t.url)"
+          Write-BdLog "attached to $($t.id) $($t.url)"
         }
         if (-not (Test-Injected $ws)) {
           $null = Invoke-Cdp $ws 'Runtime.evaluate' ('{"expression":' + $sourceJson + ',"allowUnsafeEvalBlockedByCSP":true}')
-          Write-Log "injected into $($t.url)"
+          Write-BdLog "injected into $($t.url)"
         }
       } catch {
-        Write-Log "target $($t.id): $_"
+        Write-BdLog "target $($t.id): $_"
         if ($ws) { try { $ws.Dispose() } catch { Write-Verbose 'dispose failed' } }
         $sockets.Remove($t.id)
       }
@@ -251,7 +251,7 @@ try {
     Start-Sleep -Seconds 2
   }
 } catch {
-  Write-Log "error: $_"
+  Write-BdLog "error: $_"
   # Visible feedback even when started hidden from the shortcut.
   try {
     Add-Type -AssemblyName PresentationFramework
