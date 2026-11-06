@@ -68,6 +68,17 @@ html[data-bd="on"] [data-bd-role="clear-all"] svg {
   font: 500 12px/1.4 var(--bd-font-ui);
 }
 
+/* Nothing to show yet (logged out, no history): no empty frame, no footer */
+html[data-bd="on"] [data-bd="search-popover"]:not(:has([data-testid="recent_search_title"], a, li, [role="option"], [role="listbox"])) {
+  border-color: transparent !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+html[data-bd="on"] [data-bd="search-popover"]:not(:has([data-testid="recent_search_title"], a, li, [role="option"], [role="listbox"])) .bd-search-footer {
+  display: none;
+}
+
 .bd-search-footer kbd,
 .bd-kbd-inline {
   display: inline-block;
