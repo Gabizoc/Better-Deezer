@@ -81,6 +81,39 @@ await $eval(() => window.__betterDeezer.theme("dark"));
 void tempoBg;
 
 // ---- more checks are appended per feature below ----
+// ---------- 2. Volume ----------
+const vol = () => $eval(() => ({ volume: __fake.volume, mutes: __fake.mutes, open: document.querySelector(".bd-volume")?.dataset.open }));
+check("volume slider inserted before Deezer's button", await $eval(() => document.querySelector(".bd-volume")?.nextElementSibling?.dataset.testid?.startsWith("volume_button")));
+await page.click('[data-testid^="volume_button"]');
+let v = await vol();
+check("click on icon opens the slider (no native mute)", v.open === "true" && v.mutes === 0, JSON.stringify(v));
+check("accent ring on the icon", (await $eval(() => getComputedStyle(document.querySelector('[data-testid^="volume_button"]')).boxShadow)).includes("inset"));
+await page.waitForTimeout(300);
+await shot("2-volume-open");
+const box = await page.locator('[data-testid^="volume_button"]').boundingBox();
+await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+await page.mouse.wheel(0, -100);
+await page.waitForTimeout(400);
+v = await vol();
+check("wheel up on the icon raises Deezer's volume", Math.abs(v.volume - 0.55) < 0.011, JSON.stringify(v));
+const sbox = await page.locator(".bd-volume input").boundingBox();
+await page.mouse.move(sbox.x + sbox.width / 2, sbox.y + sbox.height / 2);
+await page.mouse.wheel(0, 100);
+await page.mouse.wheel(0, 100);
+await page.waitForTimeout(400);
+v = await vol();
+check("wheel down on the slider lowers it", Math.abs(v.volume - 0.45) < 0.011, JSON.stringify(v));
+await page.mouse.click(sbox.x + sbox.width * 0.9, sbox.y + sbox.height / 2);
+await page.waitForTimeout(400);
+v = await vol();
+check("dragging/clicking the slider sets the volume", v.volume > 0.8, JSON.stringify(v));
+check("Deezer's hover popup is hidden", await $eval(() => { const m = document.querySelector('[data-testid="volume_menu"]'); return !m || getComputedStyle(m.closest('[data-bd="volume-native"]') || m).opacity === "0"; }));
+await page.keyboard.press("Escape");
+check("Escape folds it back", (await vol()).open === "false");
+await page.click('[data-testid^="volume_button"]', { modifiers: ["Alt"] });
+check("Alt+click keeps Deezer's mute", (await vol()).mutes === 1);
+await page.click('[data-testid^="volume_button"]', { modifiers: ["Alt"] });
+
 //@@CHECKS@@
 
 check("no page errors", errors.length === 0, errors.join(" | "));
