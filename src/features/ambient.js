@@ -1,9 +1,11 @@
 /*
  * Ambient header: on album / playlist / artist pages, tint the header with a
- * flat color sampled from the cover, mixed 18% into the ground. No gradient.
+ * flat color sampled from the cover. The 18% mix into the ground happens in CSS
+ * (--bd-ambient in 00-tokens.css) so it follows the light and dark themes. No gradient.
  */
 BD.feature({
   id: "ambient",
+  label: ["En-têtes teintés par la pochette", "Headers tinted by the cover"],
   setup() {
     this.lastSrc = null;
   },
@@ -34,13 +36,11 @@ BD.feature({
         b += d[i + 2];
       }
       const n = d.length / 4;
-      // 18% cover color over the graphite ground (#0b0a0c).
-      const mix = (v, base) => Math.round(base + (v / n - base) * 0.18);
-      const color = `rgb(${mix(r, 11)}, ${mix(g, 10)}, ${mix(b, 12)})`;
-      document.documentElement.style.setProperty("--bd-ambient", color);
+      const avg = (v) => Math.round(v / n);
+      document.documentElement.style.setProperty("--bd-ambient-src", `rgb(${avg(r)}, ${avg(g)}, ${avg(b)})`);
     } catch {
       // Cross-origin cover without CORS headers: keep the neutral surface.
-      document.documentElement.style.removeProperty("--bd-ambient");
+      document.documentElement.style.removeProperty("--bd-ambient-src");
     }
   }
 });

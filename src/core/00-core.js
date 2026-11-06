@@ -18,6 +18,18 @@ try {
 BD.log = (...args) => BD.debug && console.info("[Better Deezer]", ...args);
 BD.warn = (...args) => console.warn("[Better Deezer]", ...args);
 
+/** Tiny event bus: "settings" (key, value), "theme" (resolved theme). */
+BD.listeners = {};
+BD.on = (type, fn) => (BD.listeners[type] ||= []).push(fn);
+BD.emit = (type, ...args) =>
+  (BD.listeners[type] || []).forEach((fn) => {
+    try {
+      fn(...args);
+    } catch (err) {
+      BD.warn(`listener for "${type}" failed:`, err);
+    }
+  });
+
 /** Persisted settings. localStorage works in both the extension (page origin) and desktop. */
 BD.settings = {
   get(key, fallback) {
@@ -32,8 +44,13 @@ BD.settings = {
     try {
       localStorage.setItem(`bd:${key}`, JSON.stringify(value));
     } catch {}
+    BD.emit("settings", key, value);
   }
 };
+
+/** UI language: French when Deezer (or the browser) is in French, English otherwise. */
+BD.lang = () => ((document.documentElement.lang || navigator.language || "en").toLowerCase().startsWith("fr") ? "fr" : "en");
+BD.t = (fr, en) => (BD.lang() === "fr" ? fr : en);
 
 BD.isVisible = (el) => {
   if (!el || !el.isConnected) return false;
@@ -54,9 +71,23 @@ BD.unmarkAll = (value, keep, attr = "data-bd") => {
   });
 };
 
+/** Small DOM builder for our own UI: BD.h("button", { class: "x", onclick }, "text", child). */
+BD.h = (tag, props = {}, ...children) => {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(props)) {
+    if (v === undefined || v === null || v === false) continue;
+    if (k.startsWith("on") && typeof v === "function") el.addEventListener(k.slice(2), v);
+    else if (k === "class") el.className = v;
+    else el.setAttribute(k, v === true ? "" : String(v));
+  }
+  for (const c of children.flat()) if (c !== null && c !== undefined && c !== false) el.append(c);
+  return el;
+};
+
 /**
  * Register a feature.
  *  id      unique name, also the settings key (`bd:feature:<id>` = false disables it)
+ *  label   [fr, en] shown in the Better Deezer settings panel (omit to hide the toggle)
  *  setup   runs once at boot
  *  update  runs on every (throttled) DOM change; must be idempotent and cheap
  */
