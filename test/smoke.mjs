@@ -141,6 +141,28 @@ check("expanded rail floats full height", rb.collapsed === "false" && rb.top <= 
 await shot("3-rail-expanded");
 await $eval(() => __expandSidebar(false));
 
+// ---------- 4. Player bar ----------
+const css = (sel, prop) => $eval(([s, p]) => { const el = document.querySelector(s); return el ? getComputedStyle(el)[p] : null; }, [sel, prop]);
+check("dock floats with rounded corners", (await css('[data-bd="dock"]', "borderRadius")) === "22px" && (await css('[data-bd="dock"]', "bottom")) === "12px");
+check("play button is a round #A238FF disc", (await css('[data-bd-role="play"]', "backgroundColor")) === "rgb(162, 56, 255)" && (await css('[data-bd-role="play"]', "borderRadius")) !== "0px");
+await page.click('[data-bd-role="like"]');
+await page.waitForTimeout(100);
+check("liked heart is filled accent", (await css('[data-bd-role="like"] svg', "fill")) === "rgb(162, 56, 255)", await css('[data-bd-role="like"] svg', "fill"));
+check("progress fill is accent", (await css('[data-bd-role="progress-fill"]', "backgroundColor")) === "rgb(162, 56, 255)");
+const order = await $eval(() => ["time-elapsed", "progress", "time-remaining"].map((r) => document.querySelector(`[data-bd-slot="${r}"]`)?.getBoundingClientRect().left ?? -1));
+check("times on each side of the bar", order[0] >= 0 && order[0] < order[1] && order[1] < order[2], order.join(" < "));
+const pbox = await page.locator('[data-bd-slot="progress"]').boundingBox();
+await page.mouse.move(pbox.x + pbox.width / 2, pbox.y + pbox.height / 2);
+const seekBefore = await $eval(() => Number(document.querySelector('[data-testid="progress_bar"]').value));
+await page.mouse.wheel(0, -100);
+await page.waitForTimeout(100);
+const seekAfter = await $eval(() => Number(document.querySelector('[data-testid="progress_bar"]').value));
+check("wheel over the seek bar seeks +5 s", seekAfter - seekBefore === 5, `${seekBefore} -> ${seekAfter}`);
+await shot("4-dock");
+await $eval(() => window.__betterDeezer.theme("light"));
+await shot("4-dock-light");
+await $eval(() => window.__betterDeezer.theme("dark"));
+
 //@@CHECKS@@
 
 check("no page errors", errors.length === 0, errors.join(" | "));

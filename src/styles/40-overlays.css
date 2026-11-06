@@ -37,11 +37,15 @@ html[data-bd="on"] [role="menuitem"]:focus {
   background: var(--bd-surface-3) !important;
 }
 
-/* Tooltips (ours) */
+/* Tooltips (ours): label + optional tip */
 .bd-tooltip {
   position: fixed;
   z-index: 2147483647;
-  padding: 6px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 260px;
+  padding: 7px 10px;
   border-radius: var(--bd-r-chip);
   background: var(--bd-text);
   color: var(--bd-bg);
@@ -50,6 +54,11 @@ html[data-bd="on"] [role="menuitem"]:focus {
   opacity: 0;
   transform: translateY(3px);
   animation: bd-in var(--bd-t-fast) var(--bd-ease) forwards;
+}
+
+.bd-tooltip span {
+  font-weight: 500;
+  opacity: 0.72;
 }
 
 /* ---------- Volume (features/volume.js) ----------
