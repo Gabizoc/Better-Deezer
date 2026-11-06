@@ -246,6 +246,21 @@ const fonts = await $eval(async () => {
 check("Bricolage Grotesque + Instrument Sans loaded from the payload", fonts.includes("Bricolage Grotesque") && fonts.includes("Instrument Sans"), [...new Set(fonts)].join(", "));
 check("no request to Google Fonts", !googleFontRequests, String(googleFontRequests));
 
+// ---------- Top bar: search centered on the window, Home on its left ----------
+for (const width of [1440, 1100]) {
+  await page.setViewportSize({ width, height: 900 });
+  await page.waitForTimeout(500);
+  const t = await $eval(() => {
+    const s = document.querySelector('[data-bd="search-slot"]').getBoundingClientRect();
+    const h = document.querySelector(".bd-home").getBoundingClientRect();
+    return { mid: s.left + s.width / 2, w: s.width, gap: s.left - h.right, homeTop: h.top + h.height / 2, searchTop: s.top + s.height / 2 };
+  });
+  check(`search centered on the window at ${width}px`, Math.abs(t.mid - width / 2) < 2, JSON.stringify(t));
+  check(`Home button sits left of the search at ${width}px`, t.gap >= 4 && t.gap <= 12 && Math.abs(t.homeTop - t.searchTop) < 2);
+}
+await page.setViewportSize({ width: 1440, height: 900 });
+await shot("topbar");
+
 //@@CHECKS@@
 
 check("no page errors", errors.length === 0, errors.join(" | "));

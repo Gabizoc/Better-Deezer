@@ -142,6 +142,70 @@ html[data-bd="on"] [data-bd="topbar"] {
   box-shadow: none !important;
 }
 
+/* Search always centered on the window, Home button on its left (features/topbar.js).
+   The search leaves the flow, so the remaining actions are pinned to the right. */
+html[data-bd="on"][data-bd-centered-search="true"] [data-bd="topbar"] {
+  justify-content: flex-end !important;
+}
+
+html[data-bd="on"][data-bd-centered-search="true"] [data-bd="search-slot"] {
+  position: absolute !important;
+  top: 50% !important;
+  left: var(--bd-search-center, 50%) !important;
+  width: var(--bd-search-width, 480px) !important;
+  max-width: none !important;
+  margin: 0 !important;
+  transform: translate(-50%, -50%) !important;
+  transition: width var(--bd-t-layout) var(--bd-ease), left var(--bd-t-layout) var(--bd-ease);
+}
+
+html[data-bd="on"][data-bd-centered-search="true"] [data-bd="search-slot"] :is([data-testid="search_container"], [data-bd="search-field-group"]) {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+html[data-bd="on"] .bd-home {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--bd-search-center, 50%) - var(--bd-search-width, 480px) / 2 - 56px);
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--bd-r-pill);
+  background: var(--bd-surface-2);
+  color: var(--bd-text-2);
+  transform: translateY(-50%);
+  transition:
+    background-color var(--bd-t-fast) var(--bd-ease),
+    color var(--bd-t-fast) var(--bd-ease),
+    left var(--bd-t-layout) var(--bd-ease),
+    transform var(--bd-t-fast) var(--bd-ease);
+}
+
+html[data-bd="on"] .bd-home:hover {
+  background: var(--bd-surface-3);
+  color: var(--bd-text);
+  transform: translateY(-50%) scale(1.04);
+}
+
+html[data-bd="on"] .bd-home[aria-current="true"] {
+  color: var(--bd-text);
+}
+
+html[data-bd="on"] .bd-home svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linejoin: round;
+}
+
+html[data-bd="on"] .bd-home[aria-current="true"] svg {
+  fill: currentColor;
+}
+
 html[data-bd="on"] [data-bd="search-field-group"] {
   min-height: 48px !important;
   border: 0 !important;

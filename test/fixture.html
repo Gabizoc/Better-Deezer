@@ -35,10 +35,11 @@
   .css-side a { display: flex; align-items: center; gap: 12px; padding: 8px 16px; color: var(--tempo-colors-text-neutral-secondary-default); text-decoration: none; }
   .css-side .css-pins { flex: 1; overflow: auto; display: flex; flex-direction: column; gap: 4px; padding: 0 12px; }
   .css-ico { width: 24px; height: 24px; border-radius: 6px; background: currentColor; flex: none; }
-  .css-top { position: sticky; top: 0; height: 80px; display: flex; align-items: center; gap: 12px; padding: 0 24px; margin-left: var(--layout-sidebar-width); }
+  .css-top { position: fixed; top: 0; right: 0; left: var(--layout-sidebar-width); height: 80px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 16px; z-index: 2; }
+  .css-top .css-actions { display: flex; gap: 12px; align-items: center; }
   .css-grp { display: flex; align-items: center; flex: 1; max-width: 560px; border: 1px solid var(--tempo-colors-border-neutral-primary-default); border-radius: 8px; }
   .css-grp input { flex: 1; height: 40px; background: none; border: 0; color: inherit; padding: 0 12px; }
-  #page_content { margin-left: var(--layout-sidebar-width); padding: 24px; }
+  #page_content { margin-left: var(--layout-sidebar-width); padding: 104px 24px 24px; }
   .css-row { display: flex; gap: 16px; padding: 8px; border-bottom: 1px solid #333; }
   .css-cards { display: flex; gap: 16px; }
   .css-cover { width: 140px; height: 140px; background: #5a3a8a; }
@@ -73,13 +74,17 @@
   </div>
 
   <div id="page_topbar" class="page-topbar css-top">
-    <div data-testid="search_container" aria-controls="popper-search-1">
-      <div class="css-grp" role="group" data-group="true">
-        <input data-testid="search_field" placeholder="Rechercher">
+    <div class="css-searchwrap" style="position: relative; width: 375px">
+      <div data-testid="search_container" aria-controls="popper-search-1">
+        <div class="css-grp" role="group" data-group="true">
+          <input data-testid="search_field" placeholder="Rechercher">
+        </div>
       </div>
     </div>
+    <div class="css-actions">
     <button aria-controls="popover-content-notif" aria-haspopup="dialog"><svg data-testid="BellOutlinedIcon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg><span aria-label="topbar-notification-counter" style="display: inline-block; min-width: 16px; border-radius: 8px; font-size: 10px">3</span></button>
     <button data-testid="topbar-profile" class="topbar-action" aria-label="profile">P</button>
+    </div>
   </div>
 
   <main id="page_content" class="page-content">
