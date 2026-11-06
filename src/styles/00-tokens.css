@@ -1,0 +1,58 @@
+/*
+ * Better Deezer — design tokens ("Graphite").
+ * Single source of truth. Every other stylesheet reads these variables;
+ * never hardcode a color, radius or duration elsewhere.
+ */
+:root {
+  /* Ground and surfaces (warm graphite, darkest to lightest) */
+  --bd-bg: #0b0a0c;
+  --bd-surface-1: #141316;
+  --bd-surface-2: #1c1a1f;
+  --bd-surface-3: #26232a;
+  --bd-line: #2a2730;
+  --bd-line-strong: #3a3640;
+
+  /* Text */
+  --bd-text: #f4f2f6;
+  --bd-text-2: #b4aebb;
+  --bd-text-3: #9e98a6;
+
+  /* One accent only: what plays or is active. Never as a gradient. */
+  --bd-accent: #a238ff;
+  --bd-accent-text: #c68bff;
+  --bd-on-accent: #ffffff;
+  --bd-warn: #ffb84d;
+
+  /* Type */
+  --bd-font-display: "Bricolage Grotesque", "Segoe UI Variable Display", system-ui, sans-serif;
+  --bd-font-ui: "Instrument Sans", "Segoe UI Variable Text", system-ui, sans-serif;
+
+  /* Radii */
+  --bd-r-chip: 6px;
+  --bd-r-cover: 10px;
+  --bd-r-card: 14px;
+  --bd-r-dock: 22px;
+  --bd-r-pill: 999px;
+
+  /* Spacing (4px grid) */
+  --bd-s-1: 4px;
+  --bd-s-2: 8px;
+  --bd-s-3: 12px;
+  --bd-s-4: 16px;
+  --bd-s-5: 24px;
+  --bd-s-6: 32px;
+
+  /* Motion */
+  --bd-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --bd-t-fast: 140ms;
+  --bd-t-base: 220ms;
+  --bd-t-layout: 320ms;
+
+  /* Shell geometry */
+  --bd-rail-w: 72px;
+  --bd-dock-h: 80px;
+  --bd-gap: 12px;
+
+  /* Album header tint, set per page by JS from the cover (see features/ambient.js) */
+  --bd-ambient: var(--bd-surface-2);
+}

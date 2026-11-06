@@ -1,0 +1,152 @@
+/*
+ * Shell: floating rail (sidebar), top bar, floating player dock.
+ * Targets ONLY data-bd attributes set by JS from stable anchors.
+ * Never target Deezer's generated `css-xxxx` classes here: they change every release.
+ */
+
+/* ---------- Rail ---------- */
+html[data-bd="on"] [data-bd="rail"] {
+  left: var(--bd-gap) !important;
+  top: var(--bd-gap) !important;
+  bottom: calc(var(--bd-dock-h) + var(--bd-gap) * 2) !important;
+  height: auto !important;
+  width: calc(var(--layout-sidebar-width, 80px) - var(--bd-gap)) !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+  padding: var(--bd-s-2) 0 !important;
+  border: 1px solid var(--bd-line) !important;
+  border-radius: var(--bd-r-dock) !important;
+  background: var(--bd-surface-1) !important;
+  box-shadow: none !important;
+  overflow-x: hidden !important;
+  transition:
+    width var(--bd-t-layout) var(--bd-ease),
+    left var(--bd-t-layout) var(--bd-ease) !important;
+}
+
+/* Inner wrappers of the rail lose their own backgrounds */
+html[data-bd="on"] [data-bd="rail"] :is(div, nav, section, ul, li) {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+html[data-bd="on"] [data-bd="rail"] :is(a, button) {
+  border-radius: var(--bd-r-card) !important;
+}
+
+html[data-bd="on"] [data-bd="rail"] :is(a, button):hover {
+  background-color: var(--bd-surface-2) !important;
+}
+
+html[data-bd="on"] [data-bd="rail"] [aria-current="page"],
+html[data-bd="on"] [data-bd="rail"] [data-bd-active="true"] {
+  background-color: var(--bd-surface-3) !important;
+  color: var(--bd-text) !important;
+}
+
+html[data-bd="on"] [data-bd="rail"] img {
+  border-radius: var(--bd-r-cover) !important;
+  object-fit: cover !important;
+}
+
+/* ---------- Top bar ---------- */
+html[data-bd="on"] [data-bd="topbar"] {
+  background: transparent !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-bd="on"] [data-bd="search-field-group"] {
+  min-height: 48px !important;
+  border: 0 !important;
+  border-radius: var(--bd-r-pill) !important;
+  background: var(--bd-surface-2) !important;
+  box-shadow: none !important;
+  transition: background-color var(--bd-t-fast) var(--bd-ease) !important;
+}
+
+html[data-bd="on"] [data-bd="search-field-group"]:hover,
+html[data-bd="on"] [data-bd="search-field-group"]:focus-within {
+  background: var(--bd-surface-3) !important;
+}
+
+html[data-bd="on"] [data-testid="search_field"] {
+  height: 48px !important;
+  background: transparent !important;
+  color: var(--bd-text) !important;
+  font-size: 15px !important;
+}
+
+html[data-bd="on"] [data-testid="search_field"]::placeholder {
+  color: var(--bd-text-3) !important;
+}
+
+html[data-bd="on"] .bd-kbd {
+  margin-right: 14px;
+  padding: 2px 7px;
+  border: 1px solid var(--bd-line-strong);
+  border-radius: var(--bd-r-chip);
+  color: var(--bd-text-3);
+  font: 500 12px/1.4 var(--bd-font-ui);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* ---------- Player dock ---------- */
+html[data-bd="on"] [data-bd="dock"] {
+  left: calc(var(--layout-sidebar-width, 80px) + var(--bd-gap)) !important;
+  right: var(--bd-gap) !important;
+  bottom: var(--bd-gap) !important;
+  width: auto !important;
+  min-height: var(--bd-dock-h) !important;
+  height: var(--bd-dock-h) !important;
+  box-sizing: border-box !important;
+  border: 1px solid var(--bd-line) !important;
+  border-radius: var(--bd-r-dock) !important;
+  background: var(--bd-surface-1) !important;
+  box-shadow: none !important;
+  transform: none !important;
+  overflow: visible !important;
+}
+
+html[data-bd="on"] [data-bd="dock"] [data-testid="item_cover"],
+html[data-bd="on"] [data-bd="dock"] img {
+  border-radius: var(--bd-r-cover) !important;
+}
+
+html[data-bd="on"] [data-bd="dock"] :is(button, [role="button"]) {
+  border-radius: var(--bd-r-pill) !important;
+}
+
+/* Main play button: white disc, accent is reserved for "now playing" */
+html[data-bd="on"] [data-bd="dock"] :is([data-testid="play_button_play"], [data-testid="play_button_pause"]) {
+  width: 48px !important;
+  height: 48px !important;
+  background: var(--bd-text) !important;
+  color: var(--bd-bg) !important;
+}
+
+html[data-bd="on"] [data-bd="dock"] :is([data-testid="play_button_play"], [data-testid="play_button_pause"]) svg {
+  fill: currentColor !important;
+  color: currentColor !important;
+}
+
+/* Progress bar: flat, thin, grows on hover */
+html[data-bd="on"] [data-bd="dock"] [data-testid="progress_bar"] {
+  transition: transform var(--bd-t-fast) var(--bd-ease) !important;
+}
+
+/* Content clears the floating dock */
+html[data-bd="on"] [data-bd="page"] {
+  padding-bottom: calc(var(--bd-dock-h) + var(--bd-gap) * 3) !important;
+}
+
+@media (max-width: 899px) {
+  html[data-bd="on"] [data-bd="dock"] {
+    left: var(--bd-gap) !important;
+    height: 72px !important;
+    min-height: 72px !important;
+    border-radius: 18px !important;
+  }
+}
