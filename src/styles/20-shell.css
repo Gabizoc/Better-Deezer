@@ -119,7 +119,9 @@ html[data-bd="on"] [data-bd="rail"] img {
 
 /* ---------- Top bar ---------- */
 html[data-bd="on"] [data-bd="topbar"] {
-  background: transparent !important;
+  background: color-mix(in srgb, var(--bd-bg) 82%, transparent) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  backdrop-filter: blur(16px) saturate(1.2);
   border-bottom: 0 !important;
   box-shadow: none !important;
 }

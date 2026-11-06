@@ -236,6 +236,7 @@ BD.feature({
         BD.t("Interface", "Interface"),
         this.featureToggle("content"),
         this.featureToggle("ambient"),
+        this.featureToggle("pages"),
         this.featureToggle("overlays"),
         this.featureToggle("now-playing"),
         this.row(BD.t("Badge au démarrage", "Startup badge"), BD.t("« Better Deezer x.y.z » pendant 3 s.", "“Better Deezer x.y.z” for 3 s."), this.toggle("badge", true))
@@ -249,6 +250,7 @@ BD.feature({
         BD.t("Barre de lecture", "Player bar"),
         this.featureToggle("player"),
         this.featureToggle("seek-wheel"),
+        this.featureToggle("dock-gestures"),
         this.featureToggle("tooltips"),
         this.featureToggle("tips")
       ),

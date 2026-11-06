@@ -193,27 +193,6 @@ html[data-bd="on"] [data-bd="notifications"] img {
   list-style: none;
 }
 
-html[data-bd="on"] .bd-chip {
-  height: 30px;
-  padding: 0 14px;
-  border: 0;
-  border-radius: var(--bd-r-pill) !important;
-  background: var(--bd-surface-2);
-  color: var(--bd-text-2);
-  font: 600 13px/1 var(--bd-font-ui);
-  cursor: pointer;
-}
-
-html[data-bd="on"] .bd-chip:hover {
-  color: var(--bd-text);
-  background: var(--bd-surface-3) !important;
-}
-
-html[data-bd="on"] .bd-chip[aria-pressed="true"] {
-  background: var(--bd-text) !important;
-  color: var(--bd-bg);
-}
-
 html[data-bd="on"] [data-bd="notifications"][data-bd-filter="release"] [data-bd-kind="social"],
 html[data-bd="on"] [data-bd="notifications"][data-bd-filter="social"] [data-bd-kind="release"] {
   display: none !important;
