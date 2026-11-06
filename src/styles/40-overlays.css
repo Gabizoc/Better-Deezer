@@ -52,49 +52,134 @@ html[data-bd="on"] [role="menuitem"]:focus {
   animation: bd-in var(--bd-t-fast) var(--bd-ease) forwards;
 }
 
-/* Inline volume slider (always visible in the dock) */
+/* ---------- Volume (features/volume.js) ----------
+ * .bd-volume sits right before Deezer's volume button. Closed: zero width.
+ * Open: the track unfolds to the left; ::before draws the surface-2 pill that
+ * runs under the button (--bd-volume-overlap is measured by JS).
+ */
 .bd-volume {
+  position: relative;
+  isolation: isolate;
   display: inline-flex;
+  flex-direction: row-reverse;
   align-items: center;
   gap: 8px;
   height: 40px;
-  padding: 0 12px 0 4px;
-  border-radius: var(--bd-r-pill);
-  background: var(--bd-surface-2);
+  width: 0;
+  overflow: visible;
+  transition: width var(--bd-t-base) var(--bd-ease), padding var(--bd-t-base) var(--bd-ease);
 }
 
-.bd-volume-input {
-  width: 88px;
+.bd-volume::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: calc(-1 * var(--bd-volume-overlap, 40px));
+  border-radius: var(--bd-r-pill);
+  background: var(--bd-surface-2);
+  opacity: 0;
+  transition: opacity var(--bd-t-fast) var(--bd-ease);
+  pointer-events: none;
+}
+
+.bd-volume[data-open="true"] {
+  width: 152px;
+  padding-left: 14px;
+}
+
+.bd-volume[data-open="true"]::before {
+  opacity: 1;
+}
+
+.bd-volume-track {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.bd-volume input {
+  width: 100%;
+  min-width: 0;
   height: 4px;
-  margin: 0;
+  margin: 0 6px;
   border-radius: var(--bd-r-pill);
   appearance: none;
   -webkit-appearance: none;
   cursor: pointer;
   background: linear-gradient(
     90deg,
-    var(--bd-text) 0 var(--bd-volume, 100%),
-    var(--bd-line-strong) var(--bd-volume, 100%) 100%
+    var(--bd-accent) 0 var(--bd-volume, 50%),
+    var(--bd-line-strong) var(--bd-volume, 50%) 100%
   );
+  opacity: 0;
+  transition: opacity var(--bd-t-fast) var(--bd-ease);
 }
 
-.bd-volume-input::-webkit-slider-thumb {
+.bd-volume[data-open="true"] input {
+  opacity: 1;
+}
+
+.bd-volume input::-webkit-slider-thumb {
   width: 12px;
   height: 12px;
   border: 0;
   border-radius: var(--bd-r-pill);
   -webkit-appearance: none;
   background: var(--bd-text);
+  transform: scale(0.6);
+  transition: transform var(--bd-t-fast) var(--bd-ease);
+}
+
+.bd-volume input::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: 0;
+  border-radius: var(--bd-r-pill);
+  background: var(--bd-text);
+}
+
+.bd-volume:hover input::-webkit-slider-thumb,
+.bd-volume input:focus-visible::-webkit-slider-thumb {
+  transform: scale(1);
+}
+
+.bd-volume-value {
+  width: 0;
+  overflow: hidden;
+  color: var(--bd-text-3);
+  font: 600 12px/1 var(--bd-font-ui);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
   opacity: 0;
   transition: opacity var(--bd-t-fast) var(--bd-ease);
 }
 
-.bd-volume:hover .bd-volume-input::-webkit-slider-thumb {
+.bd-volume[data-open="true"] .bd-volume-value {
+  width: 24px;
+  flex: none;
   opacity: 1;
 }
 
-/* Hide Deezer's own hover popup once our slider drives it */
-html[data-bd="on"][data-bd-volume="inline"] [data-testid="volume_menu"] {
+/* The icon keeps its place on the right, ringed in accent while open */
+html[data-bd="on"] [data-bd-role="volume-button"] {
+  position: relative;
+  z-index: 1;
+  border-radius: var(--bd-r-pill) !important;
+}
+
+html[data-bd="on"] [data-bd-role="volume-button"][data-bd-volume-open="true"] {
+  box-shadow: inset 0 0 0 2px var(--bd-accent) !important;
+  color: var(--bd-text) !important;
+}
+
+/* Deezer's own hover popup stays mounted (we drive it) but invisible */
+html[data-bd="on"][data-bd-volume="inline"] [data-bd="volume-native"] {
   opacity: 0 !important;
   pointer-events: none !important;
 }

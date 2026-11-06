@@ -1,20 +1,43 @@
 /*
- * Volume: an always-visible inline slider in the dock, driven through Deezer's
- * own range input (data-testid="volume_menu_bar") so the app keeps its state.
- * Mouse wheel over the slider or the volume button changes the volume.
- * Ported from the original "Deezer Tweaks" extension.
+ * Volume, as in the user's captures:
+ *  - click the volume icon: a slider unfolds to the LEFT inside a surface-2 pill,
+ *    the icon stays on the right with an accent ring;
+ *  - mouse wheel over the icon or the slider changes the volume (5% steps, 1% with Shift);
+ *  - click the icon again, click outside or press Escape: it folds back;
+ *  - Alt+click or middle click on the icon: Deezer's native mute.
+ *
+ * Deezer's own control is a hover popover (Chakra, isLazy) holding
+ * input[data-testid="volume_menu_bar"]: we open it invisibly, write the value
+ * through the native setter and let React pick up the "input" event, so the app
+ * keeps its own state (Ac.control.setVolume).
+ *
+ * We never move Deezer's button (React owns it). Our slider is a sibling
+ * inserted just before it, which React tolerates.
  */
 BD.feature({
   id: "volume",
+  label: ["Volume dépliable + molette", "Unfolding volume + mouse wheel"],
   step: 5,
+  open: false,
 
-  /** Deezer only mounts its range input while the hover menu is open. */
-  openNativeMenu(button) {
-    if (!button || BD.anchors.volumeInput()) return;
+  slider() {
+    return document.querySelector(".bd-volume");
+  },
+
+  /** Deezer only mounts its range input while the hover popover is open. */
+  hoverNative(button, enter) {
+    if (!button) return;
     const r = button.getBoundingClientRect();
-    const init = { bubbles: true, cancelable: true, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 };
-    const Ctor = window.PointerEvent || MouseEvent;
-    for (const type of ["pointerover", "pointerenter", "mouseover", "mouseenter"]) {
+    const init = {
+      bubbles: true,
+      cancelable: true,
+      clientX: r.left + r.width / 2,
+      clientY: r.top + r.height / 2,
+      relatedTarget: enter ? null : document.body
+    };
+    const types = enter ? ["pointerover", "pointerenter", "mouseover", "mouseenter"] : ["pointerout", "pointerleave", "mouseout", "mouseleave"];
+    for (const type of types) {
+      const Ctor = type.startsWith("pointer") && window.PointerEvent ? PointerEvent : MouseEvent;
       button.dispatchEvent(new Ctor(type, { ...init, pointerType: "mouse" }));
     }
   },
@@ -23,7 +46,7 @@ BD.feature({
     const min = Number(input.min || 0);
     const max = Number(input.max || 100);
     const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set;
-    setter.call(input, String(min + (max - min) * ratio));
+    setter.call(input, String(Math.round(min + (max - min) * ratio)));
     input.dispatchEvent(new Event("input", { bubbles: true }));
     input.dispatchEvent(new Event("change", { bubbles: true }));
   },
@@ -35,66 +58,183 @@ BD.feature({
       const max = Number(input.max || 100);
       if (max > min) return (Number(input.value) - min) / (max - min);
     }
-    return BD.settings.get("volume", 1);
+    return BD.settings.get("volume", 0.5);
   },
 
   setRatio(ratio) {
     const next = Math.max(0, Math.min(1, ratio));
     BD.settings.set("volume", next);
     this.paint(next);
+    clearTimeout(this.applyTimer);
     const button = BD.anchors.volumeButton();
     const started = Date.now();
+    let opened = false;
     const apply = () => {
       const input = BD.anchors.volumeInput();
-      if (input) return this.writeNative(input, next);
-      if (Date.now() - started > 1000) return;
-      this.openNativeMenu(button);
-      setTimeout(apply, 80);
+      if (input) {
+        this.writeNative(input, next);
+        if (opened) this.closeTimer = setTimeout(() => this.hoverNative(BD.anchors.volumeButton(), false), 400);
+        return;
+      }
+      if (Date.now() - started > 1200) return BD.log("volume input never mounted");
+      if (!opened) {
+        clearTimeout(this.closeTimer);
+        this.hoverNative(button, true);
+        opened = true;
+      }
+      this.applyTimer = setTimeout(apply, 60);
     };
     apply();
   },
 
   paint(ratio) {
-    const range = document.querySelector(".bd-volume-input");
-    if (!range) return;
+    const wrap = this.slider();
+    if (!wrap) return;
+    const range = wrap.querySelector("input");
     const pct = Math.round(ratio * 100);
     range.value = String(pct);
-    range.style.setProperty("--bd-volume", `${pct}%`);
+    range.setAttribute("aria-valuetext", `${pct}%`);
+    wrap.style.setProperty("--bd-volume", `${pct}%`);
+    wrap.querySelector(".bd-volume-value").textContent = String(pct);
+  },
+
+  setOpen(open) {
+    this.open = open;
+    const wrap = this.slider();
+    const button = BD.anchors.volumeButton();
+    if (wrap) {
+      wrap.setAttribute("data-open", String(open));
+      wrap.querySelector("input").tabIndex = open ? 0 : -1;
+    }
+    if (button) {
+      BD.mark(button, String(open), "data-bd-volume-open");
+      button.setAttribute("aria-expanded", String(open));
+    }
+    if (open) {
+      this.paint(this.readRatio());
+      this.measure();
+    }
+  },
+
+  /** The pill drawn by our slider extends under Deezer's button: measure how far. */
+  measure() {
+    const wrap = this.slider();
+    const button = BD.anchors.volumeButton();
+    if (!wrap || !button) return;
+    const overlap = Math.max(0, button.getBoundingClientRect().right - wrap.getBoundingClientRect().right);
+    wrap.style.setProperty("--bd-volume-overlap", `${Math.round(overlap)}px`);
+  },
+
+  wheel(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const step = (e.shiftKey ? 1 : this.step) / 100;
+    const dir = (e.deltaY || e.deltaX) < 0 ? 1 : -1;
+    this.setRatio(this.readSlider() + dir * step);
+  },
+
+  readSlider() {
+    const range = this.slider()?.querySelector("input");
+    return range ? Number(range.value) / 100 : this.readRatio();
+  },
+
+  setup() {
+    document.documentElement.setAttribute("data-bd-volume", "inline");
+
+    // Capture phase on document: runs before React's root listener, so the
+    // native mute toggle never fires on a plain click.
+    document.addEventListener(
+      "click",
+      (e) => {
+        const button = e.target.closest?.('[data-testid^="volume_button"]');
+        if (!button) {
+          if (this.open && !e.target.closest?.(".bd-volume")) this.setOpen(false);
+          return;
+        }
+        if (e.altKey) return; // Alt+click: Deezer's mute
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        this.setOpen(!this.open);
+      },
+      true
+    );
+
+    // Middle click on the icon: mute, like most players.
+    document.addEventListener(
+      "auxclick",
+      (e) => {
+        const button = e.button === 1 && e.target.closest?.('[data-testid^="volume_button"]');
+        if (!button) return;
+        e.preventDefault();
+        button.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, altKey: true }));
+      },
+      true
+    );
+
+    document.addEventListener(
+      "wheel",
+      (e) => {
+        if (e.target.closest?.('[data-testid^="volume_button"], .bd-volume')) this.wheel(e);
+      },
+      { capture: true, passive: false }
+    );
+
+    document.addEventListener(
+      "keydown",
+      (e) => {
+        if (e.key !== "Escape" || !this.open) return;
+        this.setOpen(false);
+        BD.anchors.volumeButton()?.focus();
+      },
+      true
+    );
+
+    addEventListener("resize", () => this.open && this.measure());
   },
 
   update() {
     const button = BD.anchors.volumeButton();
-    if (!button || button.closest(".bd-volume")) return;
+    if (!button) return;
+    BD.mark(button, "volume-button", "data-bd-role");
+    if (button.getAttribute("data-bd-volume-open") !== String(this.open)) {
+      BD.mark(button, String(this.open), "data-bd-volume-open");
+    }
 
-    const wrap = document.createElement("span");
-    wrap.className = "bd-volume";
-    const range = document.createElement("input");
-    range.className = "bd-volume-input";
-    range.type = "range";
-    range.min = "0";
-    range.max = "100";
-    range.step = "1";
-    range.setAttribute("aria-label", "Volume");
+    // Hide Deezer's hover popover: our slider drives it.
+    const menu = BD.anchors.volumeMenu();
+    if (menu) {
+      const popper = menu.closest(".chakra-popover__popper, [data-popper-placement]") || menu;
+      BD.mark(popper, "volume-native");
+      const input = BD.anchors.volumeInput();
+      if (input && !this.slider()?.matches(":active")) this.paint(this.readRatio());
+    }
 
-    button.parentNode.insertBefore(wrap, button);
-    wrap.append(button, range);
-    document.documentElement.setAttribute("data-bd-volume", "inline");
-    this.paint(this.readRatio());
+    let wrap = this.slider();
+    if (wrap && wrap.nextElementSibling === button) return;
+    wrap?.remove();
 
+    const range = BD.h("input", {
+      type: "range",
+      min: "0",
+      max: "100",
+      step: "1",
+      tabindex: "-1",
+      "aria-label": "Volume"
+    });
     range.addEventListener("input", (e) => {
       e.stopPropagation();
       this.setRatio(Number(range.value) / 100);
     });
+    range.addEventListener("keydown", (e) => e.stopPropagation()); // don't trigger Deezer's hotkeys
 
-    wrap.addEventListener(
-      "wheel",
-      (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const dir = e.deltaY < 0 ? 1 : -1;
-        this.setRatio(Number(range.value) / 100 + (dir * this.step) / 100);
-      },
-      { passive: false }
+    wrap = BD.h(
+      "span",
+      { class: "bd-volume", "data-open": String(this.open) },
+      BD.h("span", { class: "bd-volume-track" }, range),
+      BD.h("span", { class: "bd-volume-value", "aria-hidden": "true" })
     );
+    button.parentNode.insertBefore(wrap, button);
+    this.paint(this.readRatio());
+    if (this.open) this.measure();
   }
 });
