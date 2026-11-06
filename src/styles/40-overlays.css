@@ -27,6 +27,7 @@ html[data-bd="on"] :is([data-bd="popover"], [data-bd="search-popover"], [data-bd
 
 /* ---------- Search popover: r=22, aligned under the field ---------- */
 html[data-bd="on"] [data-bd="search-popover"] {
+  width: max(var(--bd-search-w, 452px), 380px) !important;
   margin-top: 6px !important;
   max-height: min(70vh, 640px) !important;
 }
@@ -52,6 +53,8 @@ html[data-bd="on"] [data-bd-role="clear-all"] svg {
 }
 
 .bd-search-footer {
+  /* Deezer mounts its results lazily, after our footer: order keeps it last. */
+  order: 99;
   position: sticky;
   bottom: 0;
   z-index: 1;

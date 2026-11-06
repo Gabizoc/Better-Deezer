@@ -29,7 +29,14 @@ BD.feature({
     if (page) BD.mark(page, "page");
 
     const group = BD.anchors.searchGroup();
-    if (group) BD.mark(group, "search-field-group");
+    if (group) {
+      BD.mark(group, "search-field-group");
+      // The results popover takes the field's width, so Popper's "bottom" placement lines them up.
+      const w = `${Math.round(group.getBoundingClientRect().width)}px`;
+      if (w !== "0px" && document.documentElement.style.getPropertyValue("--bd-search-w") !== w) {
+        document.documentElement.style.setProperty("--bd-search-w", w);
+      }
+    }
   },
 
   /** Deezer swaps icons for the active page but sets no aria-current: derive it from the URL. */

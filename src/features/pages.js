@@ -104,8 +104,17 @@ BD.feature({
       : BD.qa('[data-testid="section_title"]', page).map((t) => t.closest("section") || t.parentElement?.parentElement);
     return list
       .filter(Boolean)
-      .map((el) => ({ el, title: (BD.q('[data-testid="section_title"], h2', el)?.textContent || "").trim() }))
+      .map((el) => ({ el, title: this.titleOf(el) }))
       .filter((s) => s.title);
+  },
+
+  /** Section title without its "See all" button text. */
+  titleOf(el) {
+    const heading = BD.q('[data-testid="section_title"], h2', el);
+    if (!heading) return "";
+    const clone = heading.cloneNode(true);
+    clone.querySelectorAll('[data-testid="section_title_cta"], [data-testid="section-title-subtitle"], button, a[role="button"]').forEach((n) => n.remove());
+    return clone.textContent.replace(/\s+/g, " ").trim();
   },
 
   greeting() {
