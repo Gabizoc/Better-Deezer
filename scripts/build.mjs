@@ -24,9 +24,16 @@ const js = (target) =>
     .replaceAll("__BD_VERSION__", pkg.version)
     .replaceAll("__BD_TARGET__", target);
 
-const iife = (body, withCss) =>
-  `/*! Better Deezer v${pkg.version} | MIT | https://github.com/Gabizoc/Better-Deezer */\n(() => {\n"use strict";\n` +
+// Vendored fonts (SIL OFL): files for the extension, base64 for the single-file payload.
+const fonts = JSON.parse(read("assets/fonts/fonts.json"));
+const fontsFor = (embed) =>
+  fonts.map((f) => (embed ? { ...f, data: readFileSync(join(root, "assets/fonts", f.file)).toString("base64") } : f));
+
+const iife = (body, withCss, embedFonts) =>
+  `/*! Better Deezer v${pkg.version} | MIT | https://github.com/Gabizoc/Better-Deezer\n` +
+  ` *  Fonts: Bricolage Grotesque, Instrument Sans (SIL Open Font License 1.1) */\n(() => {\n"use strict";\n` +
   (withCss ? `const __BD_CSS__ = ${JSON.stringify(css)};\n` : "") +
+  `const __BD_FONTS__ = ${JSON.stringify(fontsFor(embedFonts))};\n` +
   `${body}\n})();\n`;
 
 rmSync(join(root, "dist"), { recursive: true, force: true });
@@ -37,9 +44,13 @@ mkdirSync(ext, { recursive: true });
 cpSync(join(root, "extension"), ext, { recursive: true });
 const manifest = JSON.parse(readFileSync(join(ext, "manifest.json"), "utf8"));
 manifest.version = pkg.version;
+mkdirSync(join(ext, "fonts"), { recursive: true });
+for (const f of readdirSync(join(root, "assets/fonts"))) {
+  if (/\.(woff2|txt)$/.test(f)) cpSync(join(root, "assets/fonts", f), join(ext, "fonts", f));
+}
 writeFileSync(join(ext, "manifest.json"), JSON.stringify(manifest, null, 2));
 writeFileSync(join(ext, "better-deezer.css"), css);
-writeFileSync(join(ext, "better-deezer.js"), iife(js("extension"), false));
+writeFileSync(join(ext, "better-deezer.js"), iife(js("extension"), false, false));
 
 // Single-file payload (desktop + userscript)
 const header = `// ==UserScript==
@@ -50,6 +61,6 @@ const header = `// ==UserScript==
 // @grant        none
 // ==/UserScript==
 `;
-writeFileSync(join(root, "dist/better-deezer.user.js"), header + iife(js("desktop"), true));
+writeFileSync(join(root, "dist/better-deezer.user.js"), header + iife(js("desktop"), true, true));
 
 console.log(`Better Deezer ${pkg.version} built -> dist/`);
