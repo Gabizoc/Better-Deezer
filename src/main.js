@@ -22,6 +22,12 @@
       version: BD.version,
       enable: () => (BD.settings.set("enabled", true), location.reload())
     };
+    // Way back without the console: Ctrl/Cmd + , offers to turn it on again.
+    document.addEventListener("keydown", (e) => {
+      if (!((e.ctrlKey || e.metaKey) && e.key === ",")) return;
+      e.preventDefault();
+      if (confirm(BD.t("Réactiver Better Deezer ?", "Turn Better Deezer back on?"))) window.__betterDeezer.enable();
+    });
     return;
   }
 

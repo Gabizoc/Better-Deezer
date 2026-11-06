@@ -143,7 +143,7 @@ BD.feature({
   wheel(e) {
     e.preventDefault();
     e.stopPropagation();
-    const step = (e.shiftKey ? 1 : this.step) / 100;
+    const step = (e.shiftKey ? 1 : Number(BD.settings.get("volume:step", this.step)) || this.step) / 100;
     const dir = (e.deltaY || e.deltaX) < 0 ? 1 : -1;
     this.setRatio(this.readSlider() + dir * step);
     this.pulse();
