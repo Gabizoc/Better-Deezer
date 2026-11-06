@@ -20,6 +20,7 @@ BD.optionalAnchors = new Set([
   "volumeMenu",
   "searchPopover",
   "profileButton", // logged-out pages have none
+  "notificationButton",
   "accountPopover",
   "accountMenuList",
   "contextMenus",
@@ -53,6 +54,9 @@ BD.anchors = {
   },
 
   profileButton: () => BD.q('[data-testid="topbar-profile"]') || BD.q('[data-testid="sidebar-profile"]'),
+  /** Bell in the top bar (Tempo icon BellOutlinedIcon; data-testid btn-notification in the bundle). */
+  notificationButton: () =>
+    BD.q('[data-testid="btn-notification"]') || BD.q('[data-testid="BellOutlinedIcon"]')?.closest("button") || null,
   accountPopover: () => BD.q('[data-testid="account-popover-content"]'),
   /** The list inside the account popover where Deezer renders its entries. */
   accountMenuList: () => {

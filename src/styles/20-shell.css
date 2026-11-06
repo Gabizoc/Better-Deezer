@@ -133,9 +133,20 @@ html[data-bd="on"] [data-bd="search-field-group"] {
   transition: background-color var(--bd-t-fast) var(--bd-ease) !important;
 }
 
-html[data-bd="on"] [data-bd="search-field-group"]:hover,
-html[data-bd="on"] [data-bd="search-field-group"]:focus-within {
+html[data-bd="on"] [data-bd="search-field-group"]:hover {
   background: var(--bd-surface-3) !important;
+}
+
+/* Focus: a 2px accent border on the pill itself, never on the inner input */
+html[data-bd="on"] [data-bd="search-field-group"]:focus-within {
+  background: var(--bd-surface-2) !important;
+  box-shadow: inset 0 0 0 2px var(--bd-accent) !important;
+}
+
+html[data-bd="on"] [data-bd="search-field-group"] :is(input, div, span):not(.bd-kbd) {
+  border-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 html[data-bd="on"] [data-testid="search_field"] {

@@ -2,39 +2,325 @@
  * Overlays: search popover, menus, tooltips, volume.
  */
 
-/* Search results panel, aligned under the field */
-html[data-bd="on"] [data-bd="search-popover"] {
+/* ---------- Shared surface for every floating panel ---------- */
+html[data-bd="on"] :is([data-bd="popover"], [data-bd="search-popover"], [data-bd="account-menu"], [data-bd="context-menu"], [data-bd="notifications"], [data-bd="menu"]) {
   border: 1px solid var(--bd-line) !important;
   border-radius: var(--bd-r-dock) !important;
   background: var(--bd-surface-1) !important;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5) !important;
-  max-height: min(70vh, 640px) !important;
-  overflow-y: auto !important;
+  color: var(--bd-text) !important;
+  box-shadow: var(--bd-shadow-pop) !important;
+  overflow: hidden;
 }
 
-html[data-bd="on"] [data-bd="search-popover"] :is(a, button, [role="button"]) {
-  border-radius: var(--bd-r-cover) !important;
+/* Arrows don't fit the floating style */
+html[data-bd="on"] :is([data-bd="popover"], [data-bd="search-popover"], [data-bd="account-menu"], [data-bd="context-menu"], [data-bd="notifications"]) [data-popper-arrow] {
+  display: none !important;
 }
 
-html[data-bd="on"] [data-bd="search-popover"] :is(a, button, [role="button"]):hover {
+html[data-bd="on"] :is([data-bd="popover"], [data-bd="search-popover"], [data-bd="account-menu"], [data-bd="context-menu"], [data-bd="notifications"], [data-bd="menu"]) :is(a, button, [role="button"], [role="menuitem"]) {
+  border-radius: 12px !important;
+}
+
+html[data-bd="on"] :is([data-bd="popover"], [data-bd="search-popover"], [data-bd="account-menu"], [data-bd="context-menu"], [data-bd="notifications"], [data-bd="menu"]) :is(a, button, [role="button"], [role="menuitem"]):is(:hover, :focus-visible) {
   background-color: var(--bd-surface-2) !important;
 }
 
-/* Context menus and popovers rendered by Chakra (role-based, stable) */
-html[data-bd="on"] [role="menu"],
-html[data-bd="on"] [role="dialog"]:not([data-bd="search-popover"]) {
-  border: 1px solid var(--bd-line) !important;
-  border-radius: var(--bd-r-card) !important;
+/* ---------- Search popover: r=22, aligned under the field ---------- */
+html[data-bd="on"] [data-bd="search-popover"] {
+  margin-top: 6px !important;
+  max-height: min(70vh, 640px) !important;
+}
+
+html[data-bd="on"] [data-bd="search-popover"] [data-testid="recent_search_title"] {
+  font-family: var(--bd-font-display) !important;
+  font-size: 18px !important;
+  letter-spacing: -0.01em !important;
+}
+
+html[data-bd="on"] [data-bd-role="clear-all"] {
+  width: auto !important;
+  gap: 6px;
+  padding: 0 12px !important;
+  border-radius: var(--bd-r-pill) !important;
+  color: var(--bd-text-2) !important;
+  font: 600 13px/1 var(--bd-font-ui);
+}
+
+html[data-bd="on"] [data-bd-role="clear-all"] svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.bd-search-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  background: var(--bd-surface-1);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--bd-line);
+  color: var(--bd-text-3);
+  font: 500 12px/1.4 var(--bd-font-ui);
+}
+
+.bd-search-footer kbd,
+.bd-kbd-inline {
+  display: inline-block;
+  min-width: 18px;
+  margin-right: 2px;
+  padding: 1px 5px;
+  border: 1px solid var(--bd-line-strong);
+  border-radius: var(--bd-r-chip);
+  color: var(--bd-text-2);
+  font: 600 11px/1.4 var(--bd-font-ui);
+  text-align: center;
+}
+
+/* ---------- Profile menu ---------- */
+html[data-bd="on"] [data-bd="account-menu"] {
+  width: 320px !important;
+}
+
+html[data-bd="on"] [data-bd="account-menu"] > div,
+html[data-bd="on"] [data-bd="account-menu"] .popper-account {
+  background: transparent !important;
+}
+
+html[data-bd="on"] [data-bd="account-menu"] ul[role="navigation"] {
+  padding: 6px !important;
+}
+
+html[data-bd="on"] [data-bd="account-menu"] li > :is(a, button) {
+  padding-inline: 12px !important;
+}
+
+.bd-account {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 6px 0;
+  padding: 8px 0;
+  border-top: 1px solid var(--bd-line);
+  border-bottom: 1px solid var(--bd-line);
+  list-style: none;
+}
+
+.bd-account-theme {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 12px;
+}
+
+.bd-account-label {
+  color: var(--bd-text-2);
+  font: 500 14px/1.2 var(--bd-font-ui);
+}
+
+.bd-segmented {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: var(--bd-r-pill);
+  background: var(--bd-surface-2);
+}
+
+html[data-bd="on"] .bd-seg {
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--bd-r-pill) !important;
+  background: transparent;
+  color: var(--bd-text-2);
+  font: 600 12px/1 var(--bd-font-ui);
+  cursor: pointer;
+}
+
+html[data-bd="on"] .bd-seg:hover {
+  color: var(--bd-text);
+}
+
+html[data-bd="on"] .bd-seg[aria-checked="true"] {
   background: var(--bd-surface-1) !important;
+  color: var(--bd-text);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+}
+
+html[data-bd="on"] .bd-account-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 0;
+  background: transparent;
+  color: var(--bd-text);
+  font: 500 14px/1 var(--bd-font-ui);
+  text-align: left;
+  cursor: pointer;
+}
+
+/* ---------- Notifications ---------- */
+html[data-bd="on"] [data-bd="notifications"] {
+  width: 380px !important;
+  max-height: min(72vh, 640px) !important;
+}
+
+html[data-bd="on"] [data-bd="notifications"] h2:first-of-type {
+  font-family: var(--bd-font-display) !important;
+  letter-spacing: -0.01em !important;
+}
+
+html[data-bd="on"] [data-bd="notifications"] li {
+  border-radius: var(--bd-r-card) !important;
+}
+
+html[data-bd="on"] [data-bd="notifications"] li:hover {
+  background: var(--bd-surface-2) !important;
+}
+
+html[data-bd="on"] [data-bd="notifications"] img {
+  border-radius: var(--bd-r-cover) !important;
+}
+
+.bd-notif-filters {
+  display: flex;
+  gap: 6px;
+  padding: 0 16px 8px;
+  list-style: none;
+}
+
+html[data-bd="on"] .bd-chip {
+  height: 30px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--bd-r-pill) !important;
+  background: var(--bd-surface-2);
+  color: var(--bd-text-2);
+  font: 600 13px/1 var(--bd-font-ui);
+  cursor: pointer;
+}
+
+html[data-bd="on"] .bd-chip:hover {
+  color: var(--bd-text);
+  background: var(--bd-surface-3) !important;
+}
+
+html[data-bd="on"] .bd-chip[aria-pressed="true"] {
+  background: var(--bd-text) !important;
+  color: var(--bd-bg);
+}
+
+html[data-bd="on"] [data-bd="notifications"][data-bd-filter="release"] [data-bd-kind="social"],
+html[data-bd="on"] [data-bd="notifications"][data-bd-filter="social"] [data-bd-kind="release"] {
+  display: none !important;
+}
+
+html[data-bd="on"] [data-bd-role="unread-badge"] {
+  background: var(--bd-accent) !important;
+  color: var(--bd-on-accent) !important;
+  border: 2px solid var(--bd-bg) !important;
+}
+
+/* ---------- Context menus and menus ---------- */
+html[data-bd="on"] [data-bd="context-menu"],
+html[data-bd="on"] [data-bd="menu"] {
+  padding: 6px !important;
+  border-radius: var(--bd-r-menu) !important;
 }
 
 html[data-bd="on"] [role="menuitem"] {
-  border-radius: var(--bd-r-chip) !important;
+  border-radius: 10px !important;
 }
 
-html[data-bd="on"] [role="menuitem"]:hover,
-html[data-bd="on"] [role="menuitem"]:focus {
+html[data-bd="on"] [role="menuitem"]:is(:hover, :focus) {
+  background: var(--bd-surface-2) !important;
+}
+
+/* ---------- Modals ---------- */
+html[data-bd="on"] [data-bd="scrim"] {
+  background: var(--bd-scrim) !important;
+}
+
+html[data-bd="on"] [data-bd="modal"] {
+  border: 1px solid var(--bd-line) !important;
+  border-radius: var(--bd-r-dock) !important;
+  background: var(--bd-surface-1) !important;
+  box-shadow: var(--bd-shadow-pop) !important;
+  overflow: hidden;
+}
+
+html[data-bd="on"] [data-bd="modal"] [data-testid="modal_header"],
+html[data-bd="on"] [data-bd="modal"] .chakra-modal__header {
+  border-bottom: 0 !important;
+  font-family: var(--bd-font-display) !important;
+}
+
+html[data-bd="on"] [data-bd="modal"] :is(h1, h2) {
+  font-family: var(--bd-font-display) !important;
+  letter-spacing: -0.015em !important;
+}
+
+html[data-bd="on"] [data-bd="modal"] footer,
+html[data-bd="on"] [data-bd="modal"] .chakra-modal__footer {
+  border-top: 0 !important;
+}
+
+html[data-bd="on"] [data-bd="modal"] :is(input, textarea) {
+  border-radius: 12px !important;
+}
+
+html[data-bd="on"] [data-bd="modal"] :is(input, textarea):focus {
+  box-shadow: inset 0 0 0 2px var(--bd-accent) !important;
+}
+
+/* Primary action: solid text color (white in dark, ink in light); others surface-2 */
+html[data-bd="on"] [data-bd="modal"] button.chakra-button:not([aria-label]) {
+  border-radius: var(--bd-r-pill) !important;
+}
+
+html[data-bd="on"] [data-bd="modal"] [data-bd-role="primary"] {
+  background: var(--bd-text) !important;
+  color: var(--bd-bg) !important;
+}
+
+html[data-bd="on"] [data-bd="modal"] [data-bd-role="primary"]:hover {
+  background: var(--bd-text-2) !important;
+}
+
+html[data-bd="on"] [data-bd="modal"] [data-bd-role="secondary"] {
+  padding-inline: 20px !important;
+  border-radius: var(--bd-r-pill) !important;
+  background: var(--bd-surface-2) !important;
+  color: var(--bd-text) !important;
+}
+
+html[data-bd="on"] [data-bd="modal"] [data-bd-role="secondary"]:hover {
   background: var(--bd-surface-3) !important;
+}
+
+/* ---------- Toasts: light pill ---------- */
+html[data-bd="on"] [data-bd="toast"],
+html[data-bd="on"] [data-bd="toast"] > * {
+  border-radius: var(--bd-r-pill) !important;
+}
+
+html[data-bd="on"] [data-bd="toast"] > * {
+  background: var(--bd-text) !important;
+  color: var(--bd-bg) !important;
+  box-shadow: var(--bd-shadow-pop) !important;
+}
+
+html[data-bd="on"] [data-bd="toast"] button {
+  color: var(--bd-accent-text) !important;
+  font-weight: 700 !important;
+}
+
+html[data-bd-theme="dark"] [data-bd="toast"] button {
+  color: var(--bd-accent-text-on-light) !important; /* the toast is light even in the dark theme */
 }
 
 /* Tooltips (ours): label + optional tip */

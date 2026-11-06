@@ -78,7 +78,7 @@
         <input data-testid="search_field" placeholder="Rechercher">
       </div>
     </div>
-    <button data-testid="btn-notification" aria-label="Love"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg></button>
+    <button aria-controls="popover-content-notif" aria-haspopup="dialog"><svg data-testid="BellOutlinedIcon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg><span aria-label="topbar-notification-counter" style="display: inline-block; min-width: 16px; border-radius: 8px; font-size: 10px">3</span></button>
     <button data-testid="topbar-profile" class="topbar-action" aria-label="profile">P</button>
   </div>
 
@@ -188,6 +188,13 @@
     const li = document.createElement("li");
     li.innerHTML = '<div role="status" class="chakra-toast__inner"><div class="css-pop" style="position: static">Ajouté aux Coups de cœur</div></div>';
     document.getElementById("chakra-toast-manager-bottom").appendChild(li);
+  };
+  window.__openNotifications = () => {
+    const pop = document.createElement("div");
+    pop.className = "chakra-popover__popper";
+    pop.style.cssText = "position: fixed; top: 72px; right: 72px; z-index: 1500";
+    pop.innerHTML = '<section role="dialog" data-testid="popover-content" id="popover-content-notif" class="css-pop" style="position: static; width: 360px"><div data-popper-arrow><div data-popper-arrow-inner></div></div><div><h2>Notifications</h2><li><div role="group"><figure><img alt="" width="48" height="48"></figure><div role="cell"><h2><a href="/fr/album/1">Toupou</a></h2><p>Moha MMZ</p></div></div><p>IL Y A 11 HEURES - NOUVEAU SINGLE</p></li></div></section>';
+    document.body.appendChild(pop);
   };
   window.__expandSidebar = (on) => {
     document.querySelector(".naboo").style.setProperty("--layout-sidebar-width", on ? "243px" : "80px");
