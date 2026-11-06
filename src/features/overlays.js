@@ -40,6 +40,7 @@ BD.feature({
     });
 
     BD.anchors.menus().forEach((menu) => BD.mark(menu, "menu"));
+    BD.anchors.switchTracks().forEach((track) => BD.mark(track, "switch-track", "data-bd-role"));
     BD.anchors.toasts().forEach((toast) => BD.mark(toast, "toast"));
 
     const counter = BD.q('[aria-label="topbar-notification-counter"]');
