@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Better Deezer",
+  "version": "0.0.0",
+  "description": "A cleaner, modern Deezer: floating rail and player, custom search, volume wheel, light and dark themes.",
+  "content_scripts": [
+    {
+      "matches": ["https://www.deezer.com/*"],
+      "js": ["better-deezer.js"],
+      "css": ["better-deezer.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}

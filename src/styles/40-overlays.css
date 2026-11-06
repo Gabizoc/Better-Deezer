@@ -1,0 +1,124 @@
+/*
+ * Overlays: search popover, menus, tooltips, volume.
+ */
+
+/* Search results panel, aligned under the field */
+html[data-bd="on"] [data-bd="search-popover"] {
+  border: 1px solid var(--bd-line) !important;
+  border-radius: var(--bd-r-dock) !important;
+  background: var(--bd-surface-1) !important;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5) !important;
+  max-height: min(70vh, 640px) !important;
+  overflow-y: auto !important;
+}
+
+html[data-bd="on"] [data-bd="search-popover"] :is(a, button, [role="button"]) {
+  border-radius: var(--bd-r-cover) !important;
+}
+
+html[data-bd="on"] [data-bd="search-popover"] :is(a, button, [role="button"]):hover {
+  background-color: var(--bd-surface-2) !important;
+}
+
+/* Context menus and popovers rendered by Chakra (role-based, stable) */
+html[data-bd="on"] [role="menu"],
+html[data-bd="on"] [role="dialog"]:not([data-bd="search-popover"]) {
+  border: 1px solid var(--bd-line) !important;
+  border-radius: var(--bd-r-card) !important;
+  background: var(--bd-surface-1) !important;
+}
+
+html[data-bd="on"] [role="menuitem"] {
+  border-radius: var(--bd-r-chip) !important;
+}
+
+html[data-bd="on"] [role="menuitem"]:hover,
+html[data-bd="on"] [role="menuitem"]:focus {
+  background: var(--bd-surface-3) !important;
+}
+
+/* Tooltips (ours) */
+.bd-tooltip {
+  position: fixed;
+  z-index: 2147483647;
+  padding: 6px 10px;
+  border-radius: var(--bd-r-chip);
+  background: var(--bd-text);
+  color: var(--bd-bg);
+  font: 600 12px/1.3 var(--bd-font-ui);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(3px);
+  animation: bd-in var(--bd-t-fast) var(--bd-ease) forwards;
+}
+
+/* Inline volume slider (always visible in the dock) */
+.bd-volume {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 12px 0 4px;
+  border-radius: var(--bd-r-pill);
+  background: var(--bd-surface-2);
+}
+
+.bd-volume-input {
+  width: 88px;
+  height: 4px;
+  margin: 0;
+  border-radius: var(--bd-r-pill);
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  background: linear-gradient(
+    90deg,
+    var(--bd-text) 0 var(--bd-volume, 100%),
+    var(--bd-line-strong) var(--bd-volume, 100%) 100%
+  );
+}
+
+.bd-volume-input::-webkit-slider-thumb {
+  width: 12px;
+  height: 12px;
+  border: 0;
+  border-radius: var(--bd-r-pill);
+  -webkit-appearance: none;
+  background: var(--bd-text);
+  opacity: 0;
+  transition: opacity var(--bd-t-fast) var(--bd-ease);
+}
+
+.bd-volume:hover .bd-volume-input::-webkit-slider-thumb {
+  opacity: 1;
+}
+
+/* Hide Deezer's own hover popup once our slider drives it */
+html[data-bd="on"][data-bd-volume="inline"] [data-testid="volume_menu"] {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Boot badge, shown once */
+.bd-badge {
+  position: fixed;
+  right: 18px;
+  bottom: 110px;
+  z-index: 2147483647;
+  padding: 8px 12px;
+  border: 1px solid var(--bd-line);
+  border-radius: var(--bd-r-card);
+  background: var(--bd-surface-1);
+  color: var(--bd-text);
+  font: 600 12px/1.2 var(--bd-font-ui);
+  pointer-events: none;
+  animation: bd-in var(--bd-t-base) var(--bd-ease) forwards, bd-out var(--bd-t-base) var(--bd-ease) 2.2s forwards;
+}
+
+@keyframes bd-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bd-out {
+  to { opacity: 0; transform: translateY(4px); }
+}

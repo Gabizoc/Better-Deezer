@@ -1,0 +1,75 @@
+/*
+ * Content: covers, cards, track rows, page headers.
+ * Elements are tagged by features/content.js using data-testid / ARIA roles.
+ */
+
+/* Covers */
+html[data-bd="on"] [data-bd="page"] [data-testid="item_cover"],
+html[data-bd="on"] [data-bd="page"] [data-bd-role="cover"] {
+  border-radius: var(--bd-r-cover) !important;
+  overflow: hidden !important;
+}
+
+/* Cards: quiet surface on hover, no lift, no shadow */
+html[data-bd="on"] [data-bd-role="card"] {
+  border-radius: var(--bd-r-card) !important;
+  transition: background-color var(--bd-t-fast) var(--bd-ease) !important;
+}
+
+html[data-bd="on"] [data-bd-role="card"]:hover {
+  background-color: var(--bd-surface-2) !important;
+}
+
+/* Track rows */
+html[data-bd="on"] [data-bd-role="track-row"] {
+  border-radius: var(--bd-r-cover) !important;
+  border-bottom-color: transparent !important;
+}
+
+html[data-bd="on"] [data-bd-role="track-row"]:hover {
+  background-color: var(--bd-surface-2) !important;
+}
+
+html[data-bd="on"] [data-bd-role="track-row"][data-bd-playing="true"] {
+  background-color: var(--bd-surface-2) !important;
+}
+
+html[data-bd="on"] [data-bd-role="track-row"][data-bd-playing="true"] [data-testid="title"] {
+  color: var(--bd-accent-text) !important;
+}
+
+/* "Show all" style chips and filter pills */
+html[data-bd="on"] [data-bd-role="chip"] {
+  border-radius: var(--bd-r-pill) !important;
+  border: 0 !important;
+  background: var(--bd-surface-2) !important;
+  color: var(--bd-text) !important;
+  font-weight: 600 !important;
+}
+
+html[data-bd="on"] [data-bd-role="chip"][aria-selected="true"],
+html[data-bd="on"] [data-bd-role="chip"][aria-pressed="true"] {
+  background: var(--bd-text) !important;
+  color: var(--bd-bg) !important;
+}
+
+/* Explicit badge */
+html[data-bd="on"] [data-testid*="explicit" i] {
+  border-radius: var(--bd-r-chip) !important;
+  background: var(--bd-surface-3) !important;
+  color: var(--bd-text-2) !important;
+}
+
+/* Album / playlist / artist header: flat tint from the cover */
+html[data-bd="on"] [data-bd="page-header"] {
+  background: var(--bd-ambient) !important;
+  border-radius: var(--bd-r-dock) !important;
+  transition: background-color var(--bd-t-layout) var(--bd-ease) !important;
+}
+
+/* Section headings and "see all" links */
+html[data-bd="on"] [data-bd-role="section-title"] {
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  line-height: 1.1 !important;
+}
