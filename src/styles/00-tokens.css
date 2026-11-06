@@ -2,13 +2,20 @@
  * Better Deezer — design tokens ("Graphite").
  * Single source of truth. Every other stylesheet reads these variables;
  * never hardcode a color, radius or duration elsewhere.
+ *
+ * Themes: dark is the default (:root). The light theme ONLY redefines tokens,
+ * under html[data-bd-theme="light"] (set by core/20-theme.js).
  */
-:root {
+:root,
+html[data-bd-theme="dark"] {
+  color-scheme: dark;
+
   /* Ground and surfaces (warm graphite, darkest to lightest) */
   --bd-bg: #0b0a0c;
   --bd-surface-1: #141316;
   --bd-surface-2: #1c1a1f;
   --bd-surface-3: #26232a;
+  --bd-surface-4: #312d36;
   --bd-line: #2a2730;
   --bd-line-strong: #3a3640;
 
@@ -16,13 +23,57 @@
   --bd-text: #f4f2f6;
   --bd-text-2: #b4aebb;
   --bd-text-3: #9e98a6;
+  --bd-text-disabled: #5e5866;
 
   /* One accent only: what plays or is active. Never as a gradient. */
   --bd-accent: #a238ff;
+  --bd-accent-hover: #b157ff;
+  --bd-accent-pressed: #8e22ec;
   --bd-accent-text: #c68bff;
+  --bd-accent-soft: rgba(162, 56, 255, 0.16);
   --bd-on-accent: #ffffff;
   --bd-warn: #ffb84d;
+  --bd-danger: #ff6b6b;
+  --bd-success: #3ddc97;
 
+  /* Overlays */
+  --bd-scrim: rgba(5, 4, 6, 0.66);
+  --bd-shadow-pop: 0 24px 64px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+  --bd-shadow-dock: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+html[data-bd-theme="light"] {
+  color-scheme: light;
+
+  --bd-bg: #f6f5f7;
+  --bd-surface-1: #ffffff;
+  --bd-surface-2: #efedf1;
+  --bd-surface-3: #e5e2e9;
+  --bd-surface-4: #d9d5de;
+  --bd-line: #e2dfe6;
+  --bd-line-strong: #cbc6d1;
+
+  --bd-text: #141316;
+  --bd-text-2: #4a4550;
+  --bd-text-3: #6b6574;
+  --bd-text-disabled: #a8a2af;
+
+  --bd-accent: #a238ff;
+  --bd-accent-hover: #9326f5;
+  --bd-accent-pressed: #8419e0;
+  --bd-accent-text: #7a14d6;
+  --bd-accent-soft: rgba(162, 56, 255, 0.12);
+  --bd-on-accent: #ffffff;
+  --bd-warn: #b86e00;
+  --bd-danger: #d93636;
+  --bd-success: #12935b;
+
+  --bd-scrim: rgba(20, 19, 22, 0.36);
+  --bd-shadow-pop: 0 24px 64px rgba(40, 30, 60, 0.16), 0 2px 8px rgba(40, 30, 60, 0.08);
+  --bd-shadow-dock: 0 12px 32px rgba(40, 30, 60, 0.12);
+}
+
+:root {
   /* Type */
   --bd-font-display: "Bricolage Grotesque", "Segoe UI Variable Display", system-ui, sans-serif;
   --bd-font-ui: "Instrument Sans", "Segoe UI Variable Text", system-ui, sans-serif;
@@ -31,6 +82,7 @@
   --bd-r-chip: 6px;
   --bd-r-cover: 10px;
   --bd-r-card: 14px;
+  --bd-r-menu: 16px;
   --bd-r-dock: 22px;
   --bd-r-pill: 999px;
 
@@ -53,6 +105,7 @@
   --bd-dock-h: 80px;
   --bd-gap: 12px;
 
-  /* Album header tint, set per page by JS from the cover (see features/ambient.js) */
-  --bd-ambient: var(--bd-surface-2);
+  /* Album header tint: JS sets --bd-ambient-src from the cover (features/ambient.js),
+     mixed 18% into the ground so it works in both themes. */
+  --bd-ambient: color-mix(in srgb, var(--bd-ambient-src, var(--bd-surface-2)) 18%, var(--bd-bg));
 }

@@ -1,0 +1,91 @@
+// Smoke test: load dist/better-deezer.user.js into Chromium on test/fixture.html,
+// served at https://www.deezer.com/fr/ so the payload's host guard passes.
+//   npm run build && npm test
+// Uses the Playwright found on the machine (not a project dependency: the build stays dependency-free).
+// Screenshots go to test/.out/ (git-ignored).
+import { createRequire } from "node:module";
+import { readFileSync, mkdirSync } from "node:fs";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const require = createRequire(import.meta.url);
+let chromium;
+try {
+  ({ chromium } = require("playwright"));
+} catch {
+  console.error("Playwright not found. Install it globally (npm i -g playwright) to run the smoke test.");
+  process.exit(2);
+}
+
+const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+const out = process.env.BD_SHOTS || join(root, "test/.out");
+mkdirSync(out, { recursive: true });
+const fixture = readFileSync(join(root, "test/fixture.html"), "utf8");
+const payload = readFileSync(join(root, "dist/better-deezer.user.js"), "utf8");
+
+const results = [];
+const check = (name, ok, detail = "") => {
+  results.push({ name, ok: Boolean(ok) });
+  console.log(`${ok ? "ok  " : "FAIL"} ${name}${detail ? `  (${detail})` : ""}`);
+};
+
+const browser = await chromium.launch();
+const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+await context.route("https://www.deezer.com/**", (route) =>
+  route.fulfill({ status: 200, contentType: "text/html; charset=utf-8", body: fixture })
+);
+// Same path as the desktop launcher: injected at document start, before the DOM exists.
+await context.addInitScript({ content: payload });
+
+const page = await context.newPage();
+const errors = [];
+page.on("pageerror", (e) => errors.push(e.message));
+page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+
+const open = async (setup) => {
+  await page.goto("https://www.deezer.com/fr/");
+  if (setup) {
+    await page.evaluate(setup);
+    await page.reload();
+  }
+  await page.waitForFunction(() => window.__betterDeezer && document.documentElement.dataset.bd === "on");
+  await page.waitForTimeout(150);
+};
+const $eval = (fn, arg) => page.evaluate(fn, arg);
+const shot = (name) => page.screenshot({ path: join(out, `${name}.png`) });
+
+// ---------- Boot ----------
+await open(() => localStorage.clear());
+check("boots once (no double injection)", (await $eval(() => document.querySelectorAll("#bd-style").length)) === 1);
+const health = await $eval(() => window.__betterDeezer.health());
+const visibleAnchors = ["topbar", "page", "searchField", "searchContainer", "volumeButton", "rail", "dock", "playButton", "progressInput", "likeButton"];
+const missing = visibleAnchors.filter((k) => !health[k]);
+check("anchors resolve on the fixture", missing.length === 0, missing.join(", "));
+
+// ---------- 1. Themes ----------
+check("dark theme by default", (await $eval(() => document.documentElement.dataset.bdTheme)) === "dark");
+const tempoBg = () => $eval(() => getComputedStyle(document.body).getPropertyValue("--tempo-colors-background-neutral-primary-default").trim());
+const bodyBg = () => $eval(() => getComputedStyle(document.body).backgroundColor);
+check("Tempo tokens bridged to --bd-* (dark)", (await bodyBg()) === "rgb(11, 10, 12)", await bodyBg());
+await shot("1-dark");
+await $eval(() => window.__betterDeezer.theme("light"));
+check("light theme applies live", (await bodyBg()) === "rgb(246, 245, 247)", await bodyBg());
+await shot("1-light");
+await page.emulateMedia({ colorScheme: "dark" });
+await $eval(() => window.__betterDeezer.theme("system"));
+check("system follows prefers-color-scheme: dark", (await $eval(() => document.documentElement.dataset.bdTheme)) === "dark");
+await page.emulateMedia({ colorScheme: "light" });
+await page.waitForTimeout(50);
+check("system follows prefers-color-scheme: light", (await $eval(() => document.documentElement.dataset.bdTheme)) === "light");
+await $eval(() => window.__betterDeezer.theme("dark"));
+void tempoBg;
+
+// ---- more checks are appended per feature below ----
+//@@CHECKS@@
+
+check("no page errors", errors.length === 0, errors.join(" | "));
+await browser.close();
+
+const failed = results.filter((r) => !r.ok);
+console.log(`\n${results.length - failed.length}/${results.length} checks passed. Screenshots: ${out}`);
+process.exit(failed.length ? 1 : 0);

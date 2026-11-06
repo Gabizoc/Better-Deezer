@@ -1,14 +1,27 @@
 /*
  * Boot: inject CSS (desktop build only, the extension declares it in the manifest),
- * run every feature's setup once, then update on DOM changes, one frame at most.
- * A feature that throws is disabled for the session, never the whole app.
+ * apply the theme, run every feature's setup once, then update on DOM changes,
+ * one frame at most. A feature that throws is disabled for the session, never the whole app.
  */
 (function boot() {
+  // Only the top-level Deezer page. The desktop launcher injects into every new
+  // document (iframes, login pages...), so this guard matters there.
+  if (window.top !== window || !/(^|\.)deezer\.com$/.test(location.hostname)) return;
   if (window.__betterDeezer) return; // already injected (desktop reloads, double inject)
+
+  // Injected at document start by the desktop launcher: wait for the DOM.
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
+    return;
+  }
 
   const html = document.documentElement;
   if (BD.settings.get("enabled", true) === false) {
     html.setAttribute("data-bd", "off");
+    window.__betterDeezer = {
+      version: BD.version,
+      enable: () => (BD.settings.set("enabled", true), location.reload())
+    };
     return;
   }
 
@@ -19,11 +32,13 @@
     (document.head || html).appendChild(style);
   }
 
+  BD.theme.init();
   html.setAttribute("data-bd", "on");
   html.setAttribute("data-bd-version", BD.version);
 
   const active = BD.features.filter((f) => BD.isEnabled(f.id));
   const failed = new Set();
+  BD.failed = failed;
 
   const safe = (f, method) => {
     if (failed.has(f.id) || typeof f[method] !== "function") return;
@@ -45,21 +60,23 @@
   const schedule = () => {
     if (!frame) frame = requestAnimationFrame(run);
   };
+  BD.schedule = schedule;
 
   new MutationObserver(schedule).observe(html, { childList: true, subtree: true });
   addEventListener("resize", schedule);
   addEventListener("popstate", schedule);
+  BD.on("settings", schedule);
   run();
 
   // Health report a few seconds after boot: which anchors resolved.
   setTimeout(() => {
     const health = BD.checkHealth();
     const missing = Object.keys(health).filter((k) => !health[k]);
-    if (missing.length) BD.warn("anchors not found (Deezer may have changed):", missing.join(", "));
+    if (missing.length) BD.warn("anchors not found (Deezer may have changed, or the element is not on screen):", missing.join(", "));
     else BD.log("all anchors resolved");
   }, 4000);
 
-  if (BD.settings.get("badge", true)) {
+  if (BD.settings.get("badge", true) && document.body) {
     const badge = document.createElement("div");
     badge.className = "bd-badge";
     badge.textContent = `Better Deezer ${BD.version}`;
@@ -73,6 +90,8 @@
     target: BD.target,
     health: () => BD.checkHealth(),
     features: () => active.map((f) => ({ id: f.id, failed: failed.has(f.id) })),
+    theme: (pref) => (pref ? BD.theme.set(pref) : BD.theme.get()),
+    settings: () => BD.openSettings?.(),
     disable: (id) => BD.settings.set(id ? `feature:${id}` : "enabled", false),
     enable: (id) => BD.settings.set(id ? `feature:${id}` : "enabled", true),
     debug: (on = true) => localStorage.setItem("bd:debug", on ? "1" : "0")
