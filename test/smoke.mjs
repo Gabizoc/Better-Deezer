@@ -37,6 +37,11 @@ await context.route("https://www.deezer.com/**", (route) =>
 // Same path as the desktop launcher: injected at document start, before the DOM exists.
 await context.addInitScript({ content: payload });
 
+let googleFontRequests = 0;
+await context.route(/fonts\.(googleapis|gstatic)\.com/, (route) => {
+  googleFontRequests++;
+  route.abort();
+});
 const page = await context.newPage();
 const errors = [];
 page.on("pageerror", (e) => errors.push(e.message));
@@ -231,6 +236,15 @@ await page.waitForTimeout(300);
 check("profile menu entry opens the panel", await $eval(() => !!document.getElementById("bd-settings")));
 await page.keyboard.press("Escape");
 await $eval(() => document.querySelector(".chakra-popover__popper")?.remove());
+
+// ---------- 8. Fonts (vendored, no network) ----------
+const fonts = await $eval(async () => {
+  await document.fonts.ready;
+  await Promise.all([...document.fonts].map((f) => f.load().catch(() => null)));
+  return [...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family.replace(/"/g, ""));
+});
+check("Bricolage Grotesque + Instrument Sans loaded from the payload", fonts.includes("Bricolage Grotesque") && fonts.includes("Instrument Sans"), [...new Set(fonts)].join(", "));
+check("no request to Google Fonts", !googleFontRequests, String(googleFontRequests));
 
 //@@CHECKS@@
 
