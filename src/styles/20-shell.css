@@ -164,47 +164,149 @@ html[data-bd="on"] .bd-kbd {
 }
 
 /* ---------- Player dock ---------- */
+/* The user's design: floating rounded dock, round accent play button, filled
+   accent heart, times on each side of a thin accent bar. Parts tagged by features/player.js. */
 html[data-bd="on"] [data-bd="dock"] {
   left: calc(var(--layout-sidebar-width, 80px) + var(--bd-gap)) !important;
   right: var(--bd-gap) !important;
   bottom: var(--bd-gap) !important;
   width: auto !important;
+  min-width: 0 !important;
   min-height: var(--bd-dock-h) !important;
   height: var(--bd-dock-h) !important;
   box-sizing: border-box !important;
+  padding-inline: var(--bd-s-4) !important;
   border: 1px solid var(--bd-line) !important;
   border-radius: var(--bd-r-dock) !important;
   background: var(--bd-surface-1) !important;
-  box-shadow: none !important;
+  box-shadow: var(--bd-shadow-dock) !important;
   transform: none !important;
   overflow: visible !important;
 }
 
 html[data-bd="on"] [data-bd="dock"] [data-testid="item_cover"],
+html[data-bd="on"] [data-bd="dock"] [data-testid="item_cover"] *,
 html[data-bd="on"] [data-bd="dock"] img {
   border-radius: var(--bd-r-cover) !important;
 }
 
+html[data-bd="on"] [data-bd="dock"] [data-testid="item_title"] {
+  color: var(--bd-text) !important;
+  font-weight: 600 !important;
+}
+
+html[data-bd="on"] [data-bd="dock"] [data-testid="item_subtitle"] {
+  color: var(--bd-text-3) !important;
+}
+
 html[data-bd="on"] [data-bd="dock"] :is(button, [role="button"]) {
   border-radius: var(--bd-r-pill) !important;
+  color: var(--bd-text-2);
 }
 
-/* Main play button: white disc, accent is reserved for "now playing" */
-html[data-bd="on"] [data-bd="dock"] :is([data-testid="play_button_play"], [data-testid="play_button_pause"]) {
+html[data-bd="on"] [data-bd="dock"] :is(button, [role="button"]):hover {
+  background-color: var(--bd-surface-2) !important;
+  color: var(--bd-text) !important;
+}
+
+/* Tooltip wrappers around some buttons (e.g. "next") are block boxes taller than
+   the button: center their content so every icon sits on one line. */
+html[data-bd="on"] [data-bd="dock"] [role="group"] > div:has(> button) {
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Main play button: round, accent (#A238FF), white glyph */
+html[data-bd="on"] [data-bd="dock"] [data-bd-role="play"] {
   width: 48px !important;
   height: 48px !important;
-  background: var(--bd-text) !important;
-  color: var(--bd-bg) !important;
+  min-width: 48px !important;
+  border-radius: var(--bd-r-pill) !important;
+  background: var(--bd-accent) !important;
+  color: var(--bd-on-accent) !important;
+  transition: background-color var(--bd-t-fast) var(--bd-ease), transform var(--bd-t-fast) var(--bd-ease) !important;
 }
 
-html[data-bd="on"] [data-bd="dock"] :is([data-testid="play_button_play"], [data-testid="play_button_pause"]) svg {
+html[data-bd="on"] [data-bd="dock"] [data-bd-role="play"]:hover {
+  background: var(--bd-accent-hover) !important;
+  color: var(--bd-on-accent) !important;
+  transform: scale(1.05);
+}
+
+html[data-bd="on"] [data-bd="dock"] [data-bd-role="play"]:active {
+  background: var(--bd-accent-pressed) !important;
+  transform: scale(0.97);
+}
+
+html[data-bd="on"] [data-bd="dock"] [data-bd-role="play"] svg {
+  color: var(--bd-on-accent) !important;
   fill: currentColor !important;
-  color: currentColor !important;
 }
 
-/* Progress bar: flat, thin, grows on hover */
-html[data-bd="on"] [data-bd="dock"] [data-testid="progress_bar"] {
-  transition: transform var(--bd-t-fast) var(--bd-ease) !important;
+/* Heart: filled accent when liked */
+html[data-bd="on"] [data-bd="dock"] [data-bd-liked="true"],
+html[data-bd="on"] [data-bd="dock"] [data-bd-liked="true"]:hover {
+  color: var(--bd-accent) !important;
+}
+
+html[data-bd="on"] [data-bd="dock"] [data-bd-liked="true"] svg {
+  color: var(--bd-accent) !important;
+  fill: var(--bd-accent) !important;
+}
+
+html[data-bd="on"] [data-bd="dock"] [data-bd-liked="true"] svg path {
+  fill: var(--bd-accent) !important;
+}
+
+/* Seek row: elapsed | thin bar | remaining */
+html[data-bd="on"] [data-bd-role="progress-row"] {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--bd-s-3) !important;
+}
+
+html[data-bd="on"] [data-bd-slot="time-elapsed"] {
+  order: 0;
+  flex: none !important;
+}
+
+html[data-bd="on"] [data-bd-slot="progress"] {
+  order: 1;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+html[data-bd="on"] [data-bd-slot="time-remaining"] {
+  order: 2;
+  flex: none !important;
+}
+
+html[data-bd="on"] [data-bd-role="progress-row"] :is([data-testid="elapsed_time"], [data-testid="remaining_time"]) {
+  color: var(--bd-text-3) !important;
+  font: 500 12px/1 var(--bd-font-ui) !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+html[data-bd="on"] [data-bd-role="progress-track"] {
+  height: 4px !important;
+  border-radius: var(--bd-r-pill) !important;
+  overflow: visible !important;
+  transition: height var(--bd-t-fast) var(--bd-ease) !important;
+}
+
+html[data-bd="on"] [data-bd-role="progress-row"]:hover [data-bd-role="progress-track"] {
+  height: 6px !important;
+}
+
+html[data-bd="on"] [data-bd-role="progress-track"] > div {
+  height: 100% !important;
+  border-radius: var(--bd-r-pill) !important;
+  background: var(--bd-line-strong) !important;
+}
+
+html[data-bd="on"] [data-bd-role="progress-track"] > [data-bd-role="progress-fill"],
+html[data-bd="on"] [data-bd-role="progress-fill"] {
+  background: var(--bd-accent) !important;
 }
 
 /* Content clears the floating dock */

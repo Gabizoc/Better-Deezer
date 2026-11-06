@@ -135,11 +135,13 @@ BD.anchors = {
   /** Visual track of the seek bar: Deezer draws it with sibling divs, the input is invisible. */
   progressTrack: () => {
     const input = BD.anchors.progressInput();
-    return input?.closest(".slider-track") || input?.parentElement?.parentElement || null;
+    return input?.closest(".slider-track") || input?.parentElement || null;
   },
+  /** The filled part: ".slider-track-active", else the second drawn div of the track. */
   progressFill: () => {
     const track = BD.anchors.progressTrack();
-    return track ? BD.q(".slider-track-active", track) : null;
+    if (!track) return null;
+    return BD.q(".slider-track-active", track) || Array.from(track.children).filter((c) => c.tagName === "DIV" && !c.querySelector("input"))[1] || null;
   },
   elapsedTime: () => BD.q('#page_player [data-testid="elapsed_time"]') || BD.q('[data-testid="elapsed_time"]'),
   remainingTime: () => BD.q('#page_player [data-testid="remaining_time"]') || BD.q('[data-testid="remaining_time"]'),
