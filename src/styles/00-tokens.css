@@ -79,6 +79,9 @@ html[data-bd-theme="light"] {
   --bd-font-ui: "Instrument Sans", "Segoe UI Variable Text", system-ui, sans-serif;
 
   /* Radii */
+  /* Accent text that stays readable on light pills (toasts) in both themes */
+  --bd-accent-text-on-light: #7a14d6;
+
   --bd-r-chip: 6px;
   --bd-r-cover: 10px;
   --bd-r-card: 14px;

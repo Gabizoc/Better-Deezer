@@ -167,6 +167,37 @@ await $eval(() => window.__betterDeezer.theme("light"));
 await shot("4-dock-light");
 await $eval(() => window.__betterDeezer.theme("dark"));
 
+// ---------- 5. Overlays ----------
+await page.click('[data-testid="search_field"]');
+check("search pill gets a 2px accent border on focus", /inset.*0px 0px 0px 2px|0px 0px 0px 2px.*inset/.test(await css('[data-bd="search-field-group"]', "boxShadow")));
+await page.click('[data-testid="topbar-profile"]');
+await page.waitForTimeout(150);
+check("profile menu tagged and rounded 22", (await css('[data-bd="account-menu"]', "borderRadius")) === "22px");
+check("theme switch + settings entry injected in the profile menu", await $eval(() => !!document.querySelector('.bd-account .bd-seg[data-value="light"]') && !!document.querySelector(".bd-account-link")));
+await page.click('.bd-account .bd-seg[data-value="light"]');
+check("theme switch in the profile menu works", (await $eval(() => document.documentElement.dataset.bdTheme)) === "light");
+await shot("5-account-light");
+await page.click('.bd-account .bd-seg[data-value="dark"]');
+await shot("5-account-dark");
+await $eval(() => document.querySelector(".chakra-popover__popper")?.remove());
+await $eval(() => __openModal());
+await page.waitForTimeout(400);
+check("modal: r=22 surface-1", (await css('[data-bd="modal"]', "borderRadius")) === "22px" && (await css('[data-bd="modal"]', "backgroundColor")) === "rgb(20, 19, 22)");
+check("modal scrim: #050405 at 80%", (await css('[data-bd="scrim"]', "backgroundColor")) === "rgba(5, 4, 5, 0.8)");
+check("modal primary button is solid text color", (await css('[data-bd="modal"] [data-bd-role="primary"]', "backgroundColor")) === "rgb(244, 242, 246)", JSON.stringify(await $eval(() => [...document.querySelectorAll("[data-bd=modal] button")].map((b) => b.dataset.testid + ":" + b.dataset.bdRole + ":" + getComputedStyle(b).backgroundColor))));
+await shot("5-modal");
+await $eval(() => document.querySelector(".chakra-portal")?.remove());
+await $eval(() => __toast());
+await page.waitForTimeout(150);
+check("toast is a light pill", (await css('[data-bd="toast"] > *', "backgroundColor")) === "rgb(244, 242, 246)");
+await $eval(() => __openNotifications());
+await page.waitForTimeout(150);
+check("notifications panel tagged", (await css('[data-bd="notifications"]', "borderRadius")) === "22px");
+await page.click('.bd-notif-filters [data-value="social"]');
+check("notification filter hides releases", (await css('[data-bd="notifications"] li[data-bd-kind="release"]', "display")) === "none");
+await shot("5-notifications");
+await $eval(() => document.querySelectorAll(".chakra-popover__popper, #chakra-toast-manager-bottom li").forEach((e) => e.remove()));
+
 //@@CHECKS@@
 
 check("no page errors", errors.length === 0, errors.join(" | "));
