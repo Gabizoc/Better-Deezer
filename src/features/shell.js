@@ -23,6 +23,7 @@ BD.feature({
       BD.mark(rail, "rail");
       BD.mark(rail, String(BD.anchors.railCollapsed()), "data-bd-collapsed");
       this.markActiveLinks(rail);
+      this.markSticky(rail);
     }
     if (dock) BD.mark(dock, "dock");
     if (topbar) BD.mark(topbar, "topbar");
@@ -37,6 +38,20 @@ BD.feature({
         document.documentElement.style.setProperty("--bd-search-w", w);
       }
     }
+  },
+
+  /**
+   * Sticky headers inside the rail ("Library", "Playlists") need an opaque
+   * background or the list scrolls visibly under them. Computed styles are
+   * costly: scan at most once a second.
+   */
+  markSticky(rail) {
+    const now = Date.now();
+    if (this.stickyScan && now - this.stickyScan < 1000) return;
+    this.stickyScan = now;
+    rail.querySelectorAll("div, header, h2, p").forEach((el) => {
+      if (getComputedStyle(el).position === "sticky") BD.mark(el, "rail-sticky", "data-bd-role");
+    });
   },
 
   /** Deezer swaps icons for the active page but sets no aria-current: derive it from the URL. */
