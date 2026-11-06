@@ -1,10 +1,15 @@
 /*
  * Volume, as in the user's captures:
- *  - click the volume icon: a slider unfolds to the LEFT inside a surface-2 pill,
- *    the icon stays on the right with an accent ring;
- *  - mouse wheel over the icon or the slider changes the volume (5% steps, 1% with Shift);
- *  - click the icon again, click outside or press Escape: it folds back;
- *  - Alt+click or middle click on the icon: Deezer's native mute.
+ *  - hover: a surface-3 dot under the icon; the wheel already works;
+ *  - click the volume icon: a 140px slider unfolds to the LEFT inside a 48px
+ *    surface-2 pill, the icon stays on the right with a 2px accent ring and the
+ *    neighbouring icons slide over 320ms;
+ *  - while adjusting (wheel, drag, arrows) the track turns 6px accent and a
+ *    "70 %" bubble shows above;
+ *  - wheel over the icon or the slider: 5% steps, 1% with Shift; arrows on the slider;
+ *  - click the icon again (while open), Alt+click or middle click: Deezer's native mute;
+ *  - Escape or a click elsewhere: it folds back.
+ * Design: canvas artboard "Overlays".
  *
  * Deezer's own control is a hover popover (Chakra, isLazy) holding
  * input[data-testid="volume_menu_bar"]: we open it invisibly, write the value
@@ -95,7 +100,17 @@ BD.feature({
     range.value = String(pct);
     range.setAttribute("aria-valuetext", `${pct}%`);
     wrap.style.setProperty("--bd-volume", `${pct}%`);
-    wrap.querySelector(".bd-volume-value").textContent = String(pct);
+    wrap.style.setProperty("--bd-volume-n", String(pct / 100));
+    wrap.querySelector(".bd-volume-bubble").textContent = `${pct} %`;
+  },
+
+  /** Show the active track + bubble for a moment. */
+  pulse() {
+    const wrap = this.slider();
+    if (!wrap) return;
+    wrap.setAttribute("data-active", "true");
+    clearTimeout(this.pulseTimer);
+    this.pulseTimer = setTimeout(() => wrap.removeAttribute("data-active"), 900);
   },
 
   setOpen(open) {
@@ -131,6 +146,7 @@ BD.feature({
     const step = (e.shiftKey ? 1 : this.step) / 100;
     const dir = (e.deltaY || e.deltaX) < 0 ? 1 : -1;
     this.setRatio(this.readSlider() + dir * step);
+    this.pulse();
   },
 
   readSlider() {
@@ -151,7 +167,7 @@ BD.feature({
           if (this.open && !e.target.closest?.(".bd-volume")) this.setOpen(false);
           return;
         }
-        if (e.altKey) return; // Alt+click: Deezer's mute
+        if (e.altKey || this.open) return; // re-click while open or Alt+click: Deezer's mute
         e.preventDefault();
         e.stopImmediatePropagation();
         this.setOpen(!this.open);
@@ -224,6 +240,7 @@ BD.feature({
     range.addEventListener("input", (e) => {
       e.stopPropagation();
       this.setRatio(Number(range.value) / 100);
+      this.pulse();
     });
     range.addEventListener("keydown", (e) => e.stopPropagation()); // don't trigger Deezer's hotkeys
 
@@ -231,7 +248,7 @@ BD.feature({
       "span",
       { class: "bd-volume", "data-open": String(this.open) },
       BD.h("span", { class: "bd-volume-track" }, range),
-      BD.h("span", { class: "bd-volume-value", "aria-hidden": "true" })
+      BD.h("span", { class: "bd-volume-bubble", "aria-hidden": "true" })
     );
     button.parentNode.insertBefore(wrap, button);
     this.paint(this.readRatio());
