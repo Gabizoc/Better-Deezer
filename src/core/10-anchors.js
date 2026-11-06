@@ -27,7 +27,11 @@ BD.optionalAnchors = new Set([
   "menus",
   "modals",
   "popovers",
-  "toasts"
+  "toasts",
+  "masthead",
+  "pageToolbar",
+  "trackGrid",
+  "homeSections"
 ]);
 
 BD.anchors = {
@@ -161,6 +165,16 @@ BD.anchors = {
   /** Deezer's popover with the range input; only mounted while hovered (isLazy). */
   volumeMenu: () => BD.q('[data-testid="volume_menu"]'),
   volumeInput: () => BD.q('[data-testid="volume_menu_bar"]'),
+
+  // ---- Pages ----
+  /** Album / playlist / artist header: cover + title + subtitle (data-testid="masthead"). */
+  masthead: () => BD.q('#page_content [data-testid="masthead"]') || BD.q('[data-testid="page-masthead"]'),
+  /** Action row under the masthead (play, like, share, more). */
+  pageToolbar: () => BD.q('#page_content [data-testid="toolbar"]'),
+  /** Track list grid of album / playlist pages. */
+  trackGrid: () => BD.q('#page_content [role="grid"]'),
+  /** One section of Deezer's home / dynamic pages. */
+  homeSections: () => BD.qa('#page_content [data-testid="section-renderer"]'),
 
   // ---- Overlays (Chakra UI renders them in portals at the end of <body>) ----
   modals: () => BD.qa('[role="dialog"][aria-modal="true"], [role="alertdialog"]'),
