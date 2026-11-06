@@ -5,6 +5,7 @@
  */
 
 /* ---------- Rail ---------- */
+/* Deezer: position fixed; top 0; bottom 0; width var(--layout-sidebar-width) (80px / 243px). */
 html[data-bd="on"] [data-bd="rail"] {
   left: var(--bd-gap) !important;
   top: var(--bd-gap) !important;
@@ -20,9 +21,51 @@ html[data-bd="on"] [data-bd="rail"] {
   background: var(--bd-surface-1) !important;
   box-shadow: none !important;
   overflow-x: hidden !important;
+  transform: none;
   transition:
     width var(--bd-t-layout) var(--bd-ease),
-    left var(--bd-t-layout) var(--bd-ease) !important;
+    top var(--bd-t-layout) var(--bd-ease),
+    transform var(--bd-t-layout) var(--bd-ease) !important;
+}
+
+/* Collapsed: a compact floating column, centered vertically (as in Deezer Tweaks v0.1.62)
+   and every entry centered horizontally. */
+html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"] {
+  top: 50% !important;
+  bottom: auto !important;
+  height: fit-content !important;
+  max-height: calc(100vh - var(--bd-dock-h) - var(--bd-gap) * 4) !important;
+  transform: translateY(calc(-50% - (var(--bd-dock-h) + var(--bd-gap)) / 2)) !important;
+  padding: var(--bd-s-2) 0 !important;
+  gap: var(--bd-s-1) !important;
+  align-items: center !important;
+  overflow-y: auto !important;
+}
+
+html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"] > * {
+  flex: none !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"] :is(div, nav, ul, li, section) {
+  align-items: center !important;
+}
+
+html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"] :is(a, button) {
+  justify-content: center !important;
+  width: 44px !important;
+  min-width: 44px !important;
+  height: 44px !important;
+  margin-inline: auto !important;
+  padding: 0 !important;
+}
+
+html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"] :is(a, button) img {
+  width: 36px !important;
+  height: 36px !important;
 }
 
 /* Inner wrappers of the rail lose their own backgrounds */
@@ -32,17 +75,41 @@ html[data-bd="on"] [data-bd="rail"] :is(div, nav, section, ul, li) {
 }
 
 html[data-bd="on"] [data-bd="rail"] :is(a, button) {
+  position: relative;
   border-radius: var(--bd-r-card) !important;
+  color: var(--bd-text-2) !important;
 }
 
 html[data-bd="on"] [data-bd="rail"] :is(a, button):hover {
   background-color: var(--bd-surface-2) !important;
+  color: var(--bd-text) !important;
+}
+
+html[data-bd="on"] [data-bd="rail"] :is(a, button):active {
+  background-color: var(--bd-surface-3) !important;
 }
 
 html[data-bd="on"] [data-bd="rail"] [aria-current="page"],
 html[data-bd="on"] [data-bd="rail"] [data-bd-active="true"] {
   background-color: var(--bd-surface-3) !important;
   color: var(--bd-text) !important;
+}
+
+html[data-bd="on"] [data-bd="rail"] [data-bd-active="true"] svg {
+  color: var(--bd-accent-text) !important;
+}
+
+/* Active marker: a short accent bar on the inner edge */
+html[data-bd="on"] [data-bd="rail"] [data-bd-active="true"]::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  width: 3px;
+  height: 18px;
+  border-radius: var(--bd-r-pill);
+  background: var(--bd-accent);
+  transform: translateY(-50%);
 }
 
 html[data-bd="on"] [data-bd="rail"] img {
@@ -83,6 +150,9 @@ html[data-bd="on"] [data-testid="search_field"]::placeholder {
 }
 
 html[data-bd="on"] .bd-kbd {
+  flex: none;
+  align-self: center;
+  height: auto;
   margin-right: 14px;
   padding: 2px 7px;
   border: 1px solid var(--bd-line-strong);

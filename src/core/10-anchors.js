@@ -19,6 +19,7 @@ BD.optionalAnchors = new Set([
   "volumeInput",
   "volumeMenu",
   "searchPopover",
+  "profileButton", // logged-out pages have none
   "accountPopover",
   "accountMenuList",
   "contextMenus",
@@ -66,6 +67,9 @@ BD.anchors = {
    */
   rail: () => {
     const seeds = [
+      // Tempo icons carry their name as data-testid (seen on the live site).
+      BD.q('[data-testid="PanelLeftIcon"], [data-testid="PanelRightIcon"]'),
+      BD.q('[data-testid="HouseOutlinedIcon"], [data-testid="HouseFilledIcon"]'),
       BD.q('[data-testid="sidebar-profile"]'),
       BD.q('[aria-label="Deezer logo"]'),
       BD.q('nav a[href$="/library"], nav a[href*="/library/"]'),
@@ -84,6 +88,12 @@ BD.anchors = {
       if (best) return best;
     }
     return null;
+  },
+
+  /** The rail's toggle (aria-label "Masquer/Afficher la barre latérale"). */
+  railToggle: () => {
+    const icon = BD.q('[data-testid="PanelLeftIcon"], [data-testid="PanelRightIcon"]');
+    return icon?.closest("button") || null;
   },
 
   /** Is the rail collapsed? Deezer sets --layout-sidebar-width to 80px when it is. */

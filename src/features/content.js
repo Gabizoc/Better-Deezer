@@ -4,6 +4,7 @@
  */
 BD.feature({
   id: "content",
+  label: ["Cartes, lignes et titres retouchés", "Restyled cards, rows and titles"],
   update() {
     const page = BD.anchors.page();
     if (!page) return;
@@ -12,8 +13,10 @@ BD.feature({
     const h1 = page.querySelector("h1");
     if (h1) BD.mark(h1, "page-title", "data-bd-role");
 
-    // Section titles: h2 directly heading a carousel or grid.
-    page.querySelectorAll("h2").forEach((h2) => BD.mark(h2, "section-title", "data-bd-role"));
+    // Section titles: Deezer marks them (data-testid="section_title"); track titles are h2 too, so never tag bare h2.
+    page
+      .querySelectorAll('[data-testid="section_title"], [data-testid="dynamic_page_section_title"]')
+      .forEach((el) => BD.mark(el, "section-title", "data-bd-role"));
 
     // Track rows: ARIA rows that contain a title cell.
     page.querySelectorAll('[role="row"]').forEach((row) => {
@@ -33,6 +36,7 @@ BD.feature({
 /* Highlight the row that is currently playing, using the dock's title as truth. */
 BD.feature({
   id: "now-playing",
+  label: ["Surligner le titre en cours", "Highlight the playing track"],
   update() {
     const dock = document.querySelector('[data-bd="dock"]');
     const current = dock?.querySelector('[data-testid="item_title"], [data-testid="title"]')?.textContent?.trim();
