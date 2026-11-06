@@ -198,6 +198,40 @@ check("notification filter hides releases", (await css('[data-bd="notifications"
 await shot("5-notifications");
 await $eval(() => document.querySelectorAll(".chakra-popover__popper, #chakra-toast-manager-bottom li").forEach((e) => e.remove()));
 
+// ---------- 6. Settings panel ----------
+await page.keyboard.press("Control+Comma");
+await page.waitForTimeout(300);
+check("Ctrl+, opens the settings panel", await $eval(() => !!document.querySelector("#bd-settings [role=dialog]")));
+await shot("6-settings-appearance");
+await page.click('#bd-settings .bd-seg[data-value="light"]');
+check("theme from the settings panel", (await $eval(() => document.documentElement.dataset.bdTheme)) === "light");
+await shot("6-settings-light");
+await page.click('#bd-settings .bd-seg[data-value="dark"]');
+await page.click('#bd-settings [data-tab="reco"]');
+await page.fill("#bd-settings .bd-input", "Aérodynamic");
+await page.keyboard.press("Enter");
+await page.waitForTimeout(200);
+check("'Don't recommend' hides matching rows (accent-insensitive)", (await css('[data-bd-role="track-row"]:nth-of-type(2)', "display")) === "none");
+await shot("6-settings-reco");
+await page.click('#bd-settings .bd-taglist .bd-icon-btn');
+await page.waitForTimeout(200);
+check("removing the entry shows it again", (await css('[data-bd-role="track-row"]:nth-of-type(2)', "display")) !== "none");
+await page.click('#bd-settings [data-tab="shortcuts"]');
+await shot("6-settings-shortcuts");
+await page.click('#bd-settings [data-tab="playback"]');
+await page.click('#bd-settings [data-tab="about"]');
+await shot("6-settings-about");
+await page.keyboard.press("Escape");
+await page.waitForTimeout(300);
+check("Escape closes the panel", await $eval(() => !document.getElementById("bd-settings")));
+await page.click('[data-testid="topbar-profile"]');
+await page.waitForTimeout(100);
+await page.click(".bd-account-link");
+await page.waitForTimeout(300);
+check("profile menu entry opens the panel", await $eval(() => !!document.getElementById("bd-settings")));
+await page.keyboard.press("Escape");
+await $eval(() => document.querySelector(".chakra-popover__popper")?.remove());
+
 //@@CHECKS@@
 
 check("no page errors", errors.length === 0, errors.join(" | "));
