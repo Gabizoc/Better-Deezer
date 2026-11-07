@@ -8,11 +8,11 @@
  * (html[data-bd-tip-open]). Previous / next get none: Deezer already shows a
  * card with the previous / next track there.
  */
-// Every kind of tooltip is off by default (Settings > Appearance > Tooltips).
+// By default only previous / next keep their hover card (Deezer's track preview);
+// every other tooltip is off (Settings > Appearance > Tooltips).
 BD.defaultOff.add("tooltips");
 BD.defaultOff.add("tips");
 BD.defaultOff.add("native-tips");
-BD.defaultOff.add("track-previews");
 
 BD.feature({
   id: "tooltips",

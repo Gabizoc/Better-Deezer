@@ -254,7 +254,7 @@ BD.feature({
       ),
       this.section(
         BD.t("Infobulles", "Tooltips"),
-        BD.h("p", { class: "bd-set-hint" }, BD.t("Toutes désactivées par défaut.", "All off by default.")),
+        BD.h("p", { class: "bd-set-hint" }, BD.t("Par défaut, seuls Précédent / Suivant gardent leur aperçu du titre.", "By default only Previous / Next keep their track preview.")),
         this.featureToggle("tooltips"),
         this.featureToggle("tips"),
         this.featureToggle("native-tips", BD.t("Les bulles que Deezer affiche au survol de ses boutons.", "The bubbles Deezer shows when hovering its buttons.")),

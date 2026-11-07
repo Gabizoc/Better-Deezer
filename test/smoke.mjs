@@ -234,7 +234,14 @@ await $eval(() => { const t = document.createElement("div"); t.setAttribute("rol
 await page.waitForTimeout(150);
 check("tooltips are all off by default (ours and Deezer's)", await $eval(() => !document.querySelector(".bd-tooltip") && getComputedStyle(document.getElementById("native-tip")).display === "none"));
 await $eval(() => document.getElementById("native-tip").remove());
-await $eval(() => { __betterDeezer.disable("tooltips"); __betterDeezer.disable("native-tips"); });
+// Previous / next keep their hover card by default (Deezer's track preview, opened through aria-describedby).
+await $eval(() => { const t = document.createElement("div"); t.setAttribute("role", "tooltip"); t.id = "prev-preview"; t.textContent = "So Easy - Olivia Dean"; document.body.append(t); document.querySelector('[data-testid="previous_track_button"]').setAttribute("aria-describedby", "prev-preview"); });
+await page.waitForTimeout(150);
+check("previous / next track preview shown by default (the only tooltip kept)", (await $eval(() => document.getElementById("prev-preview").dataset.bd)) === "track-preview" && (await css("#prev-preview", "display")) !== "none");
+await $eval(() => __betterDeezer.disable("track-previews"));
+await page.waitForTimeout(150);
+check("and can be turned off", (await css("#prev-preview", "display")) === "none");
+await $eval(() => { __betterDeezer.enable("track-previews"); document.getElementById("prev-preview").remove(); document.querySelector('[data-testid="previous_track_button"]').removeAttribute("aria-describedby"); });
 await page.mouse.move(700, 300);
 await $eval(() => { __betterDeezer.enable("tooltips"); __betterDeezer.enable("native-tips"); });
 await page.waitForTimeout(100);
@@ -260,6 +267,7 @@ await page.waitForTimeout(100);
 check("dock tooltip hides when the pointer leaves", await $eval(() => !document.querySelector(".bd-tooltip")));
 check("Deezer's tooltip shows normally otherwise, styled like ours", (await css("#native-tip", "display")) !== "none" && (await css("#native-tip", "borderRadius")) !== "0px");
 await $eval(() => document.getElementById("native-tip").remove());
+await $eval(() => { __betterDeezer.disable("tooltips"); __betterDeezer.disable("native-tips"); });
 await page.click('[data-testid="topbar-profile"]');
 await page.waitForTimeout(150);
 check("profile menu tagged and rounded 22", (await css('[data-bd="account-menu"]', "borderRadius")) === "22px");

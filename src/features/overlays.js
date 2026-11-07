@@ -30,7 +30,7 @@ BD.feature({
     const previewIds = new Set(
       BD.qa('[data-bd="dock"] :is([data-testid="previous_track_button"], [data-testid="next_track_button"])')
         .flatMap((b) => [b, b.parentElement, b.parentElement?.parentElement])
-        .map((el) => el?.getAttribute?.("aria-controls"))
+        .flatMap((el) => [el?.getAttribute?.("aria-controls"), el?.getAttribute?.("aria-describedby")])
         .filter(Boolean)
     );
     const html = document.documentElement;
@@ -51,7 +51,8 @@ BD.feature({
     });
 
     BD.anchors.menus().forEach((menu) => BD.mark(menu, "menu"));
-    BD.anchors.nativeTooltips().forEach((tip) => BD.mark(tip, "native-tip"));
+    // A tooltip opened by previous / next (aria-describedby) is the track preview, not a plain tip.
+    BD.anchors.nativeTooltips().forEach((tip) => BD.mark(tip, previewIds.has(tip.id) || previewIds.has(tip.parentElement?.id) ? "track-preview" : "native-tip"));
     BD.anchors.switchTracks().forEach((track) => BD.mark(track, "switch-track", "data-bd-role"));
     BD.anchors.toasts().forEach((toast) => BD.mark(toast, "toast"));
 
