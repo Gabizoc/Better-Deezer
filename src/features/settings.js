@@ -593,7 +593,7 @@ BD.feature({
           ),
           BD.h(
             "a",
-            { class: "bd-btn bd-btn-ghost", href: "https://github.com/Gabizoc/Better-Deezer/blob/HEAD/docs/troubleshooting.md", target: "_blank", rel: "noopener" },
+            { class: "bd-btn bd-btn-ghost", href: "https://github.com/Gabizoc/Better-Deezer/blob/HEAD/docs/depannage.md", target: "_blank", rel: "noopener" },
             BD.t("Aide et dépannage", "Help and troubleshooting")
           ),
           BD.h(

@@ -1,86 +1,86 @@
-# User guide
+# Guide
 
-Better Deezer restyles the Deezer web player (www.deezer.com) and the Windows desktop app, and adds a few things Deezer doesn't have. Everything happens on your machine: Deezer's servers see a normal Deezer.
+Better Deezer restyle le lecteur web de Deezer (www.deezer.com) et l'application Windows, et ajoute ce que Deezer n'a pas. Tout se passe sur votre machine : les serveurs de Deezer voient un Deezer normal.
 
-Install instructions are in the [README](../README.md#install). Something wrong? See [Troubleshooting](troubleshooting.md).
+L'installation est décrite dans le [README](../README.md#installer). Un souci ? Voir le [Dépannage](depannage.md).
 
-## First start
+## Premier lancement
 
-A card in the bottom right corner shows the three things to know:
+Une carte en bas à droite rappelle les trois choses à savoir :
 
-- `Ctrl ,` (`⌘ ,` on Mac) opens the **Better Deezer settings**. It's also in the profile menu (your avatar, top right).
-- `F` opens the **Now playing** view with synced lyrics.
-- The **mouse wheel** works on the volume and on the player bar's cover.
+- `Ctrl ,` (`⌘ ,` sur Mac) ouvre les **Réglages Better Deezer**. Ils sont aussi dans le menu du profil (votre avatar, en haut à droite).
+- `F` ouvre la vue **En écoute** avec les paroles synchronisées.
+- La **molette** marche sur le volume et sur la pochette du lecteur.
 
-The card appears once. Afterwards a small "Better Deezer x.y.z" badge shows for 3 seconds at startup (turn it off in *Settings > Appearance*).
+La carte n'apparaît qu'une fois. Ensuite, un petit badge « Better Deezer x.y.z » s'affiche 3 secondes au démarrage (à couper dans *Réglages › Apparence*).
 
-## What changes
+## Ce qui change
 
-### Top bar
-- The search field is **always centered on the window**, whatever the width of the side rail, with a round **Home** button on its left. `Ctrl K` focuses it.
-- Results open right under the field, at the same width, with a footer listing the search shortcuts.
+### Barre du haut
+- Le champ de recherche est **toujours centré sur la fenêtre**, quelle que soit la largeur de la barre latérale, avec un bouton **Accueil** rond à sa gauche. `Ctrl K` y place le curseur.
+- Les résultats s'ouvrent juste sous le champ, à la même largeur, avec en pied la liste des raccourcis de recherche.
 
-### Side rail and player bar
-- The rail floats; collapsed, its icons are centered. The active page is marked with an accent bar.
-- The player bar floats at the bottom: round accent play button, filled heart when liked, thin seek bar between the two times.
-- **Volume**: click the speaker to unfold a slider, click it again to mute. Wheel over the speaker or the slider: ±5 % (±1 % with Shift; the step can be 2, 5 or 10 % in *Settings > Playback*). Alt+click or middle click: mute.
-- **Seek with the wheel** over the cover in the player bar: ±5 s. The seek bar itself ignores the wheel, so scrolling the page never moves the music.
-- Double-click the title in the player bar to open its album.
-- Tooltips on every icon, with the gesture it supports.
+### Barre latérale et lecteur
+- La barre latérale flotte, centrée à l'écran, réduite ou non. La page active est marquée d'une barre de couleur.
+- Le lecteur flotte en bas : bouton lecture rond de la couleur d'accent, cœur plein quand le titre est aimé, barre de progression fine entre les deux durées.
+- **Volume** : un clic sur le haut-parleur déplie un curseur, un second clic coupe le son. Molette sur le haut-parleur ou le curseur : ±5 % (±1 % avec Maj ; le pas peut être 2, 5 ou 10 % dans *Réglages › Lecture et volume*). Alt+clic ou clic milieu : couper le son.
+- **Avancer à la molette** sur la pochette du lecteur : ±5 s. La barre de progression ignore la molette : faire défiler la page ne déplace jamais la musique.
+- Double-clic sur le titre dans le lecteur : ouvre son album.
+- Une infobulle sur chaque icône, avec le geste qu'elle accepte.
 
 ### Pages
-- Album, playlist and artist headers are tinted with the cover's color.
-- Track lists: quieter rows, the playing track highlighted, popularity as a thin bar, and a **Hide explicit** filter.
-- Home: a greeting with the date, sections you can hide (*Settings > Home*) and reorder (*Settings > Recommendations*).
-- Modals, menus, notifications (with *Releases / Social* filters), the profile menu and toasts follow the theme.
+- Les en-têtes d'album, de playlist et d'artiste sont teintés de la couleur de la pochette.
+- Listes de titres : lignes plus sobres, titre en cours mis en avant, popularité en barre fine, et un filtre **Masquer les titres explicites**.
+- Accueil : un message d'accueil avec la date, des sections à masquer (*Réglages › Accueil*) et à réordonner (*Réglages › Recommandations*).
+- Fenêtres, menus, notifications (avec les filtres *Sorties / Social*), menu du profil et messages suivent le thème.
 
-## The settings panel
+## Les réglages
 
-| Tab | What you can do |
+| Onglet | Ce qu'on y fait |
 | --- | --- |
-| **Themes** | Light / dark / auto, pick a theme, browse the Marketplace, install from a link or a file, create or customize a theme ([Themes](themes.md)) |
-| **Modules** | Turn extras on and off, live ([Modules](modules.md)) |
-| **Appearance** | Turn the visual parts on and off, the startup badge, **Tooltips** (Better Deezer's, their tips, Deezer's own: off by default; the previous / next track card: on) |
-| **Sidebar** | The rail's entries as Deezer has them (real icons and names, so a Deezer update that adds or renames one shows up by itself): switch each on or off, drag the handle or use `Alt ↑` `Alt ↓` to reorder within a group, *Reset to default*. The Library entries are hidden by default; your playlists and pinned items always stay. |
-| **Playback & volume** | Player bar features, wheel gestures, volume step, lyrics source (Deezer word by word, or LRCLIB) |
-| **Home** | Hide the home carousels you don't use |
-| **Recommendations** | Home order: *Deezer* (unchanged), *Familiar* (your mixes and favorites first) or *Discovery* (new releases and trends first), plus *By time of day*. And a **Don't recommend** list: cards and tracks matching an artist, genre or word are hidden everywhere |
-| **Shortcuts** | Every keyboard shortcut and gesture |
-| **About** | Version, the health check (which parts of Deezer were found), help, reset, turn Better Deezer off |
+| **Thèmes** | Clair / sombre / auto, choisir un thème, parcourir la Marketplace, installer depuis un lien ou un fichier, créer ou personnaliser un thème ([Thèmes](themes.md)) |
+| **Modules** | Activer ou couper les extras, en direct ([Modules](modules.md)) |
+| **Apparence** | Activer ou couper chaque partie visuelle, le badge de démarrage, les **Infobulles** (celles de Better Deezer, leurs astuces, celles de Deezer : coupées par défaut ; la carte titre précédent / suivant : activée) |
+| **Barre latérale** | Les entrées telles que Deezer les a (vraies icônes et vrais noms : une entrée ajoutée ou renommée par Deezer apparaît d'elle-même). Afficher ou masquer chacune, glisser la poignée ou utiliser `Alt ↑` `Alt ↓` pour réordonner dans un groupe, *Rétablir par défaut*. Les entrées de la Bibliothèque sont masquées par défaut ; vos playlists et éléments épinglés restent toujours. |
+| **Lecture et volume** | Fonctions du lecteur, gestes à la molette, pas du volume, source des paroles (Deezer mot à mot, ou LRCLIB) |
+| **Accueil** | Masquer les carrousels de l'accueil que vous n'utilisez pas |
+| **Recommandations** | Ordre de l'accueil : *Deezer* (inchangé), *Familier* (vos mix et favoris d'abord) ou *Découverte* (nouveautés et tendances d'abord), plus *Selon l'heure*. Et une liste **Ne plus me recommander** : les cartes et titres qui correspondent à un artiste, un genre ou un mot sont masqués partout |
+| **Raccourcis** | Tous les raccourcis clavier et gestes |
+| **À propos** | Version, le bilan (éléments de Deezer reconnus), l'aide, la réinitialisation, couper Better Deezer |
 
-Changes apply at once. The few that need a reload show a *Reload* bar at the bottom of the panel.
+Les changements s'appliquent tout de suite. Les rares qui demandent un rechargement affichent une barre *Recharger* en bas du panneau.
 
-About the Recommendations tab: Better Deezer cannot change what Deezer recommends (that happens on Deezer's servers). It reorders and hides what Deezer shows, on this device only.
+À propos des Recommandations : Better Deezer ne peut pas changer ce que Deezer recommande (cela se passe sur les serveurs de Deezer). Il réordonne et masque ce que Deezer affiche, sur cet appareil seulement.
 
-## Keyboard shortcuts
+## Raccourcis clavier
 
-| Keys | Action |
+| Touches | Action |
 | --- | --- |
-| `Ctrl K` / `⌘ K` | Search |
-| `Ctrl ,` / `⌘ ,` | Better Deezer settings (also turns Better Deezer back on if you turned it off) |
-| `F` | Now playing view with lyrics |
-| `Esc` | Close the view, the settings or a menu |
-| `Q` | Queue |
-| Deezer's own | `Space` play/pause, `←` `→` seek, `Shift ←` `Shift →` previous / next, `Shift ↑` `Shift ↓` volume, `M` mute, `L` like, `S` search, `R` replay, `0`–`9` jump, `H` for Deezer's list |
+| `Ctrl K` / `⌘ K` | Recherche |
+| `Ctrl ,` / `⌘ ,` | Réglages Better Deezer (réactive aussi Better Deezer si vous l'avez coupé) |
+| `F` | Vue En écoute avec les paroles |
+| `Échap` | Fermer la vue, les réglages ou un menu |
+| `Q` | File d'attente |
+| Ceux de Deezer | `Espace` lecture / pause, `←` `→` avancer / reculer, `Maj ←` `Maj →` précédent / suivant, `Maj ↑` `Maj ↓` volume, `M` couper le son, `L` aimer, `S` recherche, `R` répéter, `0`–`9` aller à, `H` pour la liste de Deezer |
 
-Shortcuts are ignored while you type in a field.
+Les raccourcis sont ignorés pendant la saisie dans un champ.
 
-## Where your settings live
+## Où sont vos réglages
 
-In the browser's `localStorage` for deezer.com, under keys starting with `bd:` (for example `bd:themes:active`). Nothing is synced: each browser, and the desktop app, has its own settings. Installed themes are stored there too.
+Dans le `localStorage` du navigateur pour deezer.com, sous des clés qui commencent par `bd:` (par exemple `bd:themes:active`). Rien n'est synchronisé : chaque navigateur, et l'application Windows, a ses propres réglages. Les thèmes installés y sont aussi.
 
-### Reset everything
+### Tout réinitialiser
 
-- *Settings > About > Reset* (asks for confirmation, then reloads), or
-- in DevTools (`F12`) console on deezer.com:
+- *Réglages › À propos › Réinitialiser* (demande confirmation, puis recharge), ou
+- dans la console des DevTools (`F12`) sur deezer.com :
   ```js
   Object.keys(localStorage).filter((k) => k.startsWith("bd:")).forEach((k) => localStorage.removeItem(k)); location.reload();
   ```
-  With the extension, pick the **Better Deezer** context in the console's context dropdown first, or run it in the default context: both see the same `localStorage`.
+  Avec l'extension, choisissez le contexte **Better Deezer** dans la liste de la console, ou lancez-le dans le contexte par défaut : les deux voient le même `localStorage`.
 
-## Turning it off
+## Couper Better Deezer
 
-- One feature: its switch in the settings.
-- Everything, for now: *Settings > About > Turn off Better Deezer*. Deezer reloads untouched. `Ctrl ,` asks to turn it back on.
-- Keep it installed but give the desktop app back its original look: `better-deezer restore` (`better-deezer apply` brings it back).
-- For good: remove the extension, or run `better-deezer uninstall` (or *Windows Settings > Apps > Better Deezer > Uninstall*). The desktop app is put back exactly as it was. Your Better Deezer settings stay in Deezer's storage until you clear its cache or use *Reset* first.
+- Une fonction : son interrupteur dans les réglages.
+- Tout, pour l'instant : *Réglages › À propos › Désactiver Better Deezer*. Deezer se recharge sans modification. `Ctrl ,` propose de le réactiver.
+- Garder Better Deezer installé mais rendre son apparence d'origine à l'application Windows : `better-deezer restore` (`better-deezer apply` le remet).
+- Pour de bon : supprimez l'extension, ou lancez `better-deezer uninstall` (ou *Paramètres Windows › Applications › Better Deezer › Désinstaller*). L'application Deezer est remise exactement comme avant. Vos réglages Better Deezer restent dans le stockage de Deezer tant que vous ne videz pas son cache, ou faites *Réinitialiser* avant.

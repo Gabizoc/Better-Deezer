@@ -1,14 +1,13 @@
-# Better Deezer documentation
+# Documentation de Better Deezer
 
-New here? Start with the [README](../README.md) ([en français](../README.fr.md)): install, the `better-deezer` command, what changes.
+Première visite ? Commencez par le [README](../README.md) : installation, la commande `better-deezer`, ce qui change.
 
-| Page | For whom | What's inside |
+| Page | Pour qui | Contenu |
 | --- | --- | --- |
-| [User guide](guide.md) | everyone | every feature, the settings panel, shortcuts, where your settings live, how to reset or turn it off |
-| [Troubleshooting](troubleshooting.md) | everyone | symptoms, error messages and fixes (extension, desktop app and its command, themes, lyrics) |
-| [Dépannage (français)](fr/depannage.md) | tout le monde | la même page de dépannage, en français |
-| [Themes](themes.md) | theme makers | the theme format, the editor, testing from the console, publishing to the Marketplace |
-| [Modules](modules.md) | everyone, developers | what each module does and sends, how to write a new one |
-| [Privacy](privacy.md) | everyone | what stays on your machine and the only network requests Better Deezer can make |
+| [Guide](guide.md) | tout le monde | chaque fonction, les réglages, les raccourcis, où sont stockés les réglages, réinitialiser ou couper Better Deezer |
+| [Dépannage](depannage.md) | tout le monde | symptômes, messages d'erreur et solutions (extension, application Windows et sa commande, thèmes, paroles) |
+| [Thèmes](themes.md) | créateurs de thèmes | le format, l'éditeur, tester depuis la console, publier sur la Marketplace |
+| [Modules](modules.md) | tout le monde, développeurs | ce que fait et envoie chaque module, comment en écrire un |
+| [Confidentialité](confidentialite.md) | tout le monde | ce qui reste sur votre machine et les seules requêtes réseau de Better Deezer |
 
-Contributors: the architecture, the rules for touching Deezer's page and the session journal are in [HANDOFF.md](../HANDOFF.md). Build, tests and releases: [README > Development](../README.md#development).
+Pour contribuer : l'architecture, les règles pour toucher à la page de Deezer et le journal des sessions sont dans [HANDOFF.md](../HANDOFF.md). Compilation, tests et publication : [README › Développement](../README.md#développement).

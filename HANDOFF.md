@@ -63,7 +63,7 @@ src/
     welcome.js           carte de premier lancement
 themes/builtin/*.json    6 thèmes intégrés (graphite = défaut)
 themes/community/*.json  thèmes de la communauté ; themes/index.json (Marketplace) est GÉNÉRÉ par le build
-docs/                    doc utilisateur : guide, troubleshooting (+ fr/depannage), themes, modules, privacy
+docs/                    doc utilisateur, en français : guide, depannage, themes, modules, confidentialite
   main.js                boot (attend le DOM si injecté tôt), MutationObserver (1 frame max), isolation des erreurs, API console
 assets/fonts/            woff2 OFL + fonts.json (plages unicode)
 desktop/                 install.ps1 (amorce ASCII) -> setup.ps1, patch.ps1 (patch de app.asar), cli.ps1 (commande better-deezer), ui.ps1 (affichage commun), uninstall.ps1
@@ -174,8 +174,8 @@ Toujours **non testé** : lecture audio réelle sur le compte (volume, seek, min
 - Toute nouvelle ancre → `core/10-anchors.js` (+ `BD.optionalAnchors` si elle n'existe que quand un overlay est ouvert).
 - Toute nouvelle couleur → token d'abord (`00-tokens.css`, sombre ET clair).
 - Toute nouvelle feature → `label` [fr, en] pour apparaître dans les réglages ; un module → `module: true`, `glyph`, `description`, `live` + `teardown` (voir `docs/modules.md`). Ne pas nommer une méthode comme un champ réservé (`label`, `icon`… : bug rencontré).
-- Toute nouvelle requête réseau → `credentials: "omit"`, timeout, et l'écrire dans `docs/privacy.md`.
-- Tout nouveau message d'erreur visible → l'ajouter à `docs/troubleshooting.md` et `docs/fr/depannage.md`.
+- Toute nouvelle requête réseau → `credentials: "omit"`, timeout, et l'écrire dans `docs/confidentialite.md`.
+- Tout nouveau message d'erreur visible → l'ajouter à `docs/depannage.md` (la doc est en français ; `docs/troubleshooting.md` ne fait que rediriger).
 - Garder `npm run build` sans dépendance. `npm test` utilise le Playwright installé globalement (CI : installé à la volée).
 - Après un changement visuel : `npm run build && npm test`, puis regarder `test/.out/*.png`.
 

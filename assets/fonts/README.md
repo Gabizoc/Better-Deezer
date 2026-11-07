@@ -1,14 +1,10 @@
-# Vendored fonts
+# Polices incluses
 
-Both typefaces are under the SIL Open Font License 1.1 (see the `OFL-*.txt` files),
-which allows bundling them with Better Deezer.
+Les deux familles sont sous licence SIL Open Font License 1.1 (voir les fichiers `OFL-*.txt`), qui permet de les distribuer avec Better Deezer.
 
-| Family | Files | Source |
+| Famille | Fichiers | Source |
 | --- | --- | --- |
-| Bricolage Grotesque (variable, wght 200–800) | `bricolage-grotesque-latin[-ext]-wght-normal.woff2` | npm `@fontsource-variable/bricolage-grotesque@5.3.0` |
-| Instrument Sans (variable, wght 400–700) | `instrument-sans-latin[-ext]-wght-normal.woff2` | npm `@fontsource-variable/instrument-sans@5.3.0` |
+| Bricolage Grotesque (variable, graisse 200–800) | `bricolage-grotesque-latin[-ext]-wght-normal.woff2` | npm `@fontsource-variable/bricolage-grotesque@5.3.0` |
+| Instrument Sans (variable, graisse 400–700) | `instrument-sans-latin[-ext]-wght-normal.woff2` | npm `@fontsource-variable/instrument-sans@5.3.0` |
 
-`fonts.json` lists them with their unicode ranges. `scripts/build.mjs` copies them
-into the extension (web accessible resources) and embeds them in base64 in the
-single-file payload (desktop, userscript). `src/features/fonts.js` registers them
-with the FontFace API, so no network request and no CSP font-src issue.
+`fonts.json` les liste avec leurs plages Unicode. `scripts/build.mjs` les copie dans l'extension (ressources accessibles depuis le web) et les intègre en base64 dans le fichier unique (application Windows, userscript). `src/features/fonts.js` les enregistre avec l'API FontFace : aucune requête réseau, aucun souci de CSP `font-src`.

@@ -1,30 +1,30 @@
 # Modules
 
-Modules are optional extras, a bit like Spicetify's extensions. Turn them on and off in *Settings > Modules*: each one applies at once, without reloading.
+Les modules sont des extras optionnels, un peu comme les extensions de Spicetify. Activez-les ou coupez-les dans *Réglages › Modules* : chacun s'applique tout de suite, sans recharger.
 
-| Module | Default | What it does | Network |
+| Module | Par défaut | Ce qu'il fait | Réseau |
 | --- | --- | --- | --- |
-| **Now playing + synced lyrics** | on | `F` or the button in the player bar: full-window view with the big cover on the left and lyrics on the right that scroll with the music: the current line fills at singing pace and instrumental breaks show three dots that light up until the voice comes back. Click a line to jump there; click or drag the seek bar (arrows ±5 s). Blurred cover in the background, play / previous / next and a seek bar. `Esc` closes. | `lrclib.net`: title, artist, duration of the current track, only while the view is open |
-| **Smooth transitions** | on | Pages fade in, the player bar cover cross-fades on track change, cards lift on hover. Skipped when your system asks for reduced motion. | none |
-| **Hide promotional banners** | on | Hides "Go Premium" and "Sign up" banners, ad slots and sponsored playlists. Visual only. | none |
-| **Sleep timer** | on | 15 / 30 / 45 / 60 minutes or *End of track*, from the module's card. A badge with the countdown sits in the player bar (click it to cancel). The volume fades over the last minute, Deezer pauses, then the volume is put back. | none |
-| **Accent color from the cover** | off | The accent (play button, seek bar, switches, playing track) takes the main color of the playing cover, lightened or darkened until it reads well on the theme's background. | none (Deezer's image CDN) |
-| **Compact mode** | off | Smaller player bar, tighter spacing, smaller page headers. | none |
+| **Vue « En écoute » + paroles synchronisées** | activé | `F` ou le bouton du lecteur : une vue plein écran avec la grande pochette à gauche et les paroles à droite, qui défilent avec la musique. La ligne en cours se remplit au rythme du chant et les passages instrumentaux affichent trois points qui s'allument jusqu'au retour de la voix. Cliquez une ligne pour y aller ; cliquez ou faites glisser la barre de progression (flèches ±5 s). Pochette floutée en fond, lecture / précédent / suivant. `Échap` ferme. | Paroles : voir [plus bas](#les-paroles), seulement quand la vue est ouverte |
+| **Transitions fluides** | activé | Les pages apparaissent en fondu, la pochette du lecteur se fond au changement de titre, les cartes se soulèvent au survol. Désactivé quand le système demande moins d'animations. | aucun |
+| **Masquer les bannières promotionnelles** | activé | Masque les bandeaux « Passez à Premium » et « Inscrivez-vous », les emplacements publicitaires et les playlists sponsorisées. Purement visuel. | aucun |
+| **Minuteur de sommeil** | activé | 15 / 30 / 45 / 60 minutes ou *Fin du titre*, depuis la carte du module. Un badge avec le compte à rebours s'affiche dans le lecteur (cliquez-le pour annuler). Le volume baisse pendant la dernière minute, Deezer se met en pause, puis le volume est remis. | aucun |
+| **Couleur d'accent selon la pochette** | coupé | L'accent (bouton lecture, barre de progression, interrupteurs, titre en cours) prend la couleur principale de la pochette en cours, éclaircie ou assombrie jusqu'à être lisible sur le fond du thème. | aucun (CDN d'images de Deezer) |
+| **Mode compact** | coupé | Lecteur plus petit, espacements resserrés, en-têtes de page plus petits. | aucun |
 
-## Lyrics
+## Les paroles
 
-Two sources, chosen in *Settings > Playback & volume > Lyrics*:
+Deux sources, au choix dans *Réglages › Lecture et volume › Paroles* :
 
-1. **Deezer** (default): Deezer's own lyrics, through your Deezer session, exactly like Deezer's lyrics button. Many tracks are synced **word by word**: each word lights up when it is sung. Others are synced line by line with each line's real length.
-2. **[LRCLIB](https://lrclib.net)**, when Deezer has none (or with *LRCLIB only*): a free, open, community-run database. Better Deezer asks for the exact title, artist and duration first, then searches and keeps the closest version (within 8 seconds of the track's length, synced lyrics preferred). Line timings only: the line fills at an estimated singing pace.
+1. **Deezer** (par défaut) : les paroles de Deezer, via votre session Deezer, exactement comme le bouton paroles de Deezer. Beaucoup de titres sont synchronisés **mot à mot** : chaque mot s'allume quand il est chanté. Les autres le sont ligne par ligne, avec la vraie durée de chaque ligne.
+2. **[LRCLIB](https://lrclib.net)**, quand Deezer n'en a pas (ou avec *LRCLIB seul*) : une base libre, ouverte et tenue par la communauté. Better Deezer demande d'abord le titre, l'artiste et la durée exacts, puis cherche et garde la version la plus proche (à moins de 8 secondes de la durée du titre, paroles synchronisées en priorité). Seulement le début de chaque ligne : la ligne se remplit à un rythme estimé.
 
-The source is shown under the lyrics (*Lyrics: Deezer, word by word*, *Lyrics: Deezer*, *Lyrics: LRCLIB*).
+La source est indiquée sous les paroles (*Paroles : Deezer, mot à mot*, *Paroles : Deezer*, *Paroles : LRCLIB*).
 
-Missing or wrong lyrics can be added or fixed by anyone on lrclib.net, and then show up for everybody.
+Tout le monde peut ajouter ou corriger des paroles sur lrclib.net ; elles apparaissent ensuite pour tous.
 
-## Write a module
+## Écrire un module
 
-A module is a feature file in `src/features/` with `module: true`. Minimal example, `src/features/hello.js`:
+Un module est un fichier de `src/features/` avec `module: true`. Exemple minimal, `src/features/hello.js` :
 
 ```js
 /*
@@ -57,15 +57,15 @@ BD.feature({
 });
 ```
 
-Run `npm run build`, reload the extension, and it appears in *Settings > Modules*.
+Lancez `npm run build`, rechargez l'extension : le module apparaît dans *Réglages › Modules*.
 
-Rules (the same as everywhere in Better Deezer, see [HANDOFF.md](../HANDOFF.md)):
+Les règles (les mêmes que partout dans Better Deezer, voir [HANDOFF.md](../HANDOFF.md)) :
 
-- **Find Deezer's elements through `BD.anchors` or `data-testid` / ARIA**, never through `css-xxxx` class names.
-- **Never move or remove Deezer's nodes**: React owns them. Tag them (`BD.mark(el, "value", "data-bd-…")`) and style the tag, or insert your own elements next to them.
-- Your own UI: build it with `BD.h(tag, props, ...children)`, class names prefixed `bd-`, colors from the `--bd-*` variables so every theme applies.
-- Text in both languages: `BD.t("Français", "English")`.
-- Persist with `BD.settings.get(key, fallback)` / `BD.settings.set(key, value)` (stored as `bd:<key>`).
-- Network: only if the module's purpose needs it, `credentials: "omit"`, a timeout, and say what is sent in its `description` and in [Privacy](privacy.md).
-- Errors are caught: a module that throws is switched off for the session and named in the console, the rest keeps working.
-- Add a check to `test/smoke.mjs` (the fixture is `test/fixture.html`).
+- **Trouvez les éléments de Deezer avec `BD.anchors` ou `data-testid` / ARIA**, jamais avec les classes `css-xxxx`.
+- **Ne déplacez ni ne supprimez jamais les nœuds de Deezer** : ils appartiennent à React. Marquez-les (`BD.mark(el, "value", "data-bd-…")`) et stylez la marque, ou insérez vos propres éléments à côté.
+- Votre interface : construisez-la avec `BD.h(tag, props, ...children)`, des classes préfixées `bd-`, les couleurs des variables `--bd-*` pour que tous les thèmes s'appliquent.
+- Le texte dans les deux langues : `BD.t("Français", "English")`.
+- Pour enregistrer : `BD.settings.get(key, fallback)` / `BD.settings.set(key, value)` (stocké sous `bd:<key>`).
+- Le réseau : seulement si le module en a besoin, avec `credentials: "omit"` et un délai maximal, et dites ce qui est envoyé dans sa `description` et dans [Confidentialité](confidentialite.md).
+- Les erreurs sont rattrapées : un module qui plante est coupé pour la session et nommé dans la console, le reste continue.
+- Ajoutez une vérification dans `test/smoke.mjs` (la page de test est `test/fixture.html`).
