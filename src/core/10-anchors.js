@@ -25,6 +25,7 @@ BD.optionalAnchors = new Set([
   "accountMenuList",
   "contextMenus",
   "nativeTooltips",
+  "railHistory", // desktop app only
   "menus",
   "modals",
   "popovers",
@@ -108,6 +109,20 @@ BD.anchors = {
   railToggle: () => {
     const icon = BD.q('[data-testid="PanelLeftIcon"], [data-testid="PanelRightIcon"]');
     return icon?.closest("button") || null;
+  },
+
+  /**
+   * Desktop app only: Back / Forward chevrons at the top of the rail (a Chakra button
+   * group holding ChevronLeftIcon + ChevronRightIcon). Returns the box that holds the
+   * group alone, so hiding it leaves no empty row; null on the website.
+   */
+  railHistory: () => {
+    const rail = BD.anchors.rail();
+    const left = rail && BD.q('[role="group"] > button > svg[data-testid="ChevronLeftIcon"]', rail);
+    const group = left?.closest('[role="group"]');
+    if (!group || !group.querySelector('svg[data-testid="ChevronRightIcon"]')) return null;
+    const box = group.parentElement;
+    return box && box !== rail && box.children.length === 1 ? box : group;
   },
 
   /** Is the rail collapsed? Deezer sets --layout-sidebar-width to 80px when it is. */
