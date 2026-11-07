@@ -217,6 +217,13 @@ html[data-bd="on"] [data-bd="home-list"] {
 
 html[data-bd="on"] [data-bd="home-list"] > .bd-greeting {
   order: -100000;
+  margin-bottom: 24px;
+}
+
+/* Flex items keep their children's margins inside: drop the top one so the
+   space between sections stays 24px, as when the margins collapsed. */
+html[data-bd="on"] [data-bd="home-list"] > [data-testid="section-renderer"] > :first-child {
+  margin-top: 0 !important;
 }
 
 html[data-bd="on"] [data-bd-hidden="true"] {
