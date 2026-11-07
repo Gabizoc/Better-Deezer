@@ -39,11 +39,14 @@
   }
 
   BD.theme.init();
+  BD.skins.apply();
   html.setAttribute("data-bd", "on");
   html.setAttribute("data-bd-version", BD.version);
 
-  const active = BD.features.filter((f) => BD.isEnabled(f.id));
+  // Features run while enabled. Toggling one in the settings takes effect live:
+  // setup() runs the first time it is on, teardown() (optional) when it goes off.
   const failed = new Set();
+  const started = new Set();
   BD.failed = failed;
 
   const safe = (f, method) => {
@@ -55,23 +58,39 @@
       BD.warn(`feature "${f.id}" disabled after error in ${method}:`, err);
     }
   };
+  const start = (f) => {
+    if (started.has(f.id)) return;
+    started.add(f.id);
+    safe(f, "setup");
+  };
 
-  active.forEach((f) => safe(f, "setup"));
+  BD.features.filter((f) => BD.isEnabled(f.id)).forEach(start);
 
   let frame = 0;
   const run = () => {
     frame = 0;
-    active.forEach((f) => safe(f, "update"));
+    BD.features.forEach((f) => {
+      if (started.has(f.id) && BD.isEnabled(f.id)) safe(f, "update");
+    });
   };
   const schedule = () => {
     if (!frame) frame = requestAnimationFrame(run);
   };
   BD.schedule = schedule;
 
+  BD.on("settings", (key, value) => {
+    const id = key.startsWith("feature:") ? key.slice(8) : null;
+    const f = id && BD.features.find((x) => x.id === id);
+    if (f) {
+      if (value === false) safe(f, "teardown");
+      else start(f);
+    }
+    schedule();
+  });
+
   new MutationObserver(schedule).observe(html, { childList: true, subtree: true });
   addEventListener("resize", schedule);
   addEventListener("popstate", schedule);
-  BD.on("settings", schedule);
   run();
 
   // Health report a few seconds after boot: which anchors resolved.
@@ -95,9 +114,21 @@
     version: BD.version,
     target: BD.target,
     health: () => BD.checkHealth(),
-    features: () => active.map((f) => ({ id: f.id, failed: failed.has(f.id) })),
+    features: () => BD.features.map((f) => ({ id: f.id, on: BD.isEnabled(f.id), failed: failed.has(f.id) })),
     theme: (pref) => (pref ? BD.theme.set(pref) : BD.theme.get()),
     settings: () => BD.openSettings?.(),
+    // Theme development from the console (docs/themes.md):
+    themes: {
+      list: () => BD.skins.all().map((t) => t.id),
+      validate: (json) => BD.themeSchema.validate(json),
+      install: (json) => BD.skins.install(json),
+      activate: (id) => BD.skins.activate(id),
+      preview: (json) => {
+        const r = BD.themeSchema.validate(json);
+        if (r.ok) BD.skins.apply(r.theme, { preview: true });
+        return r;
+      }
+    },
     disable: (id) => BD.settings.set(id ? `feature:${id}` : "enabled", false),
     enable: (id) => BD.settings.set(id ? `feature:${id}` : "enabled", true),
     debug: (on = true) => localStorage.setItem("bd:debug", on ? "1" : "0")

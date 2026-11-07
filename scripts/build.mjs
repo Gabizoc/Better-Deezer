@@ -24,6 +24,48 @@ const js = (target) =>
     .replaceAll("__BD_VERSION__", pkg.version)
     .replaceAll("__BD_TARGET__", target);
 
+// ---------- Themes ----------
+// The validator is the runtime one (src/core/30-themes.js), run here with a stub BD,
+// so the repository and the app agree on what a valid theme is.
+const themeKit = { settings: { get: (_k, fallback) => fallback }, emit() {}, theme: {} };
+new Function("BD", "__BD_THEMES__", read("src/core/30-themes.js"))(themeKit, { builtin: [], community: [] });
+const { themeSchema } = themeKit;
+
+// Default palettes (00-tokens.css): a theme's missing colors fall back to them.
+const tokensCss = read("src/styles/00-tokens.css");
+const paletteOf = (selector) => {
+  const block = tokensCss.slice(tokensCss.indexOf(selector)).split("}")[0];
+  return Object.fromEntries([...block.matchAll(/--bd-([a-z0-9-]+):\s*(#[0-9a-f]{6})\b/gi)].map((m) => [m[1], m[2].toLowerCase()]));
+};
+const defaults = { dark: paletteOf(':root,\nhtml[data-bd-theme="dark"]'), light: paletteOf('html[data-bd-theme="light"] {') };
+
+const loadThemes = (dir) =>
+  readdirSync(join(root, dir))
+    .filter((f) => f.endsWith(".json"))
+    .sort()
+    .map((f) => {
+      const file = `${dir}/${f}`;
+      const { ok, theme, errors } = themeSchema.validate(JSON.parse(read(file)));
+      if (!ok) throw new Error(`${file}: ${errors.join("; ")}`);
+      if (`${theme.id}.json` !== f) throw new Error(`${file}: the file name must be "${theme.id}.json"`);
+      for (const mode of theme.modes) {
+        const warnings = themeSchema.checkContrast({ ...defaults[mode], ...(theme.colors[mode] || {}) });
+        if (warnings.length) throw new Error(`${file} (${mode}): low contrast: ${warnings.join("; ")}`);
+      }
+      return theme;
+    });
+// Graphite (the default) first, then by name.
+const byName = (a, b) => (a.id === "graphite" ? -1 : b.id === "graphite" ? 1 : a.name.localeCompare(b.name));
+const themes = { builtin: loadThemes("themes/builtin").sort(byName), community: loadThemes("themes/community"), defaults };
+const ids = [...themes.builtin, ...themes.community].map((t) => t.id);
+const dup = ids.find((id, i) => ids.indexOf(id) !== i);
+if (dup) throw new Error(`theme id "${dup}" is used twice`);
+// Community registry read by the Marketplace (Settings > Themes). Generated: do not edit by hand.
+writeFileSync(
+  join(root, "themes/index.json"),
+  JSON.stringify({ schema: 1, generated: "by scripts/build.mjs from themes/community, do not edit", themes: themes.community }, null, 2) + "\n"
+);
+
 // Vendored fonts (SIL OFL): files for the extension, base64 for the single-file payload.
 const fonts = JSON.parse(read("assets/fonts/fonts.json"));
 const fontsFor = (embed) =>
@@ -34,6 +76,7 @@ const iife = (body, withCss, embedFonts) =>
   ` *  Fonts: Bricolage Grotesque, Instrument Sans (SIL Open Font License 1.1) */\n(() => {\n"use strict";\n` +
   (withCss ? `const __BD_CSS__ = ${JSON.stringify(css)};\n` : "") +
   `const __BD_FONTS__ = ${JSON.stringify(fontsFor(embedFonts))};\n` +
+  `const __BD_THEMES__ = ${JSON.stringify(themes)};\n` +
   `${body}\n})();\n`;
 
 rmSync(join(root, "dist"), { recursive: true, force: true });
@@ -63,4 +106,4 @@ const header = `// ==UserScript==
 `;
 writeFileSync(join(root, "dist/better-deezer.user.js"), header + iife(js("desktop"), true, true));
 
-console.log(`Better Deezer ${pkg.version} built -> dist/`);
+console.log(`Better Deezer ${pkg.version} built -> dist/ (${themes.builtin.length} built-in themes, ${themes.community.length} community)`);
