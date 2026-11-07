@@ -23,17 +23,17 @@ BD.feature({
   },
 
   homeHref() {
-    const lang = location.pathname.split("/")[1];
-    return /^[a-z]{2}(-[a-z]{2})?$/i.test(lang) ? `/${lang}/` : "/";
+    const lang = BD.path().split("/")[1];
+    return BD.routePrefix() + (/^[a-z]{2}(-[a-z]{2})?$/i.test(lang) ? `/${lang}/` : "/");
   },
 
   isHome() {
-    return /^\/([a-z]{2}(-[a-z]{2})?)?\/?$/i.test(location.pathname);
+    return /^\/([a-z]{2}(-[a-z]{2})?)?\/?$/i.test(BD.path());
   },
 
   /** Navigate inside Deezer's single-page app: click its own Home link when we can. */
   goHome(e) {
-    const own = BD.qa('[data-bd="rail"] a[href]').find((a) => /^\/([a-z]{2}(-[a-z]{2})?)?\/?$/i.test(new URL(a.href, location.href).pathname));
+    const own = BD.qa('[data-bd="rail"] a[href]').find((a) => /^\/([a-z]{2}(-[a-z]{2})?)?\/?$/i.test(BD.path(a.href)));
     if (!own) return; // plain link navigation
     e.preventDefault();
     own.click();

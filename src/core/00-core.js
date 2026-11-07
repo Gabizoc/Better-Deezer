@@ -15,6 +15,23 @@ try {
   BD.debug = localStorage.getItem("bd:debug") === "1";
 } catch {}
 
+/**
+ * The route path of a URL ("/fr/album/123"). The website routes on the path, but
+ * the desktop app loads https://www.deezer.com/fr/ and routes on the hash
+ * ("#/fr/album/123"): there the path is "/fr/" on every page and every rail link.
+ * Always read routes through this, never `location.pathname`.
+ */
+BD.path = (url = location.href) => {
+  try {
+    const u = new URL(url, location.href);
+    return u.hash.startsWith("#/") ? u.hash.slice(1).split("?")[0] : u.pathname;
+  } catch {
+    return "";
+  }
+};
+/** Prefix for links we build ourselves: "#" in the hash-routed desktop app, "" on the website. */
+BD.routePrefix = () => (location.hash.startsWith("#/") ? "#" : "");
+
 BD.log = (...args) => BD.debug && console.info("[Better Deezer]", ...args);
 BD.warn = (...args) => console.warn("[Better Deezer]", ...args);
 

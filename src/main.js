@@ -20,7 +20,7 @@
   // asleep instead of warning about "missing" anchors. The player renders late, so
   // wait for it (layout root, content or player bar) for up to 30 s.
   const isPlayer = () => Boolean(document.querySelector('.naboo, #page_content, [data-testid="miniplayer_container"]'));
-  if (/^\/explore(\/|$)/.test(location.pathname)) return;
+  if (/^\/explore(\/|$)/.test(BD.path())) return;
   if (!isPlayer()) {
     if (boot.waiting) return;
     boot.waiting = new MutationObserver(() => {

@@ -47,7 +47,7 @@ BD.feature({
   update() {
     const page = BD.anchors.page();
     if (!page) return;
-    const isDetail = /\/(album|playlist|artist|profile|show|episode|smarttracklist)\//.test(location.pathname);
+    const isDetail = /\/(album|playlist|artist|profile|show|episode|smarttracklist)\//.test(BD.path());
     const header = isDetail ? BD.anchors.masthead() || page.querySelector("header") : null;
 
     BD.unmarkAll("page-header", header);

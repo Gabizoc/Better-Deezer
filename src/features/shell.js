@@ -52,11 +52,11 @@ BD.feature({
 
   /** Deezer swaps icons for the active page but sets no aria-current: derive it from the URL. */
   markActiveLinks(rail) {
-    const path = location.pathname.replace(/\/$/, "");
+    const path = BD.path().replace(/\/$/, "");
     rail.querySelectorAll("a[href]").forEach((a) => {
       let href;
       try {
-        href = new URL(a.href, location.href).pathname.replace(/\/$/, "");
+        href = BD.path(a.href).replace(/\/$/, "");
       } catch {
         return;
       }
@@ -86,7 +86,7 @@ BD.railNav = {
   keyOf(a) {
     if (!a.querySelector(':scope > svg[data-testid$="Icon"]')) return null;
     try {
-      const path = new URL(a.href, location.href).pathname
+      const path = BD.path(a.href)
         .replace(/^\/[a-z]{2}(?:-[a-z]{2})?(?=\/|$)/i, "")
         .replace(/^\/|\/$/g, "");
       return path.split("/").slice(0, 2).join("/");
