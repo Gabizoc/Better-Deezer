@@ -376,7 +376,8 @@
   gap: 4px;
 }
 
-.bd-settings kbd {
+.bd-settings kbd,
+.bd-welcome kbd {
   min-width: 24px;
   padding: 3px 7px;
   border: 1px solid var(--bd-line-strong);

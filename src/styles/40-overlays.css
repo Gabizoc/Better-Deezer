@@ -529,3 +529,55 @@ html[data-bd="on"][data-bd-volume="inline"] [data-bd="volume-native"] {
 @keyframes bd-out {
   to { opacity: 0; transform: translateY(4px); }
 }
+
+/* First-run card (features/welcome.js) */
+.bd-welcome {
+  position: fixed;
+  right: var(--bd-gap);
+  bottom: calc(var(--bd-dock-h) + var(--bd-gap) * 2);
+  z-index: 2147483000;
+  width: min(360px, calc(100vw - 24px));
+  box-sizing: border-box;
+  padding: 18px 18px 16px;
+  border: 1px solid var(--bd-line);
+  border-radius: var(--bd-r-dock);
+  background: var(--bd-surface-1);
+  box-shadow: var(--bd-shadow-pop);
+  color: var(--bd-text);
+  font-family: var(--bd-font-ui);
+  animation: bd-pop var(--bd-t-base) var(--bd-ease) both;
+}
+
+.bd-welcome[data-closing="true"] {
+  animation: bd-out 160ms var(--bd-ease) forwards;
+}
+
+.bd-welcome-kicker {
+  margin: 0 0 4px;
+  color: var(--bd-accent-text);
+  font: 700 11px/1.2 var(--bd-font-ui);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.bd-welcome h2 {
+  margin: 0 0 12px;
+  font: 800 20px/1.15 var(--bd-font-display);
+  letter-spacing: -0.02em;
+}
+
+.bd-welcome .bd-shortcuts {
+  margin: 0 0 16px;
+}
+
+.bd-welcome-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.bd-welcome .bd-shortcuts li {
+  grid-template-columns: 96px 1fr;
+  gap: 12px;
+  font-size: 13px;
+}
