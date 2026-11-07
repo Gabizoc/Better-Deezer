@@ -86,9 +86,11 @@ Deezer is a trademark of Deezer SA. Better Deezer is not affiliated with or endo
 
 **Store icon**: `extension/icons/icon-128.png` (vector source: `store/icon.svg`).
 
-**Screenshots** (1280×800, at least one, up to five): real deezer.com with the extension on, for example home in dark, home in light, an album page, the Now playing view with lyrics, the settings. Hide your name and avatar first.
+**Screenshots** (1280×800, PNG without alpha): `store/screenshots/`, in this order. Taken on the real deezer.com, logged out, with the skin injected (GIMS as the example artist): artist page, album *Ceinture noire*, album *Subliminal* in light mode, playlist *100% Gims*, Better Deezer settings.
 
 **Small promo tile** (440×280): `store/promo-small-440x280.png`.
+
+**Marquee promo tile** (1400×560): `store/promo-marquee-1400x560.png`.
 
 **Homepage URL**: https://github.com/Gabizoc/Better-Deezer
 **Support URL**: https://github.com/Gabizoc/Better-Deezer/issues
