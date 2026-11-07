@@ -17,11 +17,13 @@ html[data-bd="on"] :is([data-bd="popover"], [data-bd="search-popover"], [data-bd
   display: none !important;
 }
 
-html[data-bd="on"] :is([data-bd="popover"], [data-bd="search-popover"], [data-bd="account-menu"], [data-bd="context-menu"], [data-bd="notifications"], [data-bd="menu"]) :is(a, button, [role="button"], [role="menuitem"]) {
+/* Rows and text buttons of Deezer's panels. Not our own components (.bd-*), which
+   have their own hover, nor the round play buttons on covers (.action-item-tempo-btn). */
+html[data-bd="on"] :is([data-bd="popover"], [data-bd="search-popover"], [data-bd="account-menu"], [data-bd="context-menu"], [data-bd="notifications"], [data-bd="menu"]) :is(a, button, [role="button"], [role="menuitem"]):not([class*="bd-"], .action-item-tempo-btn) {
   border-radius: 12px !important;
 }
 
-html[data-bd="on"] :is([data-bd="popover"], [data-bd="search-popover"], [data-bd="account-menu"], [data-bd="context-menu"], [data-bd="notifications"], [data-bd="menu"]) :is(a, button, [role="button"], [role="menuitem"]):is(:hover, :focus-visible) {
+html[data-bd="on"] :is([data-bd="popover"], [data-bd="search-popover"], [data-bd="account-menu"], [data-bd="context-menu"], [data-bd="notifications"], [data-bd="menu"]) :is(a, button, [role="button"], [role="menuitem"]):not([class*="bd-"], .action-item-tempo-btn):is(:hover, :focus-visible) {
   background-color: var(--bd-surface-2) !important;
 }
 
@@ -198,6 +200,48 @@ html[data-bd="on"] [data-bd="notifications"] li:hover {
 
 html[data-bd="on"] [data-bd="notifications"] img {
   border-radius: var(--bd-r-cover) !important;
+}
+
+/* Play button on a notification's cover: centered, small and quiet, shown on hover
+   (Deezer's is a 48px white disc that hides most of the cover). */
+html[data-bd="on"] [data-bd="notifications"] .action-item-tempo-btn {
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  border-radius: var(--bd-r-pill) !important;
+  background: rgba(11, 10, 12, 0.62) !important;
+  color: #fff !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity var(--bd-t-fast) var(--bd-ease), transform var(--bd-t-fast) var(--bd-ease), background-color var(--bd-t-fast) var(--bd-ease) !important;
+}
+
+html[data-bd="on"] [data-bd="notifications"] .action-item-tempo-btn svg {
+  width: 18px !important;
+  height: 18px !important;
+  color: #fff !important;
+  fill: currentColor !important;
+}
+
+html[data-bd="on"] [data-bd="notifications"] .action-item-tempo-btn svg path {
+  fill: currentColor !important;
+}
+
+html[data-bd="on"] [data-bd="notifications"] li:is(:hover, :focus-within) .action-item-tempo-btn,
+html[data-bd="on"] [data-bd="notifications"] .action-item-tempo-btn.active {
+  opacity: 1;
+  transform: none;
+}
+
+html[data-bd="on"] [data-bd="notifications"] .action-item-tempo-btn:hover {
+  background: var(--bd-accent) !important;
+  color: var(--bd-on-accent) !important;
+}
+
+html[data-bd="on"] [data-bd="notifications"] .action-item-tempo-btn:hover svg {
+  color: var(--bd-on-accent) !important;
 }
 
 .bd-notif-filters {

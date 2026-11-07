@@ -33,7 +33,7 @@ BD.feature({
         { class: "bd-shortcuts" },
         tip([mac ? "⌘" : "Ctrl", ","], "Réglages, thèmes et modules", "Settings, themes and modules"),
         tip(["F"], "Paroles synchronisées et grande pochette", "Synced lyrics and big cover"),
-        tip([BD.t("Molette", "Wheel")], "Sur le volume ou la barre de progression", "Over the volume or the seek bar")
+        tip([BD.t("Molette", "Wheel")], "Sur le volume ou la pochette du lecteur", "Over the volume or the player's cover")
       ),
       BD.h(
         "div",

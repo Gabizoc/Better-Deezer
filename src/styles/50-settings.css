@@ -115,6 +115,7 @@
   font: 500 14px/1 var(--bd-font-ui);
   text-align: left;
   cursor: pointer;
+  transition: background-color var(--bd-t-fast) var(--bd-ease), color var(--bd-t-fast) var(--bd-ease), transform var(--bd-t-fast) var(--bd-ease);
 }
 
 .bd-settings-nav button:hover {
@@ -122,11 +123,43 @@
   color: var(--bd-text);
 }
 
+.bd-settings-nav button:active {
+  transform: scale(0.98);
+}
+
+/* Selected tab: the accent, softly (no side bar) */
 .bd-settings-nav button[aria-selected="true"] {
-  background: var(--bd-surface-3);
-  color: var(--bd-text);
+  background: var(--bd-accent-soft);
+  color: var(--bd-accent-text);
   font-weight: 600;
-  box-shadow: inset 3px 0 0 var(--bd-accent);
+}
+
+/* Tab content slides in when switching tabs (BD.openSettings re-renders it). */
+.bd-settings-body > * {
+  animation: bd-tab-in 240ms var(--bd-ease) both;
+}
+
+.bd-settings-body > :nth-child(2) {
+  animation-delay: 30ms;
+}
+
+.bd-settings-body > :nth-child(n + 3) {
+  animation-delay: 60ms;
+}
+
+@keyframes bd-tab-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bd-settings-nav button,
+  .bd-settings-body > * {
+    transition: none;
+    animation: none;
+  }
 }
 
 .bd-settings-body {

@@ -69,7 +69,7 @@ Thirteen keys per mode. Better Deezer maps them onto Deezer's whole interface (i
 | `text` | main text | ≥ 7 on `bg` |
 | `text-2` | secondary text (artists, metadata) | ≥ 4.5 on `bg` |
 | `text-3` | tertiary text (hints, dates) | ≥ 4.5 on `bg` |
-| `accent` | play button, seek bar, switches | |
+| `accent` | seek bar, switches, playing track, primary buttons | |
 | `accent-text` | accent used as text (playing track, links) | ≥ 4.5 on `bg` |
 | `on-accent` | icons and text on top of `accent` | ≥ 3 on `accent` |
 

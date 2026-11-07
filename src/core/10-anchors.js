@@ -36,6 +36,9 @@ BD.optionalAnchors = new Set([
   "signupBanner" // logged-out visitors only
 ]);
 
+/** False for Better Deezer's own UI (#bd-settings, #bd-welcome, #bd-np...): never restyle it as Deezer's. */
+BD.isDeezers = (el) => !el.closest('[id^="bd-"], [class^="bd-"]');
+
 BD.anchors = {
   /** Layout root that carries --layout-sidebar-width (80px collapsed, 243px expanded). */
   layoutRoot: () => BD.q(".naboo") || BD.q("#page_content")?.parentElement || null,
@@ -193,9 +196,9 @@ BD.anchors = {
   switchTracks: () => BD.qa('[role="switch"] + *, .chakra-switch__track').filter((el) => el.matches(".chakra-switch__track, [data-checked], span")),
 
   // ---- Overlays (Chakra UI renders them in portals at the end of <body>) ----
-  modals: () => BD.qa('[role="dialog"][aria-modal="true"], [role="alertdialog"]'),
-  popovers: () => BD.qa('[role="dialog"]:not([aria-modal="true"])'),
-  menus: () => BD.qa('[role="menu"]'),
+  modals: () => BD.qa('[role="dialog"][aria-modal="true"], [role="alertdialog"]').filter(BD.isDeezers),
+  popovers: () => BD.qa('[role="dialog"]:not([aria-modal="true"])').filter(BD.isDeezers),
+  menus: () => BD.qa('[role="menu"]').filter(BD.isDeezers),
   contextMenus: () => BD.qa('[data-testid="context-menu-content"]'),
   /** Toast cards: Chakra's toast manager lists (ids chakra-toast-manager-<position>). */
   toasts: () => BD.qa('[id^="chakra-toast-manager"] > li > *, [role="status"].chakra-toast__inner')

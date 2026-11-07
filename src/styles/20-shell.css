@@ -256,6 +256,11 @@ html[data-bd="on"] .bd-kbd {
   white-space: nowrap;
 }
 
+/* Once something is typed, Deezer's clear (×) button takes that spot. */
+html[data-bd="on"] [data-bd="search-field-group"]:has([data-testid="search_field"]:not(:placeholder-shown)) .bd-kbd {
+  display: none;
+}
+
 /* ---------- Player dock ---------- */
 /* The user's design: floating rounded dock, round accent play button, filled
    accent heart, times on each side of a thin accent bar. Parts tagged by features/player.js. */
@@ -309,30 +314,33 @@ html[data-bd="on"] [data-bd="dock"] [role="group"] > div:has(> button) {
   align-items: center !important;
 }
 
-/* Main play button: round, accent (#A238FF), white glyph */
+/* Main play button: a quiet round button (neutral surface, text-colored glyph),
+   a little larger than its neighbours. The accent stays for the seek bar and states. */
 html[data-bd="on"] [data-bd="dock"] [data-bd-role="play"] {
-  width: 48px !important;
-  height: 48px !important;
-  min-width: 48px !important;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
   border-radius: var(--bd-r-pill) !important;
-  background: var(--bd-accent) !important;
-  color: var(--bd-on-accent) !important;
+  background: var(--bd-surface-3) !important;
+  color: var(--bd-text) !important;
+  box-shadow: none !important;
   transition: background-color var(--bd-t-fast) var(--bd-ease), transform var(--bd-t-fast) var(--bd-ease) !important;
 }
 
 html[data-bd="on"] [data-bd="dock"] [data-bd-role="play"]:hover {
-  background: var(--bd-accent-hover) !important;
-  color: var(--bd-on-accent) !important;
-  transform: scale(1.05);
+  background: var(--bd-surface-4) !important;
+  color: var(--bd-text) !important;
+  transform: scale(1.04);
 }
 
 html[data-bd="on"] [data-bd="dock"] [data-bd-role="play"]:active {
-  background: var(--bd-accent-pressed) !important;
-  transform: scale(0.97);
+  transform: scale(0.96);
 }
 
 html[data-bd="on"] [data-bd="dock"] [data-bd-role="play"] svg {
-  color: var(--bd-on-accent) !important;
+  width: 20px !important;
+  height: 20px !important;
+  color: var(--bd-text) !important;
   fill: currentColor !important;
 }
 
@@ -470,4 +478,9 @@ html[data-bd="on"] [data-bd="rail"] button.chakra-button:not([aria-label]) {
 
 html[data-bd="on"] [data-bd="rail"] button.chakra-button:not([aria-label]):hover {
   background: var(--bd-text-2) !important;
+}
+
+/* Sidebar entries switched off in Settings > Appearance > Sidebar (features/shell.js, rail-nav) */
+html[data-bd="on"] [data-bd="rail"] [data-bd-nav-hidden="true"] {
+  display: none !important;
 }

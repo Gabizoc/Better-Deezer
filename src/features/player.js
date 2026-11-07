@@ -2,30 +2,12 @@
  * Player bar, in the user's own style: floating rounded dock, round accent play
  * button, filled accent heart when liked, elapsed / thin accent bar / remaining.
  * This file only tags the parts; the look is in styles/20-shell.css.
- *
- * Tip: mouse wheel over the seek bar seeks by 5 s (15 s with Shift).
+
+ * `seek()` is shared with the cover wheel (dock-gestures) and the Now playing view.
  */
 BD.feature({
   id: "player",
   label: ["Barre de lecture Better Deezer", "Better Deezer player bar"],
-
-  setup() {
-    document.addEventListener(
-      "wheel",
-      (e) => {
-        if (!BD.isEnabled("seek-wheel")) return;
-        const row = e.target.closest?.('[data-bd-role="progress-row"]');
-        if (!row) return;
-        const input = BD.anchors.progressInput();
-        if (!input || input.disabled) return;
-        e.preventDefault();
-        const step = e.shiftKey ? 15 : 5;
-        const dir = (e.deltaY || e.deltaX) < 0 ? 1 : -1;
-        this.seek(input, Number(input.value) + dir * step);
-      },
-      { capture: true, passive: false }
-    );
-  },
 
   /** Deezer's Slider seeks on mouseup (props.onChange(e.target.value)). */
   seek(input, value) {
@@ -77,6 +59,3 @@ BD.feature({
     }
   }
 });
-
-// Toggle-only entry for the settings panel.
-BD.feature({ id: "seek-wheel", label: ["Molette sur la barre de progression (±5 s)", "Wheel over the seek bar (±5 s)"] });
