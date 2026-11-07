@@ -34,6 +34,19 @@ html[data-bd="on"] [data-bd="search-popover"] {
   max-height: min(70vh, 640px) !important;
 }
 
+/* Deezer sizes the popover's content box at a fixed 450px (Flex width="450px"): follow
+   our wider popover instead, so "Clear all" and the hearts sit on the right edge. */
+html[data-bd="on"] [data-bd="search-popover"] > * {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* Result titles live in an overflow:hidden line (ellipsis): the first glyph's left
+   overhang (B, T, F in the display font) was clipped. 2px of room fixes it. */
+html[data-bd="on"] [data-bd="search-popover"] [data-testid$="_title"]:not([data-testid="recent_search_title"]) {
+  padding-inline-start: 2px !important;
+}
+
 html[data-bd="on"] [data-bd="search-popover"] [data-testid="recent_search_title"] {
   font-family: var(--bd-font-display) !important;
   font-size: 18px !important;

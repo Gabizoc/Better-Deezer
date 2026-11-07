@@ -232,6 +232,15 @@
     seek.addEventListener("input", () => { if (!dragging) seek.value = committed; });
     seek.addEventListener("mouseup", () => { committed = seek.value; dragging = false; });
   })();
+  // Recent searches popover, as Deezer renders it: a fixed 450px content box.
+  window.__openRecentSearches = () => {
+    const pop = document.createElement("div");
+    pop.className = "chakra-popover__popper";
+    pop.style.cssText = "position: fixed; top: 76px; left: 400px; z-index: 1500";
+    const row = (title, sub) => '<div style="padding: 8px 16px"><div style="display: flex; align-items: center; gap: 12px"><div style="width: 48px; height: 48px; border-radius: 50%; background: #5a3a8a; flex: none"></div><div style="flex: 1; min-width: 0"><div style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis"><a href="/fr/artist/1" data-testid="artist_title"><span>' + title + '</span></a></div><p>' + sub + '</p></div><div><button type="button" aria-label="Ajouter aux favoris" class="fav"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg></button></div></div></div>';
+    pop.innerHTML = '<section role="dialog" class="popper-search" data-testid="search_popper" id="popper-search-1"><div class="css-450" style="display: flex; flex-direction: column; max-height: 440px; width: 450px; overflow-y: auto"><div style="display: flex; flex-direction: column"><div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 16px"><h2 data-testid="recent_search_title">Dernières recherches</h2><button type="button" aria-label="Effacer" data-testid="recent_search_clear_button"><svg data-testid="TrashIcon" viewBox="0 0 24 24" width="20" height="20"><path d="M6 6h12v14H6z"/></svg></button></div><div style="overflow: auto">' + row("BoyWithUke", "Artiste • 157 392 fans") + row("Toc toc", "Titre • Patrick Sébastien") + "</div></div></div></section>";
+    document.body.appendChild(pop);
+  };
   window.__expandSidebar = (on) => {
     document.querySelector(".naboo").style.setProperty("--layout-sidebar-width", on ? "243px" : "80px");
   };
