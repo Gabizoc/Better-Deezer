@@ -28,7 +28,9 @@ Une surcouche (CSS + JS) qui redessine Deezer — style « rework de Steam par B
 - **Notifications** : panneau r=22, filtres Sorties / Social, pastille accent pour le compteur. (« Tout marquer comme lu » : non fait, ce serait une action sur le compte.)
 - **Menu profil** : sélecteur Clair / Sombre / Auto + entrée « Réglages Better Deezer (Ctrl ,) ».
 - **Modale** : r=22, surface-1, primaire = couleur du texte (blanc en sombre), secondaire surface-2, fond `#050405` à 80 %. **Toast** : pill claire.
-- **Réglages** : onglets Apparence, Lecture et volume, Accueil (sections on/off), Recommandations, Raccourcis, À propos.
+- **Réglages** : onglets Thèmes, Modules, Apparence, Lecture et volume, Accueil (sections on/off), Recommandations, Raccourcis, À propos. Aucun « Bientôt » : tout ce qui est affiché fonctionne (demande explicite de l'utilisateur en session 3).
+- **Barre du haut** (session 3) : recherche **toujours centrée sur la fenêtre** (pas sur la zone à droite du rail), bouton Accueil rond à sa gauche, largeur 320–600 px bornée par les actions de droite.
+- **Esprit Spicetify** (session 3) : thèmes communautaires faciles à créer/installer (Marketplace), modules activables à chaud, paroles synchronisées à côté de la pochette, transitions fluides.
 - **Pages** (inspiration Apple Music / Spotify / Tidal) : en-tête teinté par la pochette, grand titre display, photo ronde pour artistes/profils, cœur et ⋯ au survol, popularité en barre fine, filtre « Masquer les titres explicites », salutation sur l'accueil.
 - Petits plus demandés : molette sur la pochette du dock = ±5 s ; double-clic sur le titre du dock = album ; `Q` = file d'attente ; astuces dans les infobulles.
 
@@ -43,16 +45,26 @@ src/
   styles/30-content.css  cartes, lignes, en-têtes de pages, accueil, chips
   styles/40-overlays.css popovers, menus, notifications, modales, toasts, tooltips, volume
   styles/50-settings.css panneau Réglages Better Deezer (DOM à nous, classes .bd-*)
+  styles/60-modules.css  vue « En écoute », transitions, promos, minuteur, compact, onglet Modules
   core/00-core.js        objet BD, settings (localStorage bd:*), bus d'événements, BD.h (DOM), BD.t (fr/en)
   core/10-anchors.js     LE SEUL endroit qui sait trouver les éléments Deezer
-  core/20-theme.js       thème dark/light/system (html[data-bd-theme])
-  features/*.js          une feature = { id, label?, setup(), update() } ; label = toggle dans les réglages
+  core/20-theme.js       mode dark/light/system (html[data-bd-theme])
+  core/30-themes.js      thèmes JSON (« skins ») : schéma + validation (partagés avec le build), contrastes, BD.skins (installer, activer, Marketplace)
+  features/*.js          une feature = { id, label, description, module, glyph, live, setup, update, teardown } (doc dans core/00-core.js)
+    topbar.js            recherche centrée sur la fenêtre + bouton Accueil
+    themes.js            onglet Thèmes (cartes, Marketplace, lien/fichier, éditeur)
+    nowplaying.js        module vue « En écoute » + paroles LRCLIB synchronisées
+    modules.js           modules transitions, hide-promos, sleep-timer, accent-cover, compact + onglet Modules
+    welcome.js           carte de premier lancement
+themes/builtin/*.json    6 thèmes intégrés (graphite = défaut)
+themes/community/*.json  thèmes de la communauté ; themes/index.json (Marketplace) est GÉNÉRÉ par le build
+docs/                    doc utilisateur : guide, troubleshooting (+ fr/depannage), themes, modules, privacy
   main.js                boot (attend le DOM si injecté tôt), MutationObserver (1 frame max), isolation des erreurs, API console
 assets/fonts/            woff2 OFL + fonts.json (plages unicode)
 desktop/                 install.ps1 (amorce ASCII) -> setup.ps1, launcher.ps1, uninstall.ps1
 scripts/build.mjs        build sans dépendance -> dist/extension + dist/better-deezer.user.js (CSS + polices base64)
 test/fixture.html        page qui reproduit les vraies ancres de Deezer
-test/smoke.mjs           50 vérifications dans Chromium (npm test)
+test/smoke.mjs           78 vérifications dans Chromium (npm test) ; route deezer.com, lrclib.net et le registre GitHub vers des fixtures
 test/cdp-inject.mjs      rejoue la séquence CDP du lanceur contre Chromium sur le vrai deezer.com
 .github/workflows/       ci.yml (build, smoke, parse PS 5.1, PSScriptAnalyzer) ; release.yml (tag v*)
 ```
@@ -102,30 +114,24 @@ Plan B si le switch est bloqué un jour : patch de `app.asar` (possible tant que
 - **Userscript** : `better-deezer.user.js`.
 - **Release** : pousser un tag `vX.Y.Z` égal à `package.json` → `release.yml` publie extension zip, Windows zip, scripts, payload et `SHA256SUMS.txt`.
 
-## 7. État actuel (fin de session 2, 2026-11-07)
+## 7. État actuel (fin de session 3, 2026-11-07) — version 1.0.0
 
-Fait et poussé (backlog §8 points 1 à 9 de la session 1) :
-1. Thèmes clair / sombre / auto + pont Tempo.
-2. Volume façon captures + artboard Overlays.
-3. Rail replié centré (vertical + horizontal), hovers, page active, en-têtes collants opaques.
-4. Barre de lecture de l'utilisateur, molette sur la progression et la pochette.
-5. Modales, menus, notifications (filtres), menu profil (thème + réglages), popover de recherche, toasts, interrupteurs.
-6. Panneau Réglages Better Deezer (6 onglets), `Ctrl ,`, `Q`, liste « Ne plus me recommander ».
-7. Lanceur desktop, installeur, désinstalleur, CI + release.
-8. Polices vendorisées.
-9. Premier rework des pages (album, artiste, profil, playlist, accueil).
+Session 3 (demande : « inspire-toi de Spicetify », thèmes communautaires, modules, paroles synchronisées, transitions, recherche centrée + bouton Accueil, plus rien en bêta, code propre, doc des erreurs) — tout est fait et poussé :
+- **Barre du haut** : recherche centrée au pixel près sur la fenêtre (vérifié sur le vrai site à 1024 / 1280 / 1440 / 1920 px), bouton Accueil (navigation SPA via le lien Accueil du rail).
+- **Thèmes** : format JSON déclaratif (schéma 1), 6 intégrés + 2 communautaires, Marketplace (`themes/index.json` téléchargé depuis GitHub, repli hors ligne sur la copie embarquée), installation par lien ou fichier, éditeur (13 couleurs, aperçu en direct, contrastes, CSS avancé, export). Aucun code dans un thème : `url()`, `@import`, échappements… refusés (même validateur dans le build).
+- **Modules** (onglet Modules, activables à chaud) : En écoute + paroles (LRCLIB), transitions, masquer les promos (dont le bandeau « Inscription » hors connexion, qui est sinon thémé en carte), minuteur de sommeil (fondu du volume), accent selon la pochette (off par défaut), mode compact (off par défaut).
+- **Recommandations** fonctionnelles : ordre de l'accueil Deezer / Familier / Découverte + selon l'heure (mots-clés FR/EN dans les titres de sections, « Écouté récemment » épinglé, `order` CSS sur un parent passé en flex — les marges des sections sont corrigées pour garder 24 px). Les options irréalisables honnêtement (« Pourquoi ce titre », « 7 jours ») ont été retirées.
+- Carte de bienvenue au premier lancement, bouton Réinitialiser + lien Aide dans À propos, raccourci `F` listé.
+- `main.js` : une feature *live* avec `teardown` refait son `setup` quand on la réactive.
+- Doc utilisateur dans `docs/` ; README réécrit ; version **1.0.0**.
 
-Vérifié :
-- `npm run build`, `node --check` des deux sorties, **smoke test 50/50** (fixture), CI GitHub verte (Linux + Windows : parse PowerShell 5.1 + PSScriptAnalyzer sans erreur).
-- **Extension chargée dans Chromium sur le vrai deezer.com**, hors connexion (album, artiste) puis **connecté au compte de l'utilisateur** (accueil, album, artiste, profil, playlist, Explorer, recherche, menu profil, notifications, modale, réglages, rail replié/déplié, thèmes clair et sombre). Plusieurs passes de design, problèmes trouvés corrigés (voir journal).
-- Séquence CDP du lanceur rejouée contre Chromium sur deezer.com (`test/cdp-inject.mjs`) : injection + survie au rechargement.
+Vérifié en session 3 : build, **smoke 78/78**, vrai deezer.com hors connexion (album, artiste, vue En écoute avec paroles synchronisées, accent dynamique, bandeau inscription, recherche centrée à 4 largeurs) et connecté en lecture seule (accueil : ordre des sections dans les 3 modes, espacements).
 
-**Non testé** (impossible dans le conteneur) :
-- Les scripts PowerShell n'ont **jamais été exécutés** (pas de Windows, pwsh refusé) : seulement parsés par PowerShell 5.1 et analysés en CI.
-- L'app desktop Deezer elle-même (le switch `--remote-debugging-port` dans Electron 38 de Deezer, le chemin d'install réel, le comportement de la zone de notification).
-- Lecture audio réelle (volume, seek, cœur) : volontairement **aucune action** sur le compte (pas de lecture, pas de like) ; la logique est testée sur la fixture.
-- Page de résultats de recherche (taper une recherche aurait ajouté une entrée à l'historique du compte).
-- Firefox.
+Attention :
+- Le dépôt est **privé** : la Marketplace et le lien « Aide et dépannage » pointent vers `github.com/Gabizoc/Better-Deezer` (HEAD) et ne répondent pas tant qu'il l'est (la Marketplace affiche alors « Hors ligne » et utilise les thèmes embarqués).
+- La release 1.0.0 n'est pas publiée : pousser le tag `v1.0.0` déclenche `release.yml`.
+
+Toujours **non testé** (impossible dans le conteneur) : exécution réelle des scripts PowerShell et de l'app desktop Windows ; lecture audio réelle sur le compte (volume, seek, minuteur, like) — logique testée sur la fixture ; page de résultats de recherche ; Firefox.
 
 ### Règles pour tester sur le compte de l'utilisateur
 
@@ -135,19 +141,15 @@ Vérifié :
 
 ## 8. Backlog (par priorité)
 
-1. **Tests réels de l'utilisateur** (Windows + Chrome) et corrections : voir la liste dans le résumé de session.
-2. Recommandations, côté client (onglet déjà présent, marqué « Bientôt ») :
-   - Curseur **Familier ↔ Découverte** pour Flow et mixes (filtrer / réordonner : déjà liké vs jamais écouté).
-   - « Pourquoi ce titre ? » (artiste similaire / écouté N fois / genre) à partir des données de la page.
-   - Éviter les répétitions 7 jours ; accueil selon l'heure (ordre des sections).
-   - « Ne plus me recommander » accessible depuis le menu ⋯ (aujourd'hui seulement dans les réglages ; filtre texte simple, à affiner par id d'artiste).
-3. Clic milieu sur une carte = ajouter à la file (piloter le menu contextuel).
-4. Accueil : ordre des sections (glisser-déposer dans les réglages), « Reprendre l'écoute » épinglé.
-5. Aperçu du temps au survol de la barre de progression (Deezer a un tooltip natif, à restyler).
-6. Lignes de pistes : numéro → ▶ au survol (Deezer met déjà ▶ sur la pochette).
-7. Page de résultats de recherche à styler (à vérifier sans polluer l'historique : compte de test).
+1. **Tests réels de l'utilisateur** (Windows + Chrome) et corrections.
+2. Rendre le dépôt public (ou héberger `themes/index.json` ailleurs) pour activer la Marketplace en ligne ; publier la release `v1.0.0`.
+3. « Ne plus me recommander » depuis le menu ⋯ d'une carte (aujourd'hui dans les réglages ; filtre texte, à affiner par id d'artiste).
+4. Clic milieu sur une carte = ajouter à la file (piloter le menu contextuel).
+5. Accueil : ordre manuel des sections (glisser-déposer dans les réglages).
+6. Aperçu du temps au survol de la barre de progression ; numéro → ▶ au survol des lignes.
+7. Page de résultats de recherche à styler (compte de test, pour ne pas polluer l'historique).
 8. Publication Chrome Web Store / Edge / Firefox (manifest `browser_specific_settings` pour Firefox).
-9. Icônes maison (artboard Main) à la place des icônes Tempo, si l'utilisateur le veut.
+9. Idées de modules : visualiseur, paroles en karaoké mot à mot (LRCLIB « enhanced » quand dispo), mini-lecteur Picture-in-Picture, statistiques d'écoute locales.
 
 ## 9. Conventions
 
@@ -155,7 +157,9 @@ Vérifié :
 - Messages de commit en anglais, impératif. Un commit par point.
 - Toute nouvelle ancre → `core/10-anchors.js` (+ `BD.optionalAnchors` si elle n'existe que quand un overlay est ouvert).
 - Toute nouvelle couleur → token d'abord (`00-tokens.css`, sombre ET clair).
-- Toute nouvelle feature → `label` [fr, en] pour apparaître dans les réglages.
+- Toute nouvelle feature → `label` [fr, en] pour apparaître dans les réglages ; un module → `module: true`, `glyph`, `description`, `live` + `teardown` (voir `docs/modules.md`). Ne pas nommer une méthode comme un champ réservé (`label`, `icon`… : bug rencontré).
+- Toute nouvelle requête réseau → `credentials: "omit"`, timeout, et l'écrire dans `docs/privacy.md`.
+- Tout nouveau message d'erreur visible → l'ajouter à `docs/troubleshooting.md` et `docs/fr/depannage.md`.
 - Garder `npm run build` sans dépendance. `npm test` utilise le Playwright installé globalement (CI : installé à la volée).
 - Après un changement visuel : `npm run build && npm test`, puis regarder `test/.out/*.png`.
 
@@ -163,3 +167,4 @@ Vérifié :
 
 - 2026-11-06 — Session 1 : design system « Graphite » + écrans ; étude de Deezer desktop 8.0.10 ; squelette surcouche ; ce fichier.
 - 2026-11-06/07 — Session 2 : analyse du bundle web (ancres réelles, jetons Tempo) ; points 1 à 8 ; intégration des artboards HomeLight / Overlays / Settings ; rework des pages ; tests sur le vrai site (anonyme puis compte de l'utilisateur en lecture seule) ; passes de design : alignement de la salutation, prénom chargé tard, photos rondes artiste/profil, teinte claire 12 %, scrollbar du rail replié (icônes décentrées de 5 px), popover de recherche aligné sur le champ + pied de raccourcis (ordre CSS), noms de sections sans « Voir tout », modale à une seule surface, interrupteurs lisibles en clair, en-têtes collants du rail opaques, barre du haut givrée. Lanceur : `Page.enable` indispensable (trouvé par test), `install.ps1` ASCII + `setup.ps1` avec BOM.
+- 2026-11-07 — Session 3 : recherche centrée sur la fenêtre + bouton Accueil ; système de thèmes JSON + Marketplace + éditeur ; modules (En écoute + paroles LRCLIB, transitions, promos, minuteur, accent pochette, compact) et onglet Modules ; recommandations fonctionnelles (ordre de l'accueil) ; carte de bienvenue ; doc `docs/` ; 1.0.0. Bugs trouvés en test : méthode `label()` qui écrasait le libellé du module, `icon()` de la vue En écoute qui écrasait le glyphe, panneau de réglages qui défilait sous `focus()` (→ `overflow: clip`), `setup` non rejoué après réactivation, marges des sections doublées en flex, bandeau d'inscription anonyme illisible (lilas en dur).
