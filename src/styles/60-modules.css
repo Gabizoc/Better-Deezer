@@ -137,6 +137,7 @@ html[data-bd-theme="light"] .bd-np-bg {
 }
 
 .bd-np-title {
+  text-wrap: balance;
   margin: 0;
   font: 800 clamp(26px, 3.2vw, 44px) / 1.05 var(--bd-font-display);
   letter-spacing: -0.03em;
