@@ -36,7 +36,7 @@ jobs:
           mkdir -p release
           (cd dist/extension && zip -r -X ../../release/better-deezer-extension.zip .)
           cp dist/better-deezer.user.js release/
-          cp desktop/install.ps1 desktop/setup.ps1 desktop/launcher.ps1 desktop/uninstall.ps1 release/
+          cp desktop/install.ps1 desktop/setup.ps1 desktop/patch.ps1 desktop/uninstall.ps1 release/
           mkdir -p windows && cp desktop/*.ps1 dist/better-deezer.user.js windows/
           (cd windows && zip -r -X ../release/better-deezer-windows.zip .)
           (cd release && sha256sum * > SHA256SUMS.txt)

@@ -66,11 +66,11 @@ themes/community/*.json  thèmes de la communauté ; themes/index.json (Marketpl
 docs/                    doc utilisateur : guide, troubleshooting (+ fr/depannage), themes, modules, privacy
   main.js                boot (attend le DOM si injecté tôt), MutationObserver (1 frame max), isolation des erreurs, API console
 assets/fonts/            woff2 OFL + fonts.json (plages unicode)
-desktop/                 install.ps1 (amorce ASCII) -> setup.ps1, launcher.ps1, uninstall.ps1
+desktop/                 install.ps1 (amorce ASCII) -> setup.ps1, patch.ps1 (patch de app.asar), uninstall.ps1
 scripts/build.mjs        build sans dépendance -> dist/extension + dist/better-deezer.user.js (CSS + polices base64)
 test/fixture.html        page qui reproduit les vraies ancres de Deezer
 test/smoke.mjs           115 vérifications dans Chromium (npm test) ; route deezer.com, lrclib.net et le registre GitHub vers des fixtures
-test/cdp-inject.mjs      rejoue la séquence CDP du lanceur contre Chromium sur le vrai deezer.com
+test/cdp-inject.mjs      injecte le payload par CDP dans Chromium sur le vrai deezer.com
 .github/workflows/       ci.yml (build, smoke, parse PS 5.1, PSScriptAnalyzer) ; release.yml (tag v*)
 ```
 
@@ -91,7 +91,7 @@ test/cdp-inject.mjs      rejoue la séquence CDP du lanceur contre Chromium sur 
 - Installeur NSIS → `resources/app.asar`. **Electron 38.4.0**, `loadURL("https://www.deezer.com/…")` : **l'UI desktop EST le site web**.
 - Fuses : RunAsNode=on, NodeOptions=on, NodeCliInspect=on, EmbeddedAsarIntegrityValidation=off, OnlyLoadAppFromAsar=off.
 - Env : `DZ_DEVTOOLS=yes`, `DZ_DISABLE_UPDATE=yes`, `DZ_LANG`, `DZ_DEV_ENV`.
-- Install par défaut supposée : `%LOCALAPPDATA%\Programs\deezer-desktop\Deezer.exe` (le lanceur cherche aussi `Programs\Deezer`, Program Files et les clés Uninstall du registre).
+- Install par défaut supposée : `%LOCALAPPDATA%\Programs\deezer-desktop\Deezer.exe` (confirmé sur le PC de l'utilisateur ; `patch.ps1` cherche aussi `Programs\Deezer`, Program Files et les clés Uninstall du registre).
 
 ### Bundle du web player (app-web.f39f92e1 + 261 chunks, récupérés le 2026-11-06)
 
@@ -107,14 +107,21 @@ test/cdp-inject.mjs      rejoue la séquence CDP du lanceur contre Chromium sur 
 - Raccourcis natifs (lib `mousetrap`) : Espace, Maj+Entrée, `s`, ←/→ (± avance), Maj+←/→ (titre), `r`, Maj+R, `m`, Maj+↑/↓ (volume), `l` (coup de cœur), `0…9`, `h`/`?` (panneau).
 - CSP : **report-only** (rien n'est bloqué aujourd'hui). Le CDN des pochettes (`cdn-images.dzcdn.net`) répond CORS pour `https://www.deezer.com`.
 
-### Stratégie d'injection desktop (implémentée)
+### Stratégie d'injection desktop (implémentée, session 5) : patch de `app.asar`, façon Spicetify
 
-`desktop/launcher.ps1`, PowerShell pur : ferme Deezer s'il tourne (verrou d'instance unique), le relance avec `--remote-debugging-port=<port libre> --remote-allow-origins=http://127.0.0.1:<port>`, interroge `/json/list` toutes les 2 s, et pour chaque page deezer.com : WebSocket CDP → **`Page.enable`** (obligatoire : sans lui, `addScriptToEvaluateOnNewDocument` est accepté mais ne s'exécute pas au rechargement — vérifié par `test/cdp-inject.mjs`) → `Page.addScriptToEvaluateOnNewDocument` → `Runtime.evaluate` si `window.__betterDeezer` absent. Les sockets restent ouverts tant que Deezer tourne (sinon les scripts sont retirés). Garde-fou dans `main.js` : top frame + hôte `*.deezer.com` uniquement, attente du DOM si injecté tôt.
-Plan B si le switch est bloqué un jour : patch de `app.asar` (possible tant que l'intégrité asar est off).
+Demande explicite de l'utilisateur : **pas de deuxième app ni de lanceur**, on modifie Deezer lui-même ; le raccourci Deezer normal ouvre Deezer avec le skin.
+
+`desktop/patch.ps1`, PowerShell 5.1 pur :
+- Lit `resources\app.asar` (pickle : `uint32 4 | uint32 headerSize | uint32 payloadSize | uint32 jsonLength | JSON | padding 4`, puis les données ; offsets = chaînes relatives au début des données). JSON lu et écrit avec `System.Web.Script.Serialization.JavaScriptSerializer` (`MaxJsonLength` au max : `ConvertFrom-Json` de PS 5.1 plafonne à 2 Mo, l'en-tête fait 700 Ko).
+- Ajoute à la fin de `build/main.js` un hook ES5 entre `/*better-deezer-hook*/` et `/*/better-deezer-hook*/` : `app.on("web-contents-created")` → `wc.on("dom-ready")` → si l'URL est `https://*.deezer.com/`, lit `%LOCALAPPDATA%\BetterDeezer\better-deezer.user.js` et `executeJavaScript` (monde principal). Fichier absent → Deezer intact. Mettre à jour le skin = remplacer ce fichier, pas besoin de repatcher.
+- Le nouveau `main.js` est **ajouté à la fin des données** et l'en-tête pointe dessus (hash d'intégrité recalculé) : aucun autre fichier ne bouge. Relecture de contrôle avant de remplacer, sauvegarde `app.asar.bd-backup`. `-Remove` retire le hook entre les marqueurs. `-Quiet` (lancé à l'ouverture de session via `HKCU\…\Run\BetterDeezer`) repatche après une mise à jour de Deezer, sans jamais fermer un Deezer ouvert.
+- `main.js` de Deezer 8.0.10 : IIFE webpack `"use strict"`, `app.setName("Deezer")` (profil `%APPDATA%\Deezer`), fenêtre principale `contextIsolation: true` + `preload.js`, `getAppPath()` utilisé pour les locales et `titlebar.html` (raison pour laquelle on ne remplace pas l'app par un dossier `resources\app`).
+
+Abandonné : l'ancien `launcher.ps1` (CDP via `--remote-debugging-port`). Le port marchait (vérifié), mais le lanceur avait deux bugs propres à PowerShell 5.1 : `@(Invoke-RestMethod …)` garde le tableau JSON en un seul objet (toutes les cibles étaient ignorées), et `ConnectAsync().GetAwaiter().GetResult()` polluait la valeur de retour de `Connect-Cdp` (`VoidTaskResult … SendAsync`). `test/cdp-inject.mjs` reste utile pour injecter dans le vrai site.
 
 ## 6. Installation « pour tout le monde »
 
-- **Windows** : `irm https://github.com/Gabizoc/Better-Deezer/releases/latest/download/install.ps1 | iex`. `install.ps1` est **100 % ASCII** (vérifié en CI) car `irm | iex` peut mal décoder ; il télécharge les fichiers dans `%TEMP%\BetterDeezer-setup` et lance `setup.ps1` (UTF-8 **avec BOM**, sinon PowerShell 5.1 lit en ANSI) qui installe dans `%LOCALAPPDATA%\BetterDeezer`, crée les raccourcis (icône de Deezer) et une entrée *Paramètres > Applications* (HKCU, sans admin). `uninstall.ps1` arrête le lanceur et nettoie tout.
+- **Windows** : `irm https://github.com/Gabizoc/Better-Deezer/releases/latest/download/install.ps1 | iex`. `install.ps1` est **100 % ASCII** (vérifié en CI) car `irm | iex` peut mal décoder ; il télécharge les fichiers dans `%TEMP%\BetterDeezer-setup` et lance `setup.ps1` (UTF-8 **avec BOM**, sinon PowerShell 5.1 lit en ANSI) qui copie `patch.ps1`, `uninstall.ps1` et le payload dans `%LOCALAPPDATA%\BetterDeezer`, patche Deezer (le ferme et le relance s'il tournait), inscrit `patch.ps1 -Quiet` à l'ouverture de session et une entrée *Paramètres > Applications* (HKCU, sans admin). Il supprime aussi les raccourcis et le lanceur des versions < 1.1. `uninstall.ps1` retire le hook (`patch.ps1 -Remove`) et nettoie tout. Deezer installé dans Program Files : il faut lancer en administrateur.
 - **Navigateur** : zip de l'extension dans les Releases. Publication Chrome Web Store / Edge / Firefox AMO : à faire.
 - **Userscript** : `better-deezer.user.js`.
 - **Release** : pousser un tag `vX.Y.Z` égal à `package.json` → `release.yml` publie extension zip, Windows zip, scripts, payload et `SHA256SUMS.txt`.
@@ -136,7 +143,9 @@ Attention :
 - Le dépôt est **privé** : la Marketplace et le lien « Aide et dépannage » pointent vers `github.com/Gabizoc/Better-Deezer` (HEAD) et ne répondent pas tant qu'il l'est (la Marketplace affiche alors « Hors ligne » et utilise les thèmes embarqués).
 - La release 1.0.0 n'est pas publiée : pousser le tag `v1.0.0` déclenche `release.yml`.
 
-Toujours **non testé** (impossible dans le conteneur) : exécution réelle des scripts PowerShell et de l'app desktop Windows ; lecture audio réelle sur le compte (volume, seek, minuteur, like) — logique testée sur la fixture ; page de résultats de recherche ; Firefox.
+**App desktop, vérifié sur le PC Windows de l'utilisateur (session 5, Deezer 8.0.10, PS 5.1.26100)** : `patch.ps1` appliqué au vrai `app.asar` ; archive relue par Node ; Deezer lancé **sans argument** démarre normalement ; dans la page, `window.__betterDeezer` présent, `data-bd-theme=dark`, toutes les ancres de `health()` résolues ou « not open ». Non vérifié : `setup.ps1` et `uninstall.ps1` de bout en bout (refusés par le classifieur de permissions, à faire avec l'accord de l'utilisateur), `patch.ps1 -Remove`, `-Quiet` à l'ouverture de session, comportement après une vraie mise à jour de Deezer.
+
+Toujours **non testé** : lecture audio réelle sur le compte (volume, seek, minuteur, like) — logique testée sur la fixture ; page de résultats de recherche ; Firefox.
 
 ### Règles pour tester sur le compte de l'utilisateur
 
@@ -169,6 +178,8 @@ Toujours **non testé** (impossible dans le conteneur) : exécution réelle des 
 - Après un changement visuel : `npm run build && npm test`, puis regarder `test/.out/*.png`.
 
 ## 10. Journal
+
+- 2026-11-07 — Session 5 (sur le PC Windows de l'utilisateur) : l'app desktop restait d'origine. Cause : le lanceur CDP ne s'attachait jamais (PS 5.1 : tableau JSON non déroulé, puis valeur de retour polluée par `ConnectAsync`). À la demande de l'utilisateur (« comme Spicetify, pas une autre app »), remplacement du lanceur par `patch.ps1` qui modifie `app.asar`. Vérifié sur le vrai Deezer 8.0.10 (voir §7). `DEBUG-HANDOFF.md` retiré (résolu).
 
 - 2026-11-06 — Session 1 : design system « Graphite » + écrans ; étude de Deezer desktop 8.0.10 ; squelette surcouche ; ce fichier.
 - 2026-11-06/07 — Session 2 : analyse du bundle web (ancres réelles, jetons Tempo) ; points 1 à 8 ; intégration des artboards HomeLight / Overlays / Settings ; rework des pages ; tests sur le vrai site (anonyme puis compte de l'utilisateur en lecture seule) ; passes de design : alignement de la salutation, prénom chargé tard, photos rondes artiste/profil, teinte claire 12 %, scrollbar du rail replié (icônes décentrées de 5 px), popover de recherche aligné sur le champ + pied de raccourcis (ordre CSS), noms de sections sans « Voir tout », modale à une seule surface, interrupteurs lisibles en clair, en-têtes collants du rail opaques, barre du haut givrée. Lanceur : `Page.enable` indispensable (trouvé par test), `install.ps1` ASCII + `setup.ps1` avec BOM.

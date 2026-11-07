@@ -13,11 +13,10 @@
 
   Options for setup.ps1 through environment variables (handy with iex):
     $env:BD_DEEZER_PATH = 'D:\Apps\Deezer\Deezer.exe'   unusual Deezer location
-    $env:BD_NO_DESKTOP_SHORTCUT = '1'                    Start menu shortcut only
 #>
 $ErrorActionPreference = 'Stop'
 $repo = 'Gabizoc/Better-Deezer'
-$files = @('setup.ps1', 'launcher.ps1', 'uninstall.ps1', 'better-deezer.user.js')
+$files = @('setup.ps1', 'patch.ps1', 'uninstall.ps1', 'better-deezer.user.js')
 $here = $null
 if ($PSScriptRoot -and (Test-Path (Join-Path $PSScriptRoot 'setup.ps1'))) { $here = $PSScriptRoot }
 
@@ -34,6 +33,5 @@ if (-not $here) {
 }
 
 $argList = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', (Join-Path $here 'setup.ps1'))
-if ($env:BD_NO_DESKTOP_SHORTCUT) { $argList += '-NoDesktopShortcut' }
 $ps = Join-Path $env:WINDIR 'System32\WindowsPowerShell\v1.0\powershell.exe'
 & $ps @argList

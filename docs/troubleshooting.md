@@ -44,16 +44,17 @@ Note: some elements only exist on some pages or for some accounts. `profileButto
 | --- | --- |
 | `irm … \| iex` shows red text about *execution policy* | Run it in **Windows PowerShell** (not cmd), or right click `install.ps1` > *Run with PowerShell*. The installer only runs for your user, no admin rights needed. |
 | *Install cancelled: Deezer.exe not found* | The installer looks in the usual places, then asks for the full path of `Deezer.exe`; pressing Enter cancels. Install the Deezer desktop app first ([deezer.com/download](https://www.deezer.com/download)), or give the path ahead of time: `$env:BD_DEEZER_PATH = "C:\path\to\Deezer.exe"` before running the install command. |
-| The *Better Deezer* shortcut opens plain Deezer | Deezer was already running: the launcher closes it first, but if it is stuck in the tray, quit it from the tray icon and start *Better Deezer* again. Then read the log (below). |
-| *Deezer is already running* | You started the launcher with `-KeepRunning`. Quit Deezer (tray icon > Quit) and start again. |
-| Deezer starts without the skin for a few seconds | The launcher waits for Deezer's page to load, then injects. On slow PCs this takes a moment; if it never applies, check the log. |
-| *CDP … failed* / *CDP socket closed* in the log | Deezer closed or restarted during injection. Start *Better Deezer* again. If it repeats, a Deezer update may have changed its startup: report it with the log. |
-| Antivirus warning | The launcher is a PowerShell script that starts Deezer with a debugging port on `127.0.0.1`. Some antivirus tools flag that pattern. The scripts are plain text in `%LOCALAPPDATA%\BetterDeezer\`: you can read them. |
-| Uninstall | *Windows Settings > Apps > Better Deezer > Uninstall*, or run `%LOCALAPPDATA%\BetterDeezer\uninstall.ps1`. Deezer is untouched; your Better Deezer settings stay in Deezer's storage until you clear its cache. |
+| Deezer opens without the skin | Deezer was probably updated, which replaces the patched file. Sign out of Windows and back in (the hook is re-applied at sign-in when Deezer is closed), or run `%LOCALAPPDATA%\BetterDeezer\patch.ps1`. Then read the log (below). |
+| *Cannot modify Deezer: access denied* | Deezer is installed for all users (Program Files). Run the install from a PowerShell opened as administrator. |
+| *build/main.js not found in app.asar: unknown Deezer version* | Deezer changed how its app is packaged. Nothing was modified; report it with your Deezer version. |
+| *The patched app.asar did not read back correctly* | The new file failed its check and was not used: Deezer is unchanged. Report it with the log. |
+| Deezer does not start after the install | Restore the original: in `%LOCALAPPDATA%\Programs\deezer-desktop\resources`, replace `app.asar` with `app.asar.bd-backup`, or reinstall Deezer. Please report it. |
+| Antivirus warning | The installer modifies a file of the Deezer app (`app.asar`), which some antivirus tools flag. The scripts are plain text in `%LOCALAPPDATA%\BetterDeezer\`: you can read them. |
+| Uninstall | *Windows Settings > Apps > Better Deezer > Uninstall*, or run `%LOCALAPPDATA%\BetterDeezer\uninstall.ps1`. The hook is taken out of Deezer; your Better Deezer settings stay in Deezer's storage until you clear its cache. |
 
-**Log file**: `%LOCALAPPDATA%\BetterDeezer\launcher.log` (paste `%LOCALAPPDATA%\BetterDeezer` in the Explorer address bar). Each start writes the Deezer path, the port, and every page it injected into.
+**Log file**: `%LOCALAPPDATA%\BetterDeezer\patch.log` (paste `%LOCALAPPDATA%\BetterDeezer` in the Explorer address bar). Each run writes the Deezer file it patched, or why it did not.
 
-**DevTools in the desktop app**: while *Better Deezer* runs, open `http://127.0.0.1:<port>` from the log in Chrome to inspect Deezer, and use the `__betterDeezer` console API.
+**DevTools in the desktop app**: start Deezer with `Deezer.exe --remote-debugging-port=9222`, open `http://127.0.0.1:9222` in Chrome to inspect it, and use the `__betterDeezer` console API.
 
 ## Themes
 
@@ -116,10 +117,10 @@ __betterDeezer.debug()             // verbose logs; __betterDeezer.debug(false) 
 
 Open an issue on the repository with:
 
-1. Where: browser + version, or the desktop app; extension, userscript or launcher.
+1. Where: browser + version, or the desktop app; extension, userscript or desktop install.
 2. What you did and what you expected.
 3. The *About* tab's **Deezer elements found** line, or the output of `__betterDeezer.health()` and `__betterDeezer.features()`.
-4. For the desktop app: the last lines of `launcher.log`.
+4. For the desktop app: the last lines of `patch.log` and your Deezer version.
 5. A screenshot helps.
 
 Never paste cookies, tokens or your `arl` value: nobody needs them to debug Better Deezer.

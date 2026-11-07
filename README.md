@@ -43,9 +43,9 @@ irm https://github.com/Gabizoc/Better-Deezer/releases/latest/download/install.ps
 
 Or download `better-deezer-windows.zip` from the [Releases](https://github.com/Gabizoc/Better-Deezer/releases), unzip it and run `install.ps1` (right click, *Run with PowerShell*).
 
-This adds a **Better Deezer** shortcut (Start menu and desktop) that starts the official Deezer app with the skin applied. Deezer's own files are never modified, so Deezer updates keep working, and the original Deezer shortcut still starts plain Deezer. Uninstall from *Settings > Apps > Better Deezer*.
+Like Spicetify for Spotify, this patches the Deezer app itself: open Deezer as usual (its own shortcut, taskbar, Start menu) and the skin is there. There is no second app. Uninstall from *Settings > Apps > Better Deezer*, which puts Deezer back as it was.
 
-How it works: the launcher starts `Deezer.exe` with Chromium's `--remote-debugging-port` on a random port, which listens on `127.0.0.1` only, and injects the skin through the DevTools protocol while Deezer runs. Any program already running on your PC under your account could also connect to that port during that time (such a program could read your Deezer data anyway). Logs: `%LOCALAPPDATA%\BetterDeezer\launcher.log`.
+How it works: Deezer's desktop app is Electron showing deezer.com. `patch.ps1` appends a few lines to `build/main.js` inside Deezer's `resources\app.asar` (a copy of the original is kept as `app.asar.bd-backup`). On each deezer.com page load, those lines read `%LOCALAPPDATA%\BetterDeezer\better-deezer.user.js` and run it in the page; if the file is gone, Deezer runs unchanged. A Deezer update replaces `app.asar`: the installer registers `patch.ps1 -Quiet` at sign-in to put the hook back (or run `%LOCALAPPDATA%\BetterDeezer\patch.ps1` yourself). Log: `%LOCALAPPDATA%\BetterDeezer\patch.log`.
 
 ### Browser (Chrome, Edge, Brave, Opera)
 
@@ -63,7 +63,7 @@ Install `better-deezer.user.js` with Violentmonkey or Tampermonkey.
 ```bash
 npm run build          # no dependency, Node 18+; output in dist/
 npm test               # smoke test in Chromium (needs Playwright installed globally)
-node test/cdp-inject.mjs   # replays the desktop launcher's DevTools sequence on Chromium
+node test/cdp-inject.mjs   # injects the payload into the real deezer.com over the DevTools protocol
 ```
 
 ## If something breaks

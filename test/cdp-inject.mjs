@@ -1,4 +1,4 @@
-// Checks the desktop launcher's CDP sequence (desktop/launcher.ps1) without Windows:
+// Injects the payload into a real deezer.com page over the Chrome DevTools Protocol, without Windows:
 // same messages, same order, against Chromium started with --remote-debugging-port.
 //   npm run build && node test/cdp-inject.mjs [url]
 // 1. GET /json/list, keep page targets on deezer.com

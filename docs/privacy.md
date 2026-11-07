@@ -25,6 +25,6 @@ In the browser extension, a tiny script (`page-bridge.js`) runs in Deezer's page
 
 A theme is data, not code: colors, sizes, font names and CSS. CSS that could load anything (`url()`, `@import`) or run code is rejected when the theme is installed. A theme cannot see your account or send anything anywhere.
 
-## The desktop launcher
+## The desktop app
 
-The Windows launcher starts Deezer with a debugging port bound to `127.0.0.1` (your machine only) while Deezer runs, to inject the skin. Programs running under your Windows account could connect to it during that time; such programs could already read Deezer's data on disk. Details in the [README](../README.md#windows-desktop-app).
+The Windows install adds a few lines to Deezer's own `app.asar` that run `%LOCALAPPDATA%\BetterDeezer\better-deezer.user.js` in Deezer's deezer.com pages. They open no port and make no request; the skin then behaves exactly as in the browser. Details in the [README](../README.md#windows-desktop-app).
