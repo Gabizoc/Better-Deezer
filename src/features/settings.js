@@ -251,6 +251,14 @@ BD.feature({
         this.featureToggle("now-playing"),
         this.row(BD.t("Badge au démarrage", "Startup badge"), BD.t("« Better Deezer x.y.z » pendant 3 s.", "“Better Deezer x.y.z” for 3 s."), this.toggle("badge", true))
       ),
+      this.section(
+        BD.t("Infobulles", "Tooltips"),
+        BD.h("p", { class: "bd-set-hint" }, BD.t("Toutes désactivées par défaut.", "All off by default.")),
+        this.featureToggle("tooltips"),
+        this.featureToggle("tips"),
+        this.featureToggle("native-tips", BD.t("Les bulles que Deezer affiche au survol de ses boutons.", "The bubbles Deezer shows when hovering its buttons.")),
+        this.featureToggle("track-previews", BD.t("La carte du titre au survol de Précédent / Suivant.", "The track card when hovering Previous / Next."))
+      ),
       this.railSection()
     ];
   },
@@ -288,9 +296,21 @@ BD.feature({
       this.section(
         BD.t("Barre de lecture", "Player bar"),
         this.featureToggle("player"),
-        this.featureToggle("dock-gestures"),
-        this.featureToggle("tooltips"),
-        this.featureToggle("tips")
+        this.featureToggle("dock-gestures")
+      ),
+      this.section(
+        BD.t("Paroles (vue En écoute)", "Lyrics (Now playing view)"),
+        this.row(
+          BD.t("Source", "Source"),
+          BD.t(
+            "Deezer : synchronisées mot à mot quand Deezer les a, via votre session Deezer. LRCLIB prend le relais sinon (ligne par ligne).",
+            "Deezer: synced word by word when Deezer has them, through your Deezer session. LRCLIB takes over otherwise (line by line)."
+          ),
+          this.segmented("lyrics:source", "deezer", [["deezer", "Deezer puis LRCLIB", "Deezer, then LRCLIB"], ["lrclib", "LRCLIB seul", "LRCLIB only"]], (v) => {
+            BD.settings.set("lyrics:source", v);
+            BD.features.find((f) => f.id === "nowplaying")?.cache.clear();
+          })
+        )
       ),
       this.section(
         BD.t("Volume", "Volume"),

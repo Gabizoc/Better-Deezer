@@ -40,8 +40,8 @@ The card appears once. Afterwards a small "Better Deezer x.y.z" badge shows for 
 | --- | --- |
 | **Themes** | Light / dark / auto, pick a theme, browse the Marketplace, install from a link or a file, create or customize a theme ([Themes](themes.md)) |
 | **Modules** | Turn extras on and off, live ([Modules](modules.md)) |
-| **Appearance** | Turn the visual parts on and off, the startup badge, and the **Sidebar** entries (Home, Explore, Favourite tracks, Playlists, Albums, Artists, Podcasts). The Library entries are hidden by default; your playlists and pinned items always stay. |
-| **Playback & volume** | Player bar features, wheel gestures, tooltips, volume step |
+| **Appearance** | Turn the visual parts on and off, the startup badge, **Tooltips** (Better Deezer's, their tips, Deezer's own, the previous / next track card: all off by default), and the **Sidebar** entries (Home, Explore, Favourite tracks, Playlists, Albums, Artists, Podcasts). The Library entries are hidden by default; your playlists and pinned items always stay. |
+| **Playback & volume** | Player bar features, wheel gestures, volume step, lyrics source (Deezer word by word, or LRCLIB) |
 | **Home** | Hide the home carousels you don't use |
 | **Recommendations** | Home order: *Deezer* (unchanged), *Familiar* (your mixes and favorites first) or *Discovery* (new releases and trends first), plus *By time of day*. And a **Don't recommend** list: cards and tracks matching an artist, genre or word are hidden everywhere |
 | **Shortcuts** | Every keyboard shortcut and gesture |

@@ -644,3 +644,9 @@ html[data-bd="on"] [data-bd="native-tip"] [data-popper-arrow] {
 html[data-bd-tip-open] [data-bd="native-tip"] {
   display: none !important;
 }
+
+/* Settings > Appearance > Tooltips (off by default) */
+html[data-bd-native-tips="off"] [data-bd="native-tip"],
+html[data-bd-track-previews="off"] [data-bd="track-preview"] {
+  display: none !important;
+}

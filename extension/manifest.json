@@ -9,6 +9,16 @@
         "https://www.deezer.com/*"
       ],
       "js": [
+        "page-bridge.js"
+      ],
+      "run_at": "document_idle",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://www.deezer.com/*"
+      ],
+      "js": [
         "better-deezer.js"
       ],
       "css": [
@@ -26,5 +36,6 @@
         "https://www.deezer.com/*"
       ]
     }
-  ]
+  ],
+  "minimum_chrome_version": "111"
 }

@@ -347,6 +347,28 @@ html[data-bd-theme="light"] .bd-np-bg {
   color: transparent;
 }
 
+/* Word timings (Deezer): each word fills over its own duration (--w, 0..1),
+   with a slight lift while it is sung. The line itself is not filled. */
+.bd-np-lines li[data-state="current"] .bd-np-text[data-words] {
+  background: none;
+  color: inherit;
+}
+
+.bd-np-lines li[data-state="current"] .bd-np-w {
+  display: inline-block;
+  white-space: pre;
+  background: linear-gradient(
+    90deg,
+    var(--bd-text) calc(var(--w, 0) * 100% - 8%),
+    color-mix(in srgb, var(--bd-text) 42%, transparent) calc(var(--w, 0) * 100% + 8%)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transform: translateY(calc(min(var(--w, 0), 1 - var(--w, 0)) * -6px));
+  transition: transform 120ms linear;
+}
+
 /* Instrumental break / intro: three dots that light up one by one, breathing */
 .bd-np-dots {
   display: inline-flex;
