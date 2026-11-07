@@ -459,3 +459,15 @@ html[data-bd="on"] [data-bd="signup-banner"] a {
     left: var(--bd-gap) !important;
   }
 }
+
+/* Text buttons inside the rail (e.g. logged-out "Create a playlist"): Deezer paints
+   them white with a text color our palette changes; make them primary pills. */
+html[data-bd="on"] [data-bd="rail"] button.chakra-button:not([aria-label]) {
+  border-radius: var(--bd-r-pill) !important;
+  background: var(--bd-text) !important;
+  color: var(--bd-bg) !important;
+}
+
+html[data-bd="on"] [data-bd="rail"] button.chakra-button:not([aria-label]):hover {
+  background: var(--bd-text-2) !important;
+}
