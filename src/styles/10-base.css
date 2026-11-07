@@ -37,10 +37,40 @@ html[data-bd="on"] [data-testid*="time" i] {
   font-variant-numeric: tabular-nums;
 }
 
-/* Thin, quiet scrollbars */
-html[data-bd="on"] * {
-  scrollbar-width: thin;
-  scrollbar-color: var(--bd-line-strong) transparent;
+/*
+ * Thin, quiet scrollbars, drawn with ::-webkit-scrollbar. Not with scrollbar-width /
+ * scrollbar-color: since Chromium 121 those disable every ::-webkit-scrollbar rule
+ * of the element (Deezer hides some scrollbars that way), and on `html[...] *` they
+ * also beat Deezer's own `scrollbar-width: none` on its carousels, whose scrollbars
+ * then reappeared under every home row.
+ */
+html[data-bd="on"] ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background: transparent;
+}
+html[data-bd="on"] ::-webkit-scrollbar-track {
+  background: transparent;
+  border: 0;
+}
+html[data-bd="on"] ::-webkit-scrollbar-thumb {
+  background: var(--bd-line-strong);
+  background-clip: padding-box;
+  border: 3px solid transparent;
+  border-radius: 999px;
+}
+html[data-bd="on"] ::-webkit-scrollbar-thumb:hover {
+  background-color: var(--bd-text-3);
+}
+html[data-bd="on"] ::-webkit-scrollbar-corner {
+  background: transparent;
+}
+/* Firefox: the standard properties, with zero specificity so Deezer's own `none` wins. */
+@supports not selector(::-webkit-scrollbar) {
+  :where(html[data-bd="on"]) * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bd-line-strong) transparent;
+  }
 }
 
 /* Visible focus for keyboard users */
