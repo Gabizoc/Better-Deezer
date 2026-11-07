@@ -170,10 +170,10 @@ try {
   if (-not $Update) { Write-BdOk (T 'Commande better-deezer' 'better-deezer command') $(if ($pathAdded) { T 'ajoutée au PATH' 'added to PATH' } else { T 'déjà dans le PATH' 'already on PATH' }) }
 
   # 5. Old launcher (first versions): stop it, remove its shortcuts and files.
-  $old = $false
-  Get-CimInstance Win32_Process -Filter "Name = 'powershell.exe' OR Name = 'pwsh.exe'" -ErrorAction SilentlyContinue |
-    Where-Object { $_.CommandLine -and $_.CommandLine -like '*BetterDeezer*launcher.ps1*' } |
-    ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue; $old = $true }
+  $launchers = @(Get-CimInstance Win32_Process -Filter "Name = 'powershell.exe' OR Name = 'pwsh.exe'" -ErrorAction SilentlyContinue |
+    Where-Object { $_.CommandLine -and $_.CommandLine -like '*BetterDeezer*launcher.ps1*' })
+  foreach ($p in $launchers) { Stop-Process -Id $p.ProcessId -Force -ErrorAction SilentlyContinue }
+  $old = $launchers.Count -gt 0
   foreach ($s in @(
       (Join-Path ([Environment]::GetFolderPath('Programs')) 'Better Deezer.lnk'),
       (Join-Path ([Environment]::GetFolderPath('Desktop')) 'Better Deezer.lnk'),

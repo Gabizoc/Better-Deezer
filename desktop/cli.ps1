@@ -280,7 +280,7 @@ function Invoke-BdRestore {
   return 0
 }
 
-function Invoke-BdLogs {
+function Invoke-BdLog {
   Write-BdBanner -Subtitle (T 'Journal' 'Log') -Version (Get-BdVersion)
   $log = Join-Path $Root 'patch.log'
   if (-not (Test-Path $log)) { Write-BdInfo (T 'Journal vide' 'Empty log'); Write-Host ''; return 0 }
@@ -305,7 +305,7 @@ try {
       if (-not $exe) { Write-BdFail (T 'Deezer introuvable' 'Deezer not found'); $code = 1 }
       else { Restart-BdDeezer $exe; Write-Host ''; Write-BdOk (T 'Deezer redémarré' 'Deezer restarted'); Write-Host '' }
     }
-    { $_ -in @('logs', 'log') } { $code = Invoke-BdLogs }
+    { $_ -in @('logs', 'log') } { $code = Invoke-BdLog }
     'uninstall' {
       $uninstallArgs = @{}
       if ($Yes) { $uninstallArgs['Quiet'] = $true }

@@ -96,6 +96,6 @@ __betterDeezer.disable("volume")   // couper une fonction ( .enable("volume") po
 
 ## Signaler un problème
 
-Ouvrez une issue avec : navigateur ou application Windows, ce que vous avez fait, la ligne **Éléments de Deezer reconnus** (ou la sortie de `__betterDeezer.health()`), les dernières lignes de `launcher.log` pour l'application Windows, et une capture d'écran.
+Ouvrez une issue avec : navigateur ou application Windows, ce que vous avez fait, la ligne **Éléments de Deezer reconnus** (ou la sortie de `__betterDeezer.health()`), les dernières lignes de `patch.log` et la version de Deezer pour l'application Windows, et une capture d'écran.
 
 Ne collez jamais de cookies, de jetons ni votre valeur `arl` : personne n'en a besoin pour déboguer Better Deezer.
