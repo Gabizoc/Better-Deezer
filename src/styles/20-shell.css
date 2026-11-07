@@ -28,14 +28,23 @@ html[data-bd="on"] [data-bd="rail"] {
     transform var(--bd-t-layout) var(--bd-ease) !important;
 }
 
-/* Collapsed: a compact floating column, centered vertically (as in Deezer Tweaks v0.1.62)
-   and every entry centered horizontally. */
-html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"] {
+/* Both states: a floating column as tall as its content, centered vertically in the space
+   above the dock (as in Deezer Tweaks v0.1.62), scrolling inside once it fills that space. */
+html[data-bd="on"] [data-bd="rail"][data-bd-collapsed] {
   top: 50% !important;
   bottom: auto !important;
   height: fit-content !important;
   max-height: calc(100vh - var(--bd-dock-h) - var(--bd-gap) * 4) !important;
   transform: translateY(calc(-50% - (var(--bd-dock-h) + var(--bd-gap)) / 2)) !important;
+}
+
+/* Expanded: the library list is the part that scrolls; it shrinks first. */
+html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="false"] > * {
+  min-height: 0 !important;
+}
+
+/* Collapsed: every entry centered horizontally. */
+html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"] {
   padding: var(--bd-s-2) 0 !important;
   gap: var(--bd-s-1) !important;
   align-items: center !important;
@@ -54,14 +63,14 @@ html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"] :is(div, nav, ul, 
   align-items: center !important;
 }
 
-/* A scrollbar would eat a few pixels on one side and shift every icon off center:
-   hide it in the compact rail (wheel and touchpad scrolling still work). */
-html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"],
-html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"] * {
+/* A scrollbar would eat a few pixels on one side and shift every entry off center:
+   hide it in the rail, both states (wheel and touchpad scrolling still work). */
+html[data-bd="on"] [data-bd="rail"],
+html[data-bd="on"] [data-bd="rail"] * {
   scrollbar-width: none !important;
 }
 
-html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"] ::-webkit-scrollbar {
+html[data-bd="on"] [data-bd="rail"] ::-webkit-scrollbar {
   display: none !important;
 }
 
@@ -88,6 +97,12 @@ html[data-bd="on"] [data-bd="rail"] :is(div, nav, section, ul, li) {
 html[data-bd="on"] [data-bd="rail"] [data-bd-role="rail-sticky"] {
   z-index: 2;
   background-color: var(--bd-surface-1) !important;
+}
+
+/* Desktop app: Back / Forward chevrons on top of the rail. The website has none and the
+   rail is designed without them. */
+html[data-bd="on"] [data-bd="rail"] [data-bd-role="rail-history"] {
+  display: none !important;
 }
 
 html[data-bd="on"] [data-bd="rail"] :is(a, button) {
