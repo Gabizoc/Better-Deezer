@@ -1,34 +1,31 @@
 ﻿<#
 .SYNOPSIS
-  setup.ps1: installs Better Deezer for the Deezer desktop app (Windows 10/11, no admin rights).
+  setup.ps1: adds Better Deezer to the Deezer desktop app (Windows 10/11, no admin rights).
 
 .DESCRIPTION
   Normally started by install.ps1 (the ASCII bootstrap used by
-  "irm .../install.ps1 | iex"). Can be run directly from a release folder:
+  "irm .../install.ps1 | iex"). Can be run directly from a release folder or a clone:
     powershell -ExecutionPolicy Bypass -File setup.ps1
 
-  What it does:
-    - copies launcher.ps1, uninstall.ps1 and better-deezer.user.js to
-      %LOCALAPPDATA%\BetterDeezer (from this folder, or the latest GitHub release),
-    - finds Deezer.exe (%LOCALAPPDATA%\Programs\deezer-desktop, then Program Files),
-    - creates "Better Deezer" shortcuts in the Start menu and on the desktop,
-    - registers an uninstaller in Settings > Apps (current user only).
-  Deezer itself is not modified.
+  What it does (like Spicetify for Spotify: Deezer itself is patched, there is no other app):
+    - copies patch.ps1, uninstall.ps1 and better-deezer.user.js to
+      %LOCALAPPDATA%\BetterDeezer (from this folder, a clone's dist\, or the latest GitHub release),
+    - finds Deezer.exe and runs patch.ps1, which adds a small hook to Deezer's
+      resources\app.asar (Deezer is closed and restarted if it was running),
+    - registers patch.ps1 -Quiet at logon (HKCU Run) to re-apply the hook after a Deezer update,
+    - registers an uninstaller in Settings > Apps (current user only),
+    - removes the shortcuts of the old launcher (versions before 1.1).
 
 .PARAMETER DeezerPath
   Full path to Deezer.exe if it is installed somewhere unusual.
   With "irm | iex", set $env:BD_DEEZER_PATH instead.
 
-.PARAMETER NoDesktopShortcut
-  Only create the Start menu shortcut.
-
 .PARAMETER NoLaunch
-  Do not start Better Deezer at the end.
+  Do not start Deezer at the end.
 #>
 [CmdletBinding()]
 param(
   [string]$DeezerPath = $env:BD_DEEZER_PATH,
-  [switch]$NoDesktopShortcut,
   [switch]$NoLaunch
 )
 
@@ -38,8 +35,9 @@ $ErrorActionPreference = 'Stop'
 $Repo = 'Gabizoc/Better-Deezer'
 
 $Dest = Join-Path $env:LOCALAPPDATA 'BetterDeezer'
-$Files = @('launcher.ps1', 'uninstall.ps1', 'better-deezer.user.js')
+$Files = @('patch.ps1', 'uninstall.ps1', 'better-deezer.user.js')
 $French = (Get-UICulture).TwoLetterISOLanguageName -eq 'fr'
+$PowerShellExe = Join-Path $env:WINDIR 'System32\WindowsPowerShell\v1.0\powershell.exe'
 
 function T {
   param([string]$Fr, [string]$En)
@@ -77,22 +75,9 @@ function Find-Deezer {
   return $null
 }
 
-function New-Shortcut {
-  param([string]$Path, [string]$Launcher, [string]$Icon)
-  $shell = New-Object -ComObject WScript.Shell
-  $lnk = $shell.CreateShortcut($Path)
-  $lnk.TargetPath = Join-Path $env:WINDIR 'System32\WindowsPowerShell\v1.0\powershell.exe'
-  $lnk.Arguments = '-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "{0}"' -f $Launcher
-  $lnk.WorkingDirectory = Split-Path -Parent $Launcher
-  $lnk.IconLocation = "$Icon,0"
-  $lnk.Description = 'Deezer with Better Deezer'
-  $lnk.WindowStyle = 7 # minimized: no console flash
-  $lnk.Save()
-}
-
 Write-Host ''
 Write-Host '  Better Deezer' -ForegroundColor White
-Write-Host ('  ' + (T 'Installation pour l''application Deezer (Windows)' 'Install for the Deezer desktop app (Windows)')) -ForegroundColor DarkGray
+Write-Host ('  ' + (T 'Installation dans l''application Deezer (Windows)' 'Install into the Deezer desktop app (Windows)')) -ForegroundColor DarkGray
 Write-Host ''
 
 # 1. Deezer
@@ -104,16 +89,16 @@ if (-not $DeezerPath -or -not (Test-Path $DeezerPath)) {
 }
 Step ((T 'Deezer trouvé : ' 'Deezer found: ') + $DeezerPath)
 
-# 2. Files: next to this script (release zip) or from the latest release
+# 2. Files: next to this script (release zip), a clone's dist\ (after npm run build), or the latest release
 $null = New-Item -ItemType Directory -Force -Path $Dest
 $here = $null
-if ($PSScriptRoot -and (Test-Path (Join-Path $PSScriptRoot 'launcher.ps1'))) { $here = $PSScriptRoot }
+if ($PSScriptRoot -and (Test-Path (Join-Path $PSScriptRoot 'patch.ps1'))) { $here = $PSScriptRoot }
 foreach ($f in $Files) {
   $target = Join-Path $Dest $f
   if ($here -and (Test-Path (Join-Path $here $f))) {
     Copy-Item -Force (Join-Path $here $f) $target
   } elseif ($here -and $f -eq 'better-deezer.user.js' -and (Test-Path (Join-Path $here "..\dist\$f"))) {
-    Copy-Item -Force (Join-Path $here "..\dist\$f") $target # running from a clone after npm run build
+    Copy-Item -Force (Join-Path $here "..\dist\$f") $target
   } else {
     [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
     $url = "https://github.com/$Repo/releases/latest/download/$f"
@@ -130,17 +115,35 @@ foreach ($line in $header) { if ($line -match '@version\s+(\S+)') { $version = $
 @{ DeezerPath = $DeezerPath; Version = $version; InstalledAt = (Get-Date).ToString('s') } |
   ConvertTo-Json | Set-Content -Encoding UTF8 (Join-Path $Dest 'config.json')
 
-# 3. Shortcuts
-$launcher = Join-Path $Dest 'launcher.ps1'
-$startMenu = Join-Path ([Environment]::GetFolderPath('Programs')) 'Better Deezer.lnk'
-New-Shortcut -Path $startMenu -Launcher $launcher -Icon $DeezerPath
-Step (T 'Raccourci ajouté au menu Démarrer' 'Start menu shortcut added')
-if (-not $NoDesktopShortcut) {
-  New-Shortcut -Path (Join-Path ([Environment]::GetFolderPath('Desktop')) 'Better Deezer.lnk') -Launcher $launcher -Icon $DeezerPath
-  Step (T 'Raccourci ajouté au bureau' 'Desktop shortcut added')
+# 3. Old launcher (before 1.1): stop it, remove its shortcuts and files.
+Get-CimInstance Win32_Process -Filter "Name = 'powershell.exe' OR Name = 'pwsh.exe'" -ErrorAction SilentlyContinue |
+  Where-Object { $_.CommandLine -and $_.CommandLine -like '*BetterDeezer*launcher.ps1*' } |
+  ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
+foreach ($s in @(
+    (Join-Path ([Environment]::GetFolderPath('Programs')) 'Better Deezer.lnk'),
+    (Join-Path ([Environment]::GetFolderPath('Desktop')) 'Better Deezer.lnk'),
+    (Join-Path $Dest 'launcher.ps1'), (Join-Path $Dest 'launcher.log'), (Join-Path $Dest 'launcher.log.old'))) {
+  if (Test-Path $s) { Remove-Item -Force $s }
 }
 
-# 4. Settings > Apps entry (per user, no admin)
+# 4. Patch Deezer (closes and restarts it if it was running).
+$patch = Join-Path $Dest 'patch.ps1'
+try {
+  & $patch -DeezerPath $DeezerPath
+} catch {
+  if ("$_" -match 'denied|refus') {
+    throw (T "Impossible de modifier Deezer : accès refusé. Si Deezer est installé dans Program Files, relancez cette installation en administrateur." "Cannot modify Deezer: access denied. If Deezer is installed in Program Files, run this install as administrator.")
+  }
+  throw
+}
+Step (T 'Deezer modifié : Better Deezer est intégré à l''application' 'Deezer patched: Better Deezer is now part of the app')
+
+# 5. Re-apply after Deezer updates (an update replaces app.asar): quietly at each logon.
+$run = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
+$null = New-ItemProperty -Force -Path $run -Name 'BetterDeezer' -PropertyType String -Value ('"{0}" -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "{1}" -Quiet' -f $PowerShellExe, $patch)
+Step (T 'Réapplication automatique après les mises à jour de Deezer (à l''ouverture de session)' 'Re-applied automatically after Deezer updates (at sign-in)')
+
+# 6. Settings > Apps entry (per user, no admin)
 $key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\BetterDeezer'
 $null = New-Item -Force -Path $key
 $uninstall = 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "{0}"' -f (Join-Path $Dest 'uninstall.ps1')
@@ -160,10 +163,9 @@ $null = New-ItemProperty -Force -Path $key -Name 'NoRepair' -Value 1 -PropertyTy
 Step (T 'Désinstallation disponible dans Paramètres > Applications' 'Uninstall available in Settings > Apps')
 
 Write-Host ''
-Write-Host ('  ' + (T "Better Deezer $version est installé. Lancez « Better Deezer » depuis le menu Démarrer." ('Better Deezer {0} is installed. Start "Better Deezer" from the Start menu.' -f $version))) -ForegroundColor Green
-Write-Host ('  ' + (T 'Le raccourci Deezer d''origine lance toujours Deezer sans modification.' 'The original Deezer shortcut still starts plain Deezer.')) -ForegroundColor DarkGray
+Write-Host ('  ' + (T "Better Deezer $version est installé. Ouvrez Deezer comme d'habitude." "Better Deezer $version is installed. Open Deezer as usual.")) -ForegroundColor Green
 Write-Host ''
 
-if (-not $NoLaunch) {
-  Start-Process -FilePath (Join-Path $env:WINDIR 'System32\WindowsPowerShell\v1.0\powershell.exe') -WindowStyle Hidden -ArgumentList @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-WindowStyle', 'Hidden', '-File', "`"$launcher`"")
+if (-not $NoLaunch -and @(Get-Process -Name 'Deezer' -ErrorAction SilentlyContinue).Count -eq 0) {
+  Start-Process -FilePath $DeezerPath -WorkingDirectory (Split-Path -Parent $DeezerPath)
 }
