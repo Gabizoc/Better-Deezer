@@ -10,7 +10,7 @@ A card in the bottom right corner shows the three things to know:
 
 - `Ctrl ,` (`⌘ ,` on Mac) opens the **Better Deezer settings**. It's also in the profile menu (your avatar, top right).
 - `F` opens the **Now playing** view with synced lyrics.
-- The **mouse wheel** works on the volume and on the seek bar.
+- The **mouse wheel** works on the volume and on the player bar's cover.
 
 The card appears once. Afterwards a small "Better Deezer x.y.z" badge shows for 3 seconds at startup (turn it off in *Settings > Appearance*).
 
@@ -22,9 +22,9 @@ The card appears once. Afterwards a small "Better Deezer x.y.z" badge shows for 
 
 ### Side rail and player bar
 - The rail floats; collapsed, its icons are centered. The active page is marked with an accent bar.
-- The player bar floats at the bottom: round play button, filled heart when liked, thin seek bar between the two times.
+- The player bar floats at the bottom: quiet round play button, filled heart when liked, thin seek bar between the two times.
 - **Volume**: click the speaker to unfold a slider, click it again to mute. Wheel over the speaker or the slider: ±5 % (±1 % with Shift; the step can be 2, 5 or 10 % in *Settings > Playback*). Alt+click or middle click: mute.
-- **Seek with the wheel** over the seek bar or the cover: ±5 s (±15 s with Shift).
+- **Seek with the wheel** over the cover in the player bar: ±5 s. The seek bar itself ignores the wheel, so scrolling the page never moves the music.
 - Double-click the title in the player bar to open its album.
 - Tooltips on every icon, with the gesture it supports.
 
@@ -40,7 +40,7 @@ The card appears once. Afterwards a small "Better Deezer x.y.z" badge shows for 
 | --- | --- |
 | **Themes** | Light / dark / auto, pick a theme, browse the Marketplace, install from a link or a file, create or customize a theme ([Themes](themes.md)) |
 | **Modules** | Turn extras on and off, live ([Modules](modules.md)) |
-| **Appearance** | Turn the visual parts on and off, the startup badge |
+| **Appearance** | Turn the visual parts on and off, the startup badge, and the **Sidebar** entries (Home, Explore, Favourite tracks, Playlists, Albums, Artists, Podcasts). The Library entries are hidden by default; your playlists and pinned items always stay. |
 | **Playback & volume** | Player bar features, wheel gestures, tooltips, volume step |
 | **Home** | Hide the home carousels you don't use |
 | **Recommendations** | Home order: *Deezer* (unchanged), *Familiar* (your mixes and favorites first) or *Discovery* (new releases and trends first), plus *By time of day*. And a **Don't recommend** list: cards and tracks matching an artist, genre or word are hidden everywhere |

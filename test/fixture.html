@@ -34,6 +34,7 @@
   .css-side { position: fixed; top: 0; bottom: 0; left: 0; width: var(--layout-sidebar-width); padding-bottom: 80px; display: flex; flex-direction: column; gap: 16px; background: var(--tempo-colors-background-neutral-secondary-default); z-index: 1; }
   .css-side a { display: flex; align-items: center; gap: 12px; padding: 8px 16px; color: var(--tempo-colors-text-neutral-secondary-default); text-decoration: none; }
   .css-side .css-pins { flex: 1; overflow: auto; display: flex; flex-direction: column; gap: 4px; padding: 0 12px; }
+  .css-side h2 { margin: 0; font-size: 14px; font-weight: 500; }
   .css-ico { width: 24px; height: 24px; border-radius: 6px; background: currentColor; flex: none; }
   .css-top { position: fixed; top: 0; right: 0; left: var(--layout-sidebar-width); height: 80px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 16px; z-index: 2; }
   .css-top .css-actions { display: flex; gap: 12px; align-items: center; }
@@ -62,11 +63,21 @@
   <div class="css-side">
     <a href="/fr/" aria-label="Deezer logo"><span class="css-ico"></span></a>
     <nav>
-      <a href="/fr/" aria-current="page"><span class="css-ico"></span><span class="css-lbl">Accueil</span></a>
-      <a href="/fr/channels/explore"><span class="css-ico"></span><span class="css-lbl">Explorer</span></a>
-      <a href="/fr/profile/1/library"><span class="css-ico"></span><span class="css-lbl">Favoris</span></a>
+      <a href="/fr/" aria-current="page"><svg data-testid="HouseOutlinedIcon" class="css-ico" viewBox="0 0 24 24"></svg><h2 class="css-lbl">Accueil</h2></a>
+      <a href="/fr/channels/explore/explore-tab"><svg data-testid="CompassOutlinedIcon" class="css-ico" viewBox="0 0 24 24"></svg><h2 class="css-lbl">Explorer</h2></a>
     </nav>
+    <div class="css-lib">
+      <div class="css-libhead"><p>Bibliothèque</p></div>
+      <div class="css-liblist">
+        <a href="/fr/library/loved"><svg data-testid="HeartOutlinedIcon" class="css-ico" viewBox="0 0 24 24"></svg><h2 class="css-lbl">Coups de cœur</h2></a>
+        <a href="/fr/library/playlists"><svg data-testid="PlaylistOutlinedIcon" class="css-ico" viewBox="0 0 24 24"></svg><h2 class="css-lbl">Playlists</h2></a>
+        <a href="/fr/library/albums"><svg data-testid="AlbumOutlinedIcon" class="css-ico" viewBox="0 0 24 24"></svg><h2 class="css-lbl">Albums</h2></a>
+        <a href="/fr/library/artists"><svg data-testid="UserOutlinedIcon" class="css-ico" viewBox="0 0 24 24"></svg><h2 class="css-lbl">Artistes</h2></a>
+        <a href="/fr/library/podcasts"><svg data-testid="MicrophoneOutlinedIcon" class="css-ico" viewBox="0 0 24 24"></svg><h2 class="css-lbl">Podcasts</h2></a>
+      </div>
+    </div>
     <div class="css-pins">
+      <a href="/fr/library/loved" id="pinned-loved"><div class="css-ico"><svg data-testid="HeartFilledIcon" viewBox="0 0 24 24"></svg></div></a>
       <a href="/fr/playlist/1"><span class="css-ico"></span></a>
       <a href="/fr/playlist/2"><span class="css-ico"></span></a>
     </div>
@@ -204,7 +215,7 @@
     const pop = document.createElement("div");
     pop.className = "chakra-popover__popper";
     pop.style.cssText = "position: fixed; top: 72px; right: 72px; z-index: 1500";
-    pop.innerHTML = '<section role="dialog" data-testid="popover-content" id="popover-content-notif" class="css-pop" style="position: static; width: 360px"><div data-popper-arrow><div data-popper-arrow-inner></div></div><div><h2>Notifications</h2><li><div role="group"><figure><img alt="" width="48" height="48"></figure><div role="cell"><h2><a href="/fr/album/1">Toupou</a></h2><p>Moha MMZ</p></div></div><p>IL Y A 11 HEURES - NOUVEAU SINGLE</p></li></div></section>';
+    pop.innerHTML = '<section role="dialog" data-testid="popover-content" id="popover-content-notif" class="css-pop" style="position: static; width: 360px"><div data-popper-arrow><div data-popper-arrow-inner></div></div><div><h2>Notifications</h2><li><div role="group"><figure style="position: relative; margin: 0"><img alt="" width="48" height="48"><div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center"><button type="button" class="action-item-tempo-btn" aria-label="Play" style="width: 48px; height: 48px; border-radius: 50%; background: #fff; color: #000"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M8 5v14l11-7z"/></svg></button></div></figure><div role="cell"><h2><a href="/fr/album/1">Toupou</a></h2><p>Moha MMZ</p></div></div><p>IL Y A 11 HEURES - NOUVEAU SINGLE</p></li></div></section>';
     document.body.appendChild(pop);
   };
   window.__expandSidebar = (on) => {

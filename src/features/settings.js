@@ -250,8 +250,37 @@ BD.feature({
         this.featureToggle("overlays"),
         this.featureToggle("now-playing"),
         this.row(BD.t("Badge au démarrage", "Startup badge"), BD.t("« Better Deezer x.y.z » pendant 3 s.", "“Better Deezer x.y.z” for 3 s."), this.toggle("badge", true))
-      )
+      ),
+      this.railSection()
     ];
+  },
+
+  /** Settings > Appearance > Sidebar: one switch per navigation entry of the rail (features/shell.js). */
+  railSection() {
+    const hidden = BD.railNav.hidden();
+    const rows = Object.entries(BD.railNav.items).map(([key, [fr, en]]) => {
+      const input = BD.h("input", {
+        type: "checkbox",
+        role: "switch",
+        class: "bd-switch",
+        "aria-label": BD.t(fr, en),
+        onchange: () => BD.railNav.setVisible(key, input.checked)
+      });
+      input.checked = !hidden.has(key);
+      return this.row(BD.t(fr, en), null, input);
+    });
+    return this.section(
+      BD.t("Barre latérale", "Sidebar"),
+      BD.h(
+        "p",
+        { class: "bd-set-hint" },
+        BD.t(
+          "Les entrées affichées dans la barre de gauche. Vos playlists et éléments épinglés restent en dessous.",
+          "The entries shown in the left bar. Your playlists and pinned items stay below them."
+        )
+      ),
+      ...rows
+    );
   },
 
   tab_playback() {
@@ -259,7 +288,6 @@ BD.feature({
       this.section(
         BD.t("Barre de lecture", "Player bar"),
         this.featureToggle("player"),
-        this.featureToggle("seek-wheel"),
         this.featureToggle("dock-gestures"),
         this.featureToggle("tooltips"),
         this.featureToggle("tips")
@@ -401,8 +429,8 @@ BD.feature({
           line([mod, ","], "Réglages Better Deezer", "Better Deezer settings"),
           line(["F"], "Vue « En écoute » et paroles", "Now playing view and lyrics"),
           line(["Q"], "File d'attente", "Queue"),
-          line([BD.t("Molette", "Wheel")], "Sur le volume : ±5 % · sur la barre de progression : ±5 s", "On volume: ±5% · on the seek bar: ±5 s"),
-          line([BD.t("Maj", "Shift"), BD.t("Molette", "Wheel")], "Volume ±1 % · progression ±15 s", "Volume ±1% · seek ±15 s"),
+          line([BD.t("Molette", "Wheel")], "Sur le volume : ±5 % · sur la pochette : ±5 s", "On volume: ±5% · on the cover: ±5 s"),
+          line([BD.t("Maj", "Shift"), BD.t("Molette", "Wheel")], "Volume ±1 %", "Volume ±1%"),
           line(["Alt", BD.t("Clic", "Click")], "Sur le volume : muet", "On volume: mute")
         )
       ),
