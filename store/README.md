@@ -19,33 +19,33 @@ Everything to copy into the [Developer Dashboard](https://chrome.google.com/webs
 **Description (fr)**
 
 ```text
-Better Deezer redessine le lecteur web de Deezer et ajoute des dizaines de petites retouches. Extension non officielle, sans lien avec Deezer.
+🎧 Better Deezer redessine le lecteur web de Deezer et ajoute des dizaines de petites retouches. Extension non officielle, sans lien avec Deezer.
 
-THÈMES
-• 6 thèmes inclus, en clair, en sombre ou selon le système
-• Une Marketplace de thèmes de la communauté
-• Un éditeur avec aperçu en direct et contrôle de lisibilité
+🎨 THÈMES
+• 🌗 6 thèmes inclus, en clair, en sombre ou selon le système
+• 🛍️ Une Marketplace de thèmes de la communauté
+• ✏️ Un éditeur avec aperçu en direct et contrôle de lisibilité
 
-EN ÉCOUTE
-• Grande pochette et paroles synchronisées, mot à mot quand Deezer les a
+🎤 EN ÉCOUTE
+• 💿 Grande pochette et paroles synchronisées, mot à mot quand Deezer les a
 
-MISE EN PAGE
-• Recherche centrée (Ctrl K), barre latérale et lecteur flottants
-• En-têtes d'album et d'artiste teintés par la pochette
-• Menus, notifications et fenêtres restylés
+🪟 MISE EN PAGE
+• 🔍 Recherche centrée (Ctrl K), barre latérale et lecteur flottants
+• 🖼️ En-têtes d'album et d'artiste teintés par la pochette
+• 💬 Menus, notifications et fenêtres restylés
 
-CONFORT
-• Volume : un clic déplie un curseur, la molette règle (5 %, 1 % avec Maj)
-• Molette sur la pochette du lecteur pour avancer de 5 s
-• Accueil : sections à masquer, ordre au choix, liste « Ne plus me recommander »
-• Minuteur de sommeil, mode compact, masquage des bannières promotionnelles
+🎛️ CONFORT
+• 🔊 Volume : un clic déplie un curseur, la molette règle (5 %, 1 % avec Maj)
+• ⏩ Molette sur la pochette du lecteur pour avancer de 5 s
+• 🏠 Accueil : sections à masquer, ordre au choix, liste « Ne plus me recommander »
+• 😴 Minuteur de sommeil, mode compact, masquage des bannières promotionnelles
 
-Tout se règle dans les Réglages Better Deezer (Ctrl ,).
+⚙️ Tout se règle dans les Réglages Better Deezer (Ctrl ,).
 
-Vie privée : pas de compte, pas de statistiques, pas de serveur. Vos réglages restent dans votre navigateur.
+🔒 Vie privée : pas de compte, pas de statistiques, pas de serveur. Vos réglages restent dans votre navigateur.
 
-Code source (licence MIT) : https://github.com/Gabizoc/Better-Deezer
-Existe aussi pour l'application Windows de Deezer.
+💜 Code source (licence MIT) : https://github.com/Gabizoc/Better-Deezer
+💻 Existe aussi pour l'application Windows de Deezer.
 
 Deezer est une marque de Deezer SA. Better Deezer n'est ni affilié à Deezer, ni approuvé par Deezer.
 ```
