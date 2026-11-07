@@ -209,6 +209,16 @@ html[data-bd="on"] .bd-chip[aria-pressed="true"] {
   letter-spacing: -0.035em;
 }
 
+/* Home order (Settings > Recommendations): sections keep their DOM place, CSS orders them. */
+html[data-bd="on"] [data-bd="home-list"] {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+html[data-bd="on"] [data-bd="home-list"] > .bd-greeting {
+  order: -100000;
+}
+
 html[data-bd="on"] [data-bd-hidden="true"] {
   display: none !important;
 }

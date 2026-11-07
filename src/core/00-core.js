@@ -86,10 +86,16 @@ BD.h = (tag, props = {}, ...children) => {
 
 /**
  * Register a feature.
- *  id      unique name, also the settings key (`bd:feature:<id>` = false disables it)
- *  label   [fr, en] shown in the Better Deezer settings panel (omit to hide the toggle)
- *  setup   runs once at boot
- *  update  runs on every (throttled) DOM change; must be idempotent and cheap
+ *  id           unique name, also the settings key (`bd:feature:<id>` = false disables it)
+ *  label        [fr, en] shown in the Better Deezer settings panel (omit to hide the toggle)
+ *  description  [fr, en] optional longer text under the label
+ *  module       true to list it in Settings > Modules, with `glyph` (an SVG path, 24×24, stroked)
+ *  live         true if it can be switched on/off without reloading (needs `teardown` when it leaves traces)
+ *  setup        runs once, the first time the feature is on
+ *  update       runs on every (throttled) DOM change; must be idempotent and cheap
+ *  teardown     undoes setup/update when the feature is switched off (live features)
+ *
+ * Avoid other property names that could clash with these (e.g. a method called `label`).
  */
 BD.feature = (def) => BD.features.push(def);
 

@@ -319,3 +319,184 @@ html[data-bd-theme="light"] .bd-np-bg {
 @keyframes bd-np-out {
   to { opacity: 0; transform: scale(0.985); }
 }
+
+/* ---------- Smooth transitions (modules.js: transitions) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-bd-transitions="true"] [data-bd="page"][data-bd-enter="true"],
+  html[data-bd-transitions="true"] #page_content[data-bd-enter="true"] {
+    animation: bd-page-in 360ms var(--bd-ease) backwards;
+  }
+
+  html[data-bd-transitions="true"] [data-bd="dock"] [data-testid="item_cover"] img[data-bd-enter="true"] {
+    animation: bd-cover-in 420ms var(--bd-ease) backwards;
+  }
+
+  html[data-bd-transitions="true"] [data-bd-role="card"] {
+    transition: transform var(--bd-t-base) var(--bd-ease) !important;
+  }
+
+  html[data-bd-transitions="true"] [data-bd-role="card"]:hover {
+    transform: translateY(-3px);
+  }
+
+  html[data-bd-transitions="true"] .bd-np-cover {
+    transition: opacity 300ms var(--bd-ease);
+  }
+}
+
+@keyframes bd-page-in {
+  from { opacity: 0; transform: translateY(8px); }
+}
+
+@keyframes bd-cover-in {
+  from { opacity: 0; transform: scale(0.92); }
+}
+
+/* ---------- Hide promos (modules.js: hide-promos) ---------- */
+html[data-bd-hide-promos="true"] [data-bd-promo="true"],
+html[data-bd-hide-promos="true"] [data-testid="conversionBanner"],
+html[data-bd-hide-promos="true"] [data-testid="minibanner-root"],
+html[data-bd-hide-promos="true"] [data-testid="subscriptionBanner"],
+html[data-bd-hide-promos="true"] [data-testid^="adslot"] {
+  display: none !important;
+}
+
+/* ---------- Sleep timer badge (modules.js: sleep-timer) ---------- */
+html[data-bd="on"] .bd-sleep-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px 0 8px;
+  border: 0;
+  border-radius: var(--bd-r-pill);
+  background: var(--bd-accent-soft);
+  color: var(--bd-accent-text);
+  font: 600 12px/1 var(--bd-font-ui);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+html[data-bd="on"] .bd-sleep-badge:hover {
+  background: var(--bd-surface-3);
+  color: var(--bd-text);
+}
+
+.bd-sleep-moon {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: inset -4px -2px 0 0 currentColor;
+}
+
+/* ---------- Compact mode (modules.js: compact) ---------- */
+html[data-bd-compact="true"] {
+  --bd-dock-h: 64px;
+  --bd-gap: 8px;
+}
+
+html[data-bd-compact="true"] .bd-greeting-title {
+  font-size: clamp(24px, 2.4vw, 32px);
+}
+
+html[data-bd-compact="true"] .bd-greeting {
+  padding: 0;
+}
+
+html[data-bd-compact="true"] [data-bd="page-header"] img {
+  max-width: 160px !important;
+  max-height: 160px !important;
+}
+
+html[data-bd-compact="true"] [data-bd="page-header"] h1,
+html[data-bd-compact="true"] [data-bd="page-header"] h2 {
+  font-size: clamp(28px, 3vw, 44px) !important;
+}
+
+/* ---------- Settings > Modules ---------- */
+.bd-modules {
+  display: grid;
+  gap: 10px;
+}
+
+.bd-module {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: start;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid var(--bd-line);
+  border-radius: var(--bd-r-card);
+  background: var(--bd-surface-1);
+  transition: border-color var(--bd-t-fast) var(--bd-ease);
+}
+
+.bd-module[data-on="true"] {
+  border-color: var(--bd-line-strong);
+}
+
+.bd-module-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--bd-r-chip);
+  background: var(--bd-surface-2);
+  color: var(--bd-text-2);
+}
+
+.bd-module[data-on="true"] .bd-module-icon {
+  background: var(--bd-accent-soft);
+  color: var(--bd-accent-text);
+}
+
+.bd-module-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bd-module-text h4 {
+  margin: 2px 0 4px;
+  color: var(--bd-text);
+  font: 700 14px/1.3 var(--bd-font-ui);
+}
+
+.bd-module-text p {
+  margin: 0;
+  color: var(--bd-text-2);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.bd-sleep-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.bd-chip-btn {
+  height: 30px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--bd-r-pill);
+  background: var(--bd-surface-2);
+  color: var(--bd-text);
+  font: 600 12px/1 var(--bd-font-ui);
+  cursor: pointer;
+}
+
+.bd-chip-btn:hover {
+  background: var(--bd-surface-3);
+}
+
+.bd-chip-btn[data-variant="stop"] {
+  background: var(--bd-accent);
+  color: var(--bd-on-accent);
+}
