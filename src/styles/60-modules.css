@@ -162,58 +162,112 @@ html[data-bd-theme="light"] .bd-np-bg {
 }
 
 .bd-np-bar {
+  --pos: 0%;
   position: relative;
   flex: 1;
-  height: 4px;
+  height: 20px; /* hit area; the visible track is ::before */
+  cursor: pointer;
+  touch-action: none;
+  outline: none;
+}
+
+.bd-np-bar::before {
+  content: "";
+  position: absolute;
+  inset: 8px 0;
   border-radius: var(--bd-r-pill);
   background: color-mix(in srgb, var(--bd-text) 18%, transparent);
-  cursor: pointer;
+  transition: inset var(--bd-t-fast) var(--bd-ease);
 }
 
-.bd-np-bar:hover {
-  height: 6px;
-}
-
-.bd-np-bar span {
+.bd-np-fill {
   position: absolute;
-  inset: 0 auto 0 0;
-  border-radius: inherit;
+  inset: 8px auto 8px 0;
+  width: var(--pos);
+  border-radius: var(--bd-r-pill);
   background: var(--bd-accent);
+  transition: inset var(--bd-t-fast) var(--bd-ease);
+}
+
+.bd-np-thumb {
+  position: absolute;
+  top: 50%;
+  left: var(--pos);
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: var(--bd-r-pill);
+  background: var(--bd-text);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  transform: scale(0);
+  transition: transform var(--bd-t-fast) var(--bd-ease);
+}
+
+.bd-np-bar:is(:hover, :focus-visible, [data-dragging])::before,
+.bd-np-bar:is(:hover, :focus-visible, [data-dragging]) .bd-np-fill {
+  inset-block: 7px;
+}
+
+.bd-np-bar:is(:hover, :focus-visible, [data-dragging]) .bd-np-thumb {
+  transform: scale(1);
+}
+
+.bd-np-bar[data-dragging] {
+  cursor: grabbing;
 }
 
 .bd-np-controls {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 18px;
+  gap: 28px;
+  margin-top: 4px;
 }
 
 .bd-np-ctl {
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
+  padding: 0;
   border: 0;
   border-radius: var(--bd-r-pill);
-  background: transparent;
+  background: color-mix(in srgb, var(--bd-text) 8%, transparent);
   color: var(--bd-text);
   cursor: pointer;
+  transition: background-color var(--bd-t-fast) var(--bd-ease), transform var(--bd-t-fast) var(--bd-ease), box-shadow var(--bd-t-fast) var(--bd-ease);
 }
 
 .bd-np-ctl:hover {
-  background: color-mix(in srgb, var(--bd-text) 10%, transparent);
+  background: color-mix(in srgb, var(--bd-text) 16%, transparent);
+  transform: scale(1.06);
+}
+
+.bd-np-ctl:active {
+  transform: scale(0.94);
+}
+
+#bd-np .bd-np-ctl svg {
+  width: 24px;
+  height: 24px;
 }
 
 .bd-np-ctl.bd-np-play {
-  width: 64px;
-  height: 64px;
+  width: 72px;
+  height: 72px;
   background: var(--bd-accent);
   color: var(--bd-on-accent);
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--bd-accent) 45%, transparent);
+}
+
+#bd-np .bd-np-ctl.bd-np-play svg {
+  width: 30px;
+  height: 30px;
 }
 
 .bd-np-ctl.bd-np-play:hover {
   background: var(--bd-accent-hover);
-  transform: scale(1.04);
+  box-shadow: 0 14px 38px color-mix(in srgb, var(--bd-accent) 55%, transparent);
 }
 
 .bd-np-right {
@@ -274,6 +328,78 @@ html[data-bd-theme="light"] .bd-np-bg {
 .bd-np-lines li[data-state="current"] {
   color: var(--bd-text);
   transform: scale(1.04);
+}
+
+/* Rhythm: the current line fills at singing pace (--p, 0..1, set every frame).
+   The span is inline so the fill follows the text across wrapped lines. */
+.bd-np-lines li[data-state="current"] {
+  color: color-mix(in srgb, var(--bd-text) 42%, transparent);
+}
+
+.bd-np-lines li[data-state="current"] .bd-np-text {
+  background: linear-gradient(
+    90deg,
+    var(--bd-text) calc(var(--p, 0) * 100% - 3%),
+    color-mix(in srgb, var(--bd-text) 42%, transparent) calc(var(--p, 0) * 100% + 3%)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Instrumental break / intro: three dots that light up one by one, breathing */
+.bd-np-dots {
+  display: inline-flex;
+  gap: 10px;
+  padding: 6px 0;
+  vertical-align: middle;
+}
+
+.bd-np-dots i {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--bd-r-pill);
+  background: currentColor;
+  opacity: 0.35;
+  transition: opacity 300ms var(--bd-ease), transform 300ms var(--bd-ease);
+}
+
+.bd-np-lines li[data-break="true"]:not([data-state="current"]) {
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+.bd-np-lines li[data-break="true"][data-state="current"] {
+  color: var(--bd-text);
+  transform: none;
+}
+
+.bd-np-lines li[data-state="current"] .bd-np-dots {
+  animation: bd-np-breathe 1.8s var(--bd-ease) infinite;
+}
+
+.bd-np-lines li[data-state="current"] .bd-np-dots i:nth-child(1) {
+  opacity: calc(0.3 + 0.7 * min(1, var(--p, 0) * 3));
+}
+
+.bd-np-lines li[data-state="current"] .bd-np-dots i:nth-child(2) {
+  opacity: calc(0.3 + 0.7 * clamp(0, var(--p, 0) * 3 - 1, 1));
+}
+
+.bd-np-lines li[data-state="current"] .bd-np-dots i:nth-child(3) {
+  opacity: calc(0.3 + 0.7 * clamp(0, var(--p, 0) * 3 - 2, 1));
+}
+
+@keyframes bd-np-breathe {
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bd-np-lines li[data-state="current"] .bd-np-dots {
+    animation: none;
+  }
 }
 
 .bd-np-lines .bd-np-note {

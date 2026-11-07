@@ -24,6 +24,7 @@ BD.optionalAnchors = new Set([
   "accountPopover",
   "accountMenuList",
   "contextMenus",
+  "nativeTooltips",
   "menus",
   "modals",
   "popovers",
@@ -199,6 +200,11 @@ BD.anchors = {
   modals: () => BD.qa('[role="dialog"][aria-modal="true"], [role="alertdialog"]').filter(BD.isDeezers),
   popovers: () => BD.qa('[role="dialog"]:not([aria-modal="true"])').filter(BD.isDeezers),
   menus: () => BD.qa('[role="menu"]').filter(BD.isDeezers),
+  /** Deezer's own hover tooltips (Chakra Tooltip, role=tooltip), not its volume popover. */
+  nativeTooltips: () =>
+    BD.qa('[role="tooltip"]').filter(
+      (el) => BD.isDeezers(el) && !el.closest('[data-testid="volume_menu"], [data-bd="volume-native"]') && !el.querySelector('[data-testid^="volume_menu"]')
+    ),
   contextMenus: () => BD.qa('[data-testid="context-menu-content"]'),
   /** Toast cards: Chakra's toast manager lists (ids chakra-toast-manager-<position>). */
   toasts: () => BD.qa('[id^="chakra-toast-manager"] > li > *, [role="status"].chakra-toast__inner')

@@ -53,7 +53,7 @@ await context.route("https://lrclib.net/**", (route) =>
     status: 200,
     contentType: "application/json",
     headers: { "access-control-allow-origin": "*" },
-    body: JSON.stringify({ trackName: "One More Time", artistName: "Daft Punk", duration: 320, instrumental: false, syncedLyrics: "[00:00.50] One more time\n[01:05.00] We're gonna celebrate\n[01:10.00] Oh yeah, all right\n[01:15.00] Don't stop the dancing\n[02:00.00] One more time" })
+    body: JSON.stringify({ trackName: "One More Time", artistName: "Daft Punk", duration: 320, instrumental: false, syncedLyrics: "[00:00.50] One more time\n[01:05.00] We're gonna celebrate\n[01:10.00] Oh yeah, all right\n[01:15.00] Don't stop the dancing\n[01:20.00] \n[02:00.00] One more time" })
   })
 );
 const page = await context.newPage();
@@ -181,7 +181,7 @@ check("an all-hidden Library block hides its title too", await $eval(() => docum
 // ---------- 4. Player bar ----------
 const css = (sel, prop) => $eval(([s, p]) => { const el = document.querySelector(s); return el ? getComputedStyle(el)[p] : null; }, [sel, prop]);
 check("dock floats with rounded corners", (await css('[data-bd="dock"]', "borderRadius")) === "22px" && (await css('[data-bd="dock"]', "bottom")) === "12px");
-check("play button is a quiet round surface-3 disc", (await css('[data-bd-role="play"]', "backgroundColor")) === "rgb(38, 35, 42)" && (await css('[data-bd-role="play"]', "borderRadius")) !== "0px", await css('[data-bd-role="play"]', "backgroundColor"));
+check("play button is a round accent disc", (await css('[data-bd-role="play"]', "backgroundColor")) === "rgb(162, 56, 255)" && (await css('[data-bd-role="play"]', "borderRadius")) !== "0px", await css('[data-bd-role="play"]', "backgroundColor"));
 await page.click('[data-bd-role="like"]');
 await page.waitForTimeout(100);
 check("liked heart is filled accent", (await css('[data-bd-role="like"] svg', "fill")) === "rgb(162, 56, 255)", await css('[data-bd-role="like"] svg', "fill"));
@@ -214,7 +214,11 @@ await page.fill('[data-testid="search_field"]', "daft");
 check("Ctrl K hint hidden once something is typed (clear button's spot)", (await css('[data-bd="search-field-group"] .bd-kbd', "display")) === "none");
 await page.fill('[data-testid="search_field"]', "");
 // Tooltip: moving from a button onto its icon keeps the same tooltip (no flicker)
-const prev = page.locator('[data-bd="dock"] [data-testid="previous_track_button"]');
+const prevBox = await page.locator('[data-bd="dock"] [data-testid="previous_track_button"]').boundingBox();
+await page.mouse.move(prevBox.x + prevBox.width / 2, prevBox.y + prevBox.height / 2);
+await page.waitForTimeout(100);
+check("previous / next get no tooltip of ours (Deezer shows the track there)", await $eval(() => !document.querySelector(".bd-tooltip")));
+const prev = page.locator('[data-bd="dock"] [data-testid="queue_list_button"]');
 const pb = await prev.boundingBox();
 await page.mouse.move(pb.x + pb.width / 2, pb.y + 3);
 await page.waitForTimeout(100);
@@ -223,9 +227,14 @@ await page.mouse.move(pb.x + pb.width / 2, pb.y + pb.height / 2);
 await page.waitForTimeout(100);
 const tip2 = await $eval(() => [...document.querySelectorAll(".bd-tooltip")].map((t) => t.dataset.n || "new").join(","));
 check("dock tooltip stays put when moving onto the icon", tip1 && tip2 === "1", `${tip1} ${tip2}`);
+await $eval(() => { const t = document.createElement("div"); t.setAttribute("role", "tooltip"); t.id = "native-tip"; t.textContent = "File d'attente"; document.body.append(t); });
+await page.waitForTimeout(150);
+check("Deezer's own tooltip is hidden while ours is shown (no double tooltip)", (await css("#native-tip", "display")) === "none");
 await page.mouse.move(700, 300);
 await page.waitForTimeout(100);
 check("dock tooltip hides when the pointer leaves", await $eval(() => !document.querySelector(".bd-tooltip")));
+check("Deezer's tooltip shows normally otherwise, styled like ours", (await css("#native-tip", "display")) !== "none" && (await css("#native-tip", "borderRadius")) !== "0px");
+await $eval(() => document.getElementById("native-tip").remove());
 await page.click('[data-testid="topbar-profile"]');
 await page.waitForTimeout(150);
 check("profile menu tagged and rounded 22", (await css('[data-bd="account-menu"]', "borderRadius")) === "22px");
@@ -368,8 +377,19 @@ await page.keyboard.press("f");
 await page.waitForTimeout(800);
 check("F opens the now playing view", await $eval(() => !!document.getElementById("bd-np")));
 const np = await $eval(() => ({ title: document.querySelector(".bd-np-title")?.textContent, lines: document.querySelectorAll(".bd-np-lines li").length, current: document.querySelector('.bd-np-lines li[data-state="current"]')?.textContent }));
-check("synced lyrics loaded and the current line follows the seek bar (1:12)", np.lines === 5 && np.current === "Oh yeah, all right", JSON.stringify(np));
+check("synced lyrics loaded and the current line follows the seek bar (1:12)", np.lines === 6 && np.current === "Oh yeah, all right", JSON.stringify(np));
 await shot("nowplaying");
+const rhythm = await $eval(() => ({ p: Number(document.querySelector('.bd-np-lines li[data-state="current"]').style.getPropertyValue("--p")), dots: document.querySelectorAll('.bd-np-lines li[data-break="true"] .bd-np-dots i').length }));
+check("current line fills with the rhythm (--p) and breaks show three dots", rhythm.p > 0 && rhythm.p <= 1 && rhythm.dots === 3, JSON.stringify(rhythm));
+const nbar = await page.locator(".bd-np-bar").boundingBox();
+await page.mouse.move(nbar.x + nbar.width * 0.25, nbar.y + nbar.height / 2);
+await page.mouse.down();
+await page.mouse.move(nbar.x + nbar.width * 0.5, nbar.y + nbar.height / 2, { steps: 4 });
+const midDrag = await $eval(() => Number(document.querySelector('[data-testid="progress_bar"]').value));
+await page.mouse.up();
+await page.waitForTimeout(100);
+const afterDrag = await $eval(() => Number(document.querySelector('[data-testid="progress_bar"]').value));
+check("dragging the Now playing bar previews, then seeks Deezer on release", midDrag !== 160 && Math.abs(afterDrag - 160) <= 2, `${midDrag} -> ${afterDrag}`);
 await page.locator(".bd-np-lines li", { hasText: "One more time" }).last().click();
 await page.waitForTimeout(150);
 check("clicking a lyric line seeks there", Math.abs((await $eval(() => Number(document.querySelector('[data-testid="progress_bar"]').value))) - 120) <= 1);

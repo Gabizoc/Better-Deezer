@@ -27,7 +27,7 @@
     },
     "light": {
       "bg": "#f8f3ee",
-      "surface-1": "#ffffff",
+      "surface-1": "#fcfbf9",
       "surface-2": "#f0e8e0",
       "surface-3": "#e6dbd0",
       "surface-4": "#d9cbbd",
@@ -38,7 +38,7 @@
       "text-3": "#74645a",
       "accent": "#c2410c",
       "accent-text": "#9a3412",
-      "on-accent": "#ffffff"
+      "on-accent": "#fcfbf9"
     }
   }
 }

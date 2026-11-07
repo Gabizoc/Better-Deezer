@@ -4,11 +4,11 @@ Modules are optional extras, a bit like Spicetify's extensions. Turn them on and
 
 | Module | Default | What it does | Network |
 | --- | --- | --- | --- |
-| **Now playing + synced lyrics** | on | `F` or the button in the player bar: full-window view with the big cover on the left and lyrics on the right that scroll with the music. Click a line to jump there. Blurred cover in the background, play / previous / next and a seek bar. `Esc` closes. | `lrclib.net`: title, artist, duration of the current track, only while the view is open |
+| **Now playing + synced lyrics** | on | `F` or the button in the player bar: full-window view with the big cover on the left and lyrics on the right that scroll with the music: the current line fills at singing pace and instrumental breaks show three dots that light up until the voice comes back. Click a line to jump there; click or drag the seek bar (arrows ±5 s). Blurred cover in the background, play / previous / next and a seek bar. `Esc` closes. | `lrclib.net`: title, artist, duration of the current track, only while the view is open |
 | **Smooth transitions** | on | Pages fade in, the player bar cover cross-fades on track change, cards lift on hover. Skipped when your system asks for reduced motion. | none |
 | **Hide promotional banners** | on | Hides "Go Premium" and "Sign up" banners, ad slots and sponsored playlists. Visual only. | none |
 | **Sleep timer** | on | 15 / 30 / 45 / 60 minutes or *End of track*, from the module's card. A badge with the countdown sits in the player bar (click it to cancel). The volume fades over the last minute, Deezer pauses, then the volume is put back. | none |
-| **Accent color from the cover** | off | The accent (seek bar, switches, playing track, buttons) takes the main color of the playing cover, lightened or darkened until it reads well on the theme's background. | none (Deezer's image CDN) |
+| **Accent color from the cover** | off | The accent (play button, seek bar, switches, playing track) takes the main color of the playing cover, lightened or darkened until it reads well on the theme's background. | none (Deezer's image CDN) |
 | **Compact mode** | off | Smaller player bar, tighter spacing, smaller page headers. | none |
 
 ## Lyrics

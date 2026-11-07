@@ -10,6 +10,11 @@
  *
  * Time: Deezer's seek input (data-testid="progress_bar") holds the position in
  * seconds and moves once a second; between ticks we interpolate while playing.
+ *
+ * Rhythm: the current line fills from left to right at singing pace (estimated
+ * from its length, never longer than the gap to the next line), and instrumental
+ * breaks (empty LRC lines, or a long intro) show three dots that light up one by
+ * one until the voice comes back. LRCLIB has line timings only, no beat data.
  */
 BD.feature({
   id: "nowplaying",
@@ -148,6 +153,56 @@ BD.feature({
   },
 
   // ---------- view ----------
+  /** Filled 24x24 glyphs with rounded corners (Graphite icon style). */
+  glyphs: {
+    play: "M8 6.2v11.6c0 1 1.1 1.6 1.9 1.1l9.2-5.8c.8-.5.8-1.7 0-2.2L9.9 5.1C9.1 4.6 8 5.2 8 6.2z",
+    pause: "M7.5 5h2c.8 0 1.5.7 1.5 1.5v11c0 .8-.7 1.5-1.5 1.5h-2C6.7 19 6 18.3 6 17.5v-11C6 5.7 6.7 5 7.5 5zm7 0h2c.8 0 1.5.7 1.5 1.5v11c0 .8-.7 1.5-1.5 1.5h-2c-.8 0-1.5-.7-1.5-1.5v-11c0-.8.7-1.5 1.5-1.5z",
+    previous: "M6 5.5c.6 0 1 .4 1 1v11c0 .6-.4 1-1 1s-1-.4-1-1v-11c0-.6.4-1 1-1zm12.5 1.3v10.4c0 .9-1 1.4-1.7.9l-7.6-5.2c-.6-.4-.6-1.4 0-1.8l7.6-5.2c.7-.5 1.7 0 1.7.9z",
+    next: "M18 5.5c.6 0 1 .4 1 1v11c0 .6-.4 1-1 1s-1-.4-1-1v-11c0-.6.4-1 1-1zM5.5 6.8v10.4c0 .9 1 1.4 1.7.9l7.6-5.2c.6-.4.6-1.4 0-1.8L7.2 5.9c-.7-.5-1.7 0-1.7.9z"
+  },
+
+  /**
+   * The seek bar: click or drag (the position previews while dragging and is
+   * sent to Deezer on release), arrows ±5 s, Home / End.
+   */
+  bindBar(bar) {
+    const duration = () => this.state?.track?.duration || Number(BD.anchors.progressInput()?.max) || 0;
+    const at = (e) => {
+      const r = bar.getBoundingClientRect();
+      return Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * duration();
+    };
+    bar.addEventListener("pointerdown", (e) => {
+      if (e.button !== 0 || !this.state || !duration()) return;
+      e.preventDefault();
+      bar.setPointerCapture(e.pointerId);
+      bar.focus({ preventScroll: true });
+      this.state.drag = at(e);
+      bar.dataset.dragging = "true";
+    });
+    bar.addEventListener("pointermove", (e) => {
+      if (this.state?.drag != null) this.state.drag = at(e);
+    });
+    const release = (e, commit) => {
+      const s = this.state;
+      if (!s || s.drag == null) return;
+      const time = commit ? at(e) : null;
+      s.drag = null;
+      delete bar.dataset.dragging;
+      if (time != null) this.seekTo(time, true);
+    };
+    bar.addEventListener("pointerup", (e) => release(e, true));
+    bar.addEventListener("pointercancel", (e) => release(e, false));
+    bar.addEventListener("keydown", (e) => {
+      const step = { ArrowRight: 5, ArrowUp: 5, ArrowLeft: -5, ArrowDown: -5 }[e.key];
+      if (step) this.seekTo(this.position() + step, true);
+      else if (e.key === "Home") this.seekTo(0, true);
+      else if (e.key === "End") this.seekTo(duration() - 2, true);
+      else return;
+      e.preventDefault();
+      e.stopPropagation();
+    });
+  },
+
   icon(d, fill = false) {
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("viewBox", "0 0 24 24");
@@ -180,13 +235,13 @@ BD.feature({
     const artist = BD.h("p", { class: "bd-np-artist" });
     const elapsed = BD.h("span", { class: "bd-np-time" }, "0:00");
     const total = BD.h("span", { class: "bd-np-time" }, "0:00");
-    const bar = BD.h("div", { class: "bd-np-bar" }, BD.h("span"));
-    bar.addEventListener("click", (e) => {
-      const r = bar.getBoundingClientRect();
-      const input = BD.anchors.progressInput();
-      const player = BD.features.find((f) => f.id === "player");
-      if (input && player?.seek) player.seek(input, ((e.clientX - r.left) / r.width) * Number(input.max || 0));
-    });
+    const bar = BD.h(
+      "div",
+      { class: "bd-np-bar", role: "slider", tabindex: "0", "aria-label": BD.t("Position", "Position"), "aria-valuemin": "0" },
+      BD.h("span", { class: "bd-np-fill" }),
+      BD.h("span", { class: "bd-np-thumb" })
+    );
+    this.bindBar(bar);
     const proxy = (testid, d, label) =>
       BD.h(
         "button",
@@ -199,7 +254,7 @@ BD.feature({
         },
         this.icon(d, true)
       );
-    const playBtn = proxy("play_button_", "M8 5v14l11-7z", BD.t("Lecture / pause", "Play / pause"));
+    const playBtn = proxy("play_button_", this.glyphs.play, BD.t("Lecture / pause", "Play / pause"));
     playBtn.classList.add("bd-np-play");
     const lyricsBox = BD.h("div", { class: "bd-np-lyrics", "aria-live": "off" });
     const lyricsList = BD.h("ol", { class: "bd-np-lines" });
@@ -224,9 +279,9 @@ BD.feature({
           BD.h(
             "div",
             { class: "bd-np-controls" },
-            proxy("previous_track_button", "M6 5h2v14H6zm3 7 9-7v14z", BD.t("Précédent", "Previous")),
+            proxy("previous_track_button", this.glyphs.previous, BD.t("Précédent", "Previous")),
             playBtn,
-            proxy("next_track_button", "M16 5h2v14h-2zM6 5l9 7-9 7z", BD.t("Suivant", "Next"))
+            proxy("next_track_button", this.glyphs.next, BD.t("Suivant", "Next"))
           )
         ),
         BD.h("section", { class: "bd-np-right" }, lyricsBox, BD.h("p", { class: "bd-np-source" }, BD.t("Paroles : LRCLIB", "Lyrics: LRCLIB")))
@@ -261,7 +316,10 @@ BD.feature({
     const s = this.state;
     if (!s) return;
     const playing = this.isPlaying();
-    s.playBtn.replaceChildren(this.icon(playing ? "M7 5h4v14H7zm6 0h4v14h-4z" : "M8 5v14l11-7z", true));
+    if (s.playBtn.dataset.playing !== String(playing)) {
+      s.playBtn.dataset.playing = String(playing);
+      s.playBtn.replaceChildren(this.icon(playing ? this.glyphs.pause : this.glyphs.play, true));
+    }
     s.playBtn.setAttribute("aria-label", playing ? BD.t("Pause", "Pause") : BD.t("Lecture", "Play"));
   },
 
@@ -291,11 +349,15 @@ BD.feature({
     if (result.kind === "none") return note("Pas de paroles trouvées pour ce titre.", "No lyrics found for this track.");
     if (result.kind === "instrumental") return note("Instrumental ♪", "Instrumental ♪");
     if (result.kind === "error") return note("Paroles indisponibles (connexion à lrclib.net impossible).", "Lyrics unavailable (cannot reach lrclib.net).");
-    s.lines = result.lines;
+    // A long intro gets the same "waiting" dots as an instrumental break.
+    const lines = result.kind === "synced" && result.lines[0]?.time > 4 ? [{ time: 0, text: "" }, ...result.lines] : result.lines;
+    s.lines = lines;
     s.lyricsList.replaceChildren(
-      ...result.lines.map((line, i) => {
-        const li = BD.h("li", { "data-i": String(i) }, line.text || "♪");
-        if (line.time !== null) {
+      ...lines.map((line, i) => {
+        const synced = line.time !== null;
+        const content = synced && !line.text ? BD.h("span", { class: "bd-np-dots", "aria-label": "♪" }, BD.h("i"), BD.h("i"), BD.h("i")) : BD.h("span", { class: "bd-np-text" }, line.text || "♪");
+        const li = BD.h("li", { "data-i": String(i), "data-break": String(synced && !line.text) }, content);
+        if (synced) {
           li.tabIndex = 0;
           li.addEventListener("click", () => this.seekTo(line.time));
           li.addEventListener("keydown", (e) => e.key === "Enter" && this.seekTo(line.time));
@@ -306,19 +368,42 @@ BD.feature({
     s.lyricsList.style.transform = "";
   },
 
-  seekTo(time) {
+  /** Seek Deezer's player. Lines start a hair early so the first word isn't cut. */
+  seekTo(time, exact = false) {
     const input = BD.anchors.progressInput();
     const player = BD.features.find((f) => f.id === "player");
-    if (input && player?.seek) player.seek(input, Math.max(0, time - 0.2));
+    if (!input || !player?.seek) return;
+    player.seek(input, Math.max(0, exact ? time : time - 0.2));
+    if (this.state) {
+      // Show the new position at once instead of waiting for Deezer's next tick.
+      this.state.lastValue = Number(input.value);
+      this.state.lastAt = performance.now();
+    }
+  },
+
+  /** 0..1 progress of line i at time t: singing pace for words, the whole gap for a break. */
+  lineProgress(i, t) {
+    const s = this.state;
+    const line = s.lines[i];
+    if (!line) return 0;
+    const end = s.lines[i + 1]?.time ?? (s.track?.duration || line.time + 4);
+    const gap = Math.max(0.3, end - line.time);
+    const span = line.text ? Math.min(gap, Math.max(1.2, line.text.length * 0.075 + 0.4)) : gap;
+    return Math.max(0, Math.min(1, (t - line.time) / span));
   },
 
   loop() {
     const s = this.state;
     if (!s) return;
-    const t = this.position();
+    const playing = this.position();
+    const t = s.drag ?? playing;
     const duration = s.track?.duration || Number(BD.anchors.progressInput()?.max) || 0;
     s.elapsed.textContent = this.fmt(t);
-    s.bar.firstChild.style.width = duration ? `${Math.min(100, (t / duration) * 100)}%` : "0%";
+    const pct = duration ? Math.min(100, (t / duration) * 100) : 0;
+    s.bar.style.setProperty("--pos", `${pct}%`);
+    s.bar.setAttribute("aria-valuemax", String(Math.round(duration)));
+    s.bar.setAttribute("aria-valuenow", String(Math.round(t)));
+    s.bar.setAttribute("aria-valuetext", `${this.fmt(t)} / ${this.fmt(duration)}`);
     if (s.lyricsBox.dataset.kind === "synced" && s.lines.length) {
       let i = -1;
       for (let k = 0; k < s.lines.length; k++) {
@@ -335,6 +420,8 @@ BD.feature({
           s.lyricsList.style.transform = `translateY(${-Math.max(0, offset)}px)`;
         }
       }
+      const current = s.lyricsList.children[i];
+      if (current) current.style.setProperty("--p", this.lineProgress(i, playing).toFixed(3));
     }
     s.frame = requestAnimationFrame(() => this.loop());
   }
