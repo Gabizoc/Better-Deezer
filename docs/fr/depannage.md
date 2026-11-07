@@ -33,13 +33,17 @@ Une fonction qui plante est coupée automatiquement pour la session : une seule 
 | --- | --- |
 | Texte rouge sur la *stratégie d'exécution* | Lancez la commande dans **Windows PowerShell** (pas cmd), ou clic droit sur `install.ps1` > *Exécuter avec PowerShell*. Pas besoin de droits administrateur. |
 | *Installation annulée : Deezer.exe introuvable* | L'installateur cherche aux emplacements habituels puis demande le chemin complet de `Deezer.exe` (Entrée annule). Installez d'abord l'application Deezer, ou indiquez le chemin avant : `$env:BD_DEEZER_PATH = "C:\chemin\vers\Deezer.exe"`. |
-| Deezer s'ouvre sans le skin | Deezer a sans doute été mis à jour, ce qui remplace le fichier modifié. Fermez puis rouvrez votre session Windows (le correctif est réappliqué à l'ouverture de session si Deezer est fermé), ou lancez `%LOCALAPPDATA%\BetterDeezer\patch.ps1`. Puis lisez le journal (ci-dessous). |
+| Deezer s'ouvre sans le skin | Deezer a sans doute été mis à jour, ce qui remplace le fichier modifié. Fermez puis rouvrez votre session Windows (le correctif est réappliqué à l'ouverture de session si Deezer est fermé), ou lancez `better-deezer apply`. `better-deezer status` indique si Deezer est modifié. Puis lisez le journal (ci-dessous). |
+| *better-deezer* n'est pas reconnu | L'installation l'ajoute au PATH de l'utilisateur : ouvrez un **nouveau** terminal. Il se trouve dans `%LOCALAPPDATA%\BetterDeezer\bin`. |
+| *Impossible de joindre les versions sur GitHub* (update) | Pas de connexion, ou dépôt privé : installez GitHub CLI et connectez-vous (`gh auth login`), `better-deezer update` l'utilise alors. |
+| *La version … ne contient pas cli.ps1, ui.ps1 : trop ancienne* | Version demandée plus ancienne que la commande elle-même (1.0.0). Installez-la depuis la page des versions. |
+| *Fichier corrompu : … (somme SHA-256 différente)* | Un fichier téléchargé ne correspond pas au `SHA256SUMS.txt` de la version. Rien n'a été installé ; réessayez. |
 | *Impossible de modifier Deezer : accès refusé* | Deezer est installé pour tous les utilisateurs (Program Files). Lancez l'installation depuis un PowerShell ouvert en administrateur. |
 | *build/main.js not found in app.asar* | Deezer a changé la façon dont son application est emballée. Rien n'a été modifié ; signalez-le avec votre version de Deezer. |
 | *The patched app.asar did not read back correctly* | Le nouveau fichier a échoué à sa vérification et n'a pas été utilisé : Deezer est intact. Signalez-le avec le journal. |
 | Deezer ne démarre plus après l'installation | Restaurez l'original : dans `%LOCALAPPDATA%\Programs\deezer-desktop\resources`, remplacez `app.asar` par `app.asar.bd-backup`, ou réinstallez Deezer. Merci de le signaler. |
 | Alerte antivirus | L'installation modifie un fichier de l'application Deezer (`app.asar`), ce que certains antivirus signalent. Les scripts sont lisibles dans `%LOCALAPPDATA%\BetterDeezer\`. |
-| Désinstaller | *Paramètres Windows > Applications > Better Deezer > Désinstaller*. Le correctif est retiré de Deezer. |
+| Désinstaller | *Paramètres Windows > Applications > Better Deezer > Désinstaller*, ou `better-deezer uninstall`. Le correctif est retiré de Deezer. |
 
 **Journal** : `%LOCALAPPDATA%\BetterDeezer\patch.log` (collez `%LOCALAPPDATA%\BetterDeezer` dans la barre d'adresse de l'Explorateur).
 

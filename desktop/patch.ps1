@@ -33,12 +33,16 @@
 .PARAMETER Quiet
   No output and no message box; used by the logon task. Does nothing when
   Deezer is already patched, and never closes a running Deezer.
+
+.PARAMETER Check
+  Change nothing: output $true when Deezer is patched, $false otherwise.
 #>
 [CmdletBinding()]
 param(
   [string]$DeezerPath,
   [switch]$Remove,
-  [switch]$Quiet
+  [switch]$Quiet,
+  [switch]$Check
 )
 
 Set-StrictMode -Version 2.0
@@ -54,8 +58,13 @@ function Write-BdLog {
   param([string]$Message)
   $line = '{0}  {1}' -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $Message
   Add-Content -Path $LogFile -Value $line -Encoding UTF8
-  if (-not $Quiet) { Write-Host "  > $Message" -ForegroundColor Magenta }
+  if ($Quiet -or $Check) { return }
+  if (Get-Command Write-BdInfo -ErrorAction SilentlyContinue) { Write-BdInfo $Message } else { Write-Host "  > $Message" -ForegroundColor DarkGray }
 }
+
+# The shared look, when this script sits next to ui.ps1 (installed or release folder).
+$ui = Join-Path $Root 'ui.ps1'
+if (Test-Path $ui) { . $ui }
 
 if ((Test-Path $LogFile) -and (Get-Item $LogFile).Length -gt 256KB) { Move-Item -Force $LogFile ($LogFile + '.old') }
 
@@ -204,6 +213,8 @@ try {
   $asar = Read-Asar $asarPath
   $source = Get-MainSource $asar
   $patched = $source.Contains($Marker)
+
+  if ($Check) { return $patched }
 
   if ($Remove) {
     if (-not $patched) { Write-BdLog 'Deezer is not patched, nothing to remove'; return }
