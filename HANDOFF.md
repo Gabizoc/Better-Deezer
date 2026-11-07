@@ -69,7 +69,7 @@ assets/fonts/            woff2 OFL + fonts.json (plages unicode)
 desktop/                 install.ps1 (amorce ASCII) -> setup.ps1, patch.ps1 (patch de app.asar), uninstall.ps1
 scripts/build.mjs        build sans dépendance -> dist/extension + dist/better-deezer.user.js (CSS + polices base64)
 test/fixture.html        page qui reproduit les vraies ancres de Deezer
-test/smoke.mjs           115 vérifications dans Chromium (npm test) ; route deezer.com, lrclib.net et le registre GitHub vers des fixtures
+test/smoke.mjs           118 vérifications dans Chromium (npm test) ; route deezer.com, lrclib.net et le registre GitHub vers des fixtures
 test/cdp-inject.mjs      injecte le payload par CDP dans Chromium sur le vrai deezer.com
 .github/workflows/       ci.yml (build, smoke, parse PS 5.1, PSScriptAnalyzer) ; release.yml (tag v*)
 ```
@@ -143,7 +143,7 @@ Vérifié en session 3 : build, **smoke 78/78**, vrai deezer.com hors connexion 
 
 Attention :
 - Le dépôt est **privé** : la Marketplace et le lien « Aide et dépannage » pointent vers `github.com/Gabizoc/Better-Deezer` (HEAD) et ne répondent pas tant qu'il l'est (la Marketplace affiche alors « Hors ligne » et utilise les thèmes embarqués).
-- La release 1.0.0 n'est pas publiée : pousser le tag `v1.0.0` déclenche `release.yml`.
+- Release **v1.0.0 publiée** le 2026-11-07 (https://github.com/Gabizoc/Better-Deezer/releases/tag/v1.0.0, tag sur `1d6eb87`, CI 118/118). Dépôt privé : la commande `irm … | iex` et les liens de téléchargement ne marchent que pour qui a accès au dépôt.
 
 **App desktop, vérifié sur le PC Windows de l'utilisateur (session 5, Deezer 8.0.10, PS 5.1.26100)** : `patch.ps1` appliqué au vrai `app.asar` ; archive relue par Node ; Deezer lancé **sans argument** démarre normalement ; dans la page, `window.__betterDeezer` présent, `data-bd-theme=dark`, toutes les ancres de `health()` résolues ou « not open ». Non vérifié : `setup.ps1` et `uninstall.ps1` de bout en bout (refusés par le classifieur de permissions, à faire avec l'accord de l'utilisateur), `patch.ps1 -Remove`, `-Quiet` à l'ouverture de session, comportement après une vraie mise à jour de Deezer.
 
@@ -158,7 +158,7 @@ Toujours **non testé** : lecture audio réelle sur le compte (volume, seek, min
 ## 8. Backlog (par priorité)
 
 1. **Tests réels de l'utilisateur** (Windows + Chrome) et corrections.
-2. Rendre le dépôt public (ou héberger `themes/index.json` ailleurs) pour activer la Marketplace en ligne ; publier la release `v1.0.0`.
+2. Rendre le dépôt public (ou héberger `themes/index.json` ailleurs) pour activer la Marketplace en ligne .
 3. « Ne plus me recommander » depuis le menu ⋯ d'une carte (aujourd'hui dans les réglages ; filtre texte, à affiner par id d'artiste).
 4. Clic milieu sur une carte = ajouter à la file (piloter le menu contextuel).
 5. Accueil : ordre manuel des sections (glisser-déposer dans les réglages).
@@ -181,7 +181,7 @@ Toujours **non testé** : lecture audio réelle sur le compte (volume, seek, min
 
 ## 10. Journal
 
-- 2026-11-07 — Session 5 (sur le PC Windows de l'utilisateur) : l'app desktop restait d'origine. Cause : le lanceur CDP ne s'attachait jamais (PS 5.1 : tableau JSON non déroulé, puis valeur de retour polluée par `ConnectAsync`). À la demande de l'utilisateur (« comme Spicetify, pas une autre app »), remplacement du lanceur par `patch.ps1` qui modifie `app.asar`. Vérifié sur le vrai Deezer 8.0.10 (voir §7). `DEBUG-HANDOFF.md` retiré (résolu). Puis, retours de l'utilisateur dans l'app : rail où tout était actif et Bibliothèque visible (routage par hash → `BD.path()`), barres de défilement revenues sous les carrousels de l'accueil (notre `html[data-bd] * { scrollbar-width }` battait le `scrollbar-width: none` de Deezer → barres dessinées en `::-webkit-scrollbar`, version standard en `:where()` pour Firefox). Vérifié dans le vrai Deezer : seul l'onglet courant actif (suit la navigation), seuls Accueil et Explorer affichés, 0 barre sur 16 carrousels. 2 vérifications ajoutées au smoke test, **non exécuté** (Playwright absent du PC). Ensuite : chevrons Précédent / Avancer de l'app desktop masqués en haut du rail (ancre `railHistory`, optionnelle, trouvée par les icônes `ChevronLeftIcon` / `ChevronRightIcon`) ; rail déplié centré verticalement comme le replié (hauteur du contenu, plafonnée, la liste défile dedans) et sans barre de défilement, qui décalait les entrées de 10 px. Vérifié dans Deezer : déplié à 18 / 18 px du haut et du dock, entrées à 9 / 9 px des bords ; replié centré.
+- 2026-11-07 — Session 5 (sur le PC Windows de l'utilisateur) : l'app desktop restait d'origine. Cause : le lanceur CDP ne s'attachait jamais (PS 5.1 : tableau JSON non déroulé, puis valeur de retour polluée par `ConnectAsync`). À la demande de l'utilisateur (« comme Spicetify, pas une autre app »), remplacement du lanceur par `patch.ps1` qui modifie `app.asar`. Vérifié sur le vrai Deezer 8.0.10 (voir §7). `DEBUG-HANDOFF.md` retiré (résolu). Puis, retours de l'utilisateur dans l'app : rail où tout était actif et Bibliothèque visible (routage par hash → `BD.path()`), barres de défilement revenues sous les carrousels de l'accueil (notre `html[data-bd] * { scrollbar-width }` battait le `scrollbar-width: none` de Deezer → barres dessinées en `::-webkit-scrollbar`, version standard en `:where()` pour Firefox). Vérifié dans le vrai Deezer : seul l'onglet courant actif (suit la navigation), seuls Accueil et Explorer affichés, 0 barre sur 16 carrousels. 2 vérifications ajoutées au smoke test (Playwright absent du PC : exécuté en CI, 118/118 après mise à jour du test du rail déplié). Ensuite : chevrons Précédent / Avancer de l'app desktop masqués en haut du rail (ancre `railHistory`, optionnelle, trouvée par les icônes `ChevronLeftIcon` / `ChevronRightIcon`) ; rail déplié centré verticalement comme le replié (hauteur du contenu, plafonnée, la liste défile dedans) et sans barre de défilement, qui décalait les entrées de 10 px. Vérifié dans Deezer : déplié à 18 / 18 px du haut et du dock, entrées à 9 / 9 px des bords ; replié centré.
 
 - 2026-11-06 — Session 1 : design system « Graphite » + écrans ; étude de Deezer desktop 8.0.10 ; squelette surcouche ; ce fichier.
 - 2026-11-06/07 — Session 2 : analyse du bundle web (ancres réelles, jetons Tempo) ; points 1 à 8 ; intégration des artboards HomeLight / Overlays / Settings ; rework des pages ; tests sur le vrai site (anonyme puis compte de l'utilisateur en lecture seule) ; passes de design : alignement de la salutation, prénom chargé tard, photos rondes artiste/profil, teinte claire 12 %, scrollbar du rail replié (icônes décentrées de 5 px), popover de recherche aligné sur le champ + pied de raccourcis (ordre CSS), noms de sections sans « Voir tout », modale à une seule surface, interrupteurs lisibles en clair, en-têtes collants du rail opaques, barre du haut givrée. Lanceur : `Page.enable` indispensable (trouvé par test), `install.ps1` ASCII + `setup.ps1` avec BOM.
