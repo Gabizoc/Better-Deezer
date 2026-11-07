@@ -49,13 +49,16 @@ jobs:
           generate_release_notes: true
           files: release/*
           body: |
-            ### Windows (Deezer desktop app)
-            In PowerShell: `irm https://github.com/Gabizoc/Better-Deezer/releases/latest/download/install.ps1 | iex`
-            Or unzip `better-deezer-windows.zip` and run `install.ps1`.
+            ### Windows (application Deezer)
+            Dans PowerShell : `irm https://github.com/Gabizoc/Better-Deezer/releases/latest/download/install.ps1 | iex`
+            Ou décompressez `better-deezer-windows.zip` et lancez `install.ps1`.
+            Déjà installé : `better-deezer update`.
 
-            ### Browser
-            Unzip `better-deezer-extension.zip`, then load the folder as an unpacked extension
-            (chrome://extensions, Developer mode, "Load unpacked").
+            ### Navigateur
+            Décompressez `better-deezer-extension.zip`, puis chargez le dossier comme extension non empaquetée
+            (chrome://extensions, Mode développeur, « Charger l'extension non empaquetée »).
 
             ### Userscript
-            Open `better-deezer.user.js` with Violentmonkey or Tampermonkey.
+            Ouvrez `better-deezer.user.js` avec Violentmonkey ou Tampermonkey.
+
+            Vérifiez les fichiers avec `SHA256SUMS.txt`. Aide : [Dépannage](https://github.com/Gabizoc/Better-Deezer/blob/HEAD/docs/depannage.md).
