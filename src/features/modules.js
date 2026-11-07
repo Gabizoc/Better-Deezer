@@ -64,7 +64,7 @@ BD.feature({
 
   setup() {
     BD.mark(document.documentElement, "true", "data-bd-transitions");
-    this.path = location.pathname;
+    this.path = BD.path();
   },
 
   teardown() {
@@ -79,8 +79,8 @@ BD.feature({
   },
 
   update() {
-    if (location.pathname !== this.path) {
-      this.path = location.pathname;
+    if (BD.path() !== this.path) {
+      this.path = BD.path();
       this.replay(BD.anchors.page(), "data-bd-enter");
     }
     const img = BD.q('[data-bd="dock"] [data-testid="item_cover"] img');

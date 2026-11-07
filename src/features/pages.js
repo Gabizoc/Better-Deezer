@@ -31,7 +31,7 @@ BD.feature({
     if (cover) {
       BD.mark(cover, "page-cover", "data-bd-role");
       // Artists and profiles get a round picture, like most players.
-      BD.mark(cover, String(/\/(artist|profile)\//.test(location.pathname)), "data-bd-round");
+      BD.mark(cover, String(/\/(artist|profile)\//.test(BD.path())), "data-bd-round");
     }
   },
 
@@ -144,7 +144,7 @@ BD.feature({
   },
 
   isHome() {
-    return /^\/([a-z]{2}(-[a-z]{2})?)?\/?$/i.test(location.pathname);
+    return /^\/([a-z]{2}(-[a-z]{2})?)?\/?$/i.test(BD.path());
   },
 
   sections() {
