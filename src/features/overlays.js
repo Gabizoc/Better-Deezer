@@ -26,11 +26,22 @@ BD.feature({
 
     // Popovers (non-modal dialogs) by purpose
     const notifId = BD.anchors.notificationButton()?.getAttribute("aria-controls");
+    // The card Deezer shows when hovering previous / next (Chakra popover of that button).
+    const previewIds = new Set(
+      BD.qa('[data-bd="dock"] :is([data-testid="previous_track_button"], [data-testid="next_track_button"])')
+        .flatMap((b) => [b, b.parentElement, b.parentElement?.parentElement])
+        .map((el) => el?.getAttribute?.("aria-controls"))
+        .filter(Boolean)
+    );
+    const html = document.documentElement;
+    BD.mark(html, BD.isEnabled("native-tips") ? "on" : "off", "data-bd-native-tips");
+    BD.mark(html, BD.isEnabled("track-previews") ? "on" : "off", "data-bd-track-previews");
     BD.anchors.popovers().forEach((pop) => {
       if (pop.closest('[data-bd="modal"]') || pop.getAttribute("data-bd") === "volume-native") return;
       const testid = pop.getAttribute("data-testid");
       let kind = "popover";
-      if (testid === "search_popper") kind = "search-popover";
+      if (previewIds.has(pop.id)) kind = "track-preview";
+      else if (testid === "search_popper") kind = "search-popover";
       else if (testid === "account-popover-content") kind = "account-menu";
       else if (testid === "context-menu-content") kind = "context-menu";
       else if ((notifId && pop.id === notifId) || BD.q('h2', pop)?.textContent.trim().match(/^notifications?$/i)) kind = "notifications";

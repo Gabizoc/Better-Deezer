@@ -11,10 +11,18 @@
  * Time: Deezer's seek input (data-testid="progress_bar") holds the position in
  * seconds and moves once a second; between ticks we interpolate while playing.
  *
- * Rhythm: the current line fills from left to right at singing pace (estimated
- * from its length, never longer than the gap to the next line), and instrumental
- * breaks (empty LRC lines, or a long intro) show three dots that light up one by
- * one until the voice comes back. LRCLIB has line timings only, no beat data.
+ * Sources, in order (Settings > Playback & volume > Lyrics):
+ *  1. Deezer's own lyrics, word by word when Deezer has them, else line by line
+ *     with each line's real duration. Same request as Deezer's lyrics button:
+ *     your Deezer session asks Deezer's servers (auth.deezer.com, pipe.deezer.com)
+ *     for the playing track's lyrics. Nothing goes anywhere else.
+ *  2. LRCLIB (https://lrclib.net), when Deezer has none: title, artist and
+ *     duration are sent there. Line timings only.
+ *
+ * Rhythm: with word timings each word lights up exactly when it is sung (and
+ * fills over its own duration). With line timings only, the line fills at an
+ * estimated singing pace. Instrumental breaks and long intros show three dots
+ * that light up one by one until the voice comes back.
  */
 BD.feature({
   id: "nowplaying",
@@ -118,6 +126,156 @@ BD.feature({
 
   async lyrics(track) {
     if (this.cache.has(track.key)) return this.cache.get(track.key);
+    if (BD.settings.get("lyrics:source", "deezer") === "deezer") {
+      const fromDeezer = await this.deezerLyrics(track).catch((err) => {
+        BD.log?.("Deezer lyrics unavailable, using LRCLIB:", err.message);
+        return null;
+      });
+      if (fromDeezer) {
+        this.cache.set(track.key, fromDeezer);
+        return fromDeezer;
+      }
+    }
+    const result = await this.lrclib(track);
+    this.cache.set(track.key, result);
+    return result;
+  },
+
+  // ---------- Deezer's own lyrics ----------
+  /**
+   * The playing track's Deezer id, from Deezer's player object. In the page world
+   * (userscript, desktop app) it is read directly; the extension's isolated world
+   * asks extension/page-bridge.js.
+   */
+  currentSong() {
+    try {
+      const s = window.dzPlayer?.getCurrentSong?.();
+      if (s?.SNG_ID) return Promise.resolve({ id: String(s.SNG_ID), title: String(s.SNG_TITLE || ""), duration: Number(s.DURATION) || 0 });
+    } catch {
+      /* fall through to the bridge */
+    }
+    return new Promise((resolve) => {
+      const id = Math.random().toString(36).slice(2);
+      const done = (song) => {
+        clearTimeout(timer);
+        window.removeEventListener("message", onMessage);
+        resolve(song);
+      };
+      const onMessage = (e) => e.source === window && e.data?.bd === "song" && e.data.id === id && done(e.data.song);
+      const timer = setTimeout(() => done(null), 600);
+      window.addEventListener("message", onMessage);
+      window.postMessage({ bd: "song?", id }, location.origin);
+    });
+  },
+
+  /**
+   * A short-lived token for Deezer's API, obtained like Deezer's own page does
+   * (auth.deezer.com/login/renew with the session cookie). Logged out: an
+   * anonymous token. Kept in memory for 4 minutes, never stored.
+   */
+  async deezerToken() {
+    if (this.token && Date.now() - this.token.at < 240000) return this.token.jwt;
+    const get = async (path, credentials) => {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 6000);
+      try {
+        const res = await fetch(`https://auth.deezer.com/${path}`, {
+          method: "POST",
+          credentials,
+          headers: { Accept: "application/json", "Content-Type": "application/json" },
+          signal: ctrl.signal
+        });
+        return res.ok ? (await res.json()).jwt || null : null;
+      } finally {
+        clearTimeout(timer);
+      }
+    };
+    const jwt = (await get("login/renew?jo=p&rto=c&i=c", "include").catch(() => null)) || (await get("login/anonymous?jo=p&rto=c", "omit"));
+    if (!jwt) throw new Error("no Deezer token");
+    this.token = { jwt, at: Date.now() };
+    return jwt;
+  },
+
+  /** Deezer's GetLyrics query, word-by-word and line timings only. */
+  async deezerLyrics(track) {
+    const song = await this.currentSong();
+    if (!song?.id) throw new Error("track id unknown");
+    // The dock can lag a frame behind the player on track change: same title, or give up.
+    if (song.title && song.title.toLowerCase() !== track.title.toLowerCase()) throw new Error("track changed");
+    const query = `query BetterDeezerLyrics($trackId: String!) {
+  track(trackId: $trackId) {
+    id
+    lyrics {
+      id
+      synchronizedWordByWordLines { start end words { start end word } }
+      synchronizedLines { line milliseconds duration }
+    }
+  }
+}`;
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 8000);
+    let data;
+    try {
+      const res = await fetch("https://pipe.deezer.com/api", {
+        method: "POST",
+        credentials: "omit",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${await this.deezerToken()}` },
+        body: JSON.stringify({ operationName: "BetterDeezerLyrics", query, variables: { trackId: song.id } }),
+        signal: ctrl.signal
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      data = await res.json();
+    } finally {
+      clearTimeout(timer);
+    }
+    return this.fromDeezer(data?.data?.track?.lyrics, song.duration || track.duration);
+  },
+
+  /** Deezer's lyrics object -> our { kind, source, lines }. Times are in ms. */
+  fromDeezer(lyrics, duration) {
+    const ms = (v) => Number(v) / 1000;
+    const wbw = lyrics?.synchronizedWordByWordLines;
+    if (Array.isArray(wbw) && wbw.length) {
+      const lines = wbw
+        .map((l) => {
+          // Words may or may not carry their own spaces: normalise to "word" + separate spaces.
+          const raw = (l.words || []).filter((w) => String(w.word ?? "").trim());
+          const spaced = raw.some((w) => /\s$/.test(w.word) || /^\s/.test(w.word));
+          const words = raw.map((w, k) => ({
+            start: ms(w.start),
+            end: ms(w.end),
+            word: String(w.word).trim(),
+            space: spaced ? /\s$/.test(w.word) || /^\s/.test(raw[k + 1]?.word || "") : k < raw.length - 1
+          }));
+          return { time: ms(l.start), end: ms(l.end), text: words.map((w) => w.word + (w.space ? " " : "")).join("").trim(), words };
+        })
+        .filter((l) => l.text && Number.isFinite(l.time));
+      if (lines.length) return { kind: "synced", source: "deezer-words", lines: this.withBreaks(lines, duration) };
+    }
+    const sync = lyrics?.synchronizedLines;
+    if (Array.isArray(sync) && sync.length) {
+      const lines = sync
+        .map((l) => ({ time: ms(l.milliseconds), end: ms(Number(l.milliseconds) + Number(l.duration || 0)), text: String(l.line || "").trim() }))
+        .filter((l) => Number.isFinite(l.time));
+      if (lines.length) return { kind: "synced", source: "deezer-lines", lines: this.withBreaks(lines, duration) };
+    }
+    return null; // nothing usable: LRCLIB takes over
+  },
+
+  /** Insert an empty "break" line where the voice pauses for more than 5 s (or a long intro). */
+  withBreaks(lines, duration) {
+    const out = [];
+    if (lines[0].time > 4) out.push({ time: 0, end: lines[0].time, text: "" });
+    lines.forEach((line, i) => {
+      out.push(line);
+      const next = lines[i + 1];
+      if (line.text && line.end && next && next.time - line.end > 5) out.push({ time: line.end, end: next.time, text: "" });
+    });
+    return out;
+  },
+
+  // ---------- LRCLIB ----------
+  async lrclib(track) {
     const api = "https://lrclib.net/api";
     const artist = this.firstArtist(track.artist);
     const params = (o) => new URLSearchParams(o).toString();
@@ -136,7 +294,11 @@ BD.feature({
           : hit.plainLyrics
             ? { kind: "plain", lines: hit.plainLyrics.split("\n").map((text) => ({ time: null, text })) }
             : { kind: "none" };
-    this.cache.set(track.key, result);
+    if (result.kind === "synced") {
+      result.source = "lrclib";
+      // A long intro gets the same "waiting" dots as an instrumental break.
+      if (result.lines[0]?.time > 4) result.lines.unshift({ time: 0, text: "" });
+    }
     return result;
   },
 
@@ -284,7 +446,7 @@ BD.feature({
             proxy("next_track_button", this.glyphs.next, BD.t("Suivant", "Next"))
           )
         ),
-        BD.h("section", { class: "bd-np-right" }, lyricsBox, BD.h("p", { class: "bd-np-source" }, BD.t("Paroles : LRCLIB", "Lyrics: LRCLIB")))
+        BD.h("section", { class: "bd-np-right" }, lyricsBox, BD.h("p", { class: "bd-np-source" }))
       )
     );
     document.body.append(root);
@@ -345,17 +507,27 @@ BD.feature({
     }
     if (this.state !== s || s.track !== track) return; // closed or track changed meanwhile
     s.lyricsBox.dataset.kind = result.kind;
+    const sources = {
+      "deezer-words": ["Paroles : Deezer, mot à mot", "Lyrics: Deezer, word by word"],
+      "deezer-lines": ["Paroles : Deezer", "Lyrics: Deezer"],
+      lrclib: ["Paroles : LRCLIB", "Lyrics: LRCLIB"]
+    };
+    BD.q(".bd-np-source", s.root).textContent = BD.t(...(sources[result.source] || sources.lrclib));
     const note = (fr, en) => s.lyricsList.replaceChildren(BD.h("li", { class: "bd-np-note" }, BD.t(fr, en)));
     if (result.kind === "none") return note("Pas de paroles trouvées pour ce titre.", "No lyrics found for this track.");
     if (result.kind === "instrumental") return note("Instrumental ♪", "Instrumental ♪");
     if (result.kind === "error") return note("Paroles indisponibles (connexion à lrclib.net impossible).", "Lyrics unavailable (cannot reach lrclib.net).");
-    // A long intro gets the same "waiting" dots as an instrumental break.
-    const lines = result.kind === "synced" && result.lines[0]?.time > 4 ? [{ time: 0, text: "" }, ...result.lines] : result.lines;
+    const lines = result.lines;
     s.lines = lines;
     s.lyricsList.replaceChildren(
       ...lines.map((line, i) => {
         const synced = line.time !== null;
-        const content = synced && !line.text ? BD.h("span", { class: "bd-np-dots", "aria-label": "♪" }, BD.h("i"), BD.h("i"), BD.h("i")) : BD.h("span", { class: "bd-np-text" }, line.text || "♪");
+        const content =
+          synced && !line.text
+            ? BD.h("span", { class: "bd-np-dots", "aria-label": "♪" }, BD.h("i"), BD.h("i"), BD.h("i"))
+            : line.words
+              ? BD.h("span", { class: "bd-np-text", "data-words": "true" }, line.words.map((w) => BD.h("span", { class: "bd-np-w" }, w.word + (w.space ? " " : ""))))
+              : BD.h("span", { class: "bd-np-text" }, line.text || "♪");
         const li = BD.h("li", { "data-i": String(i), "data-break": String(synced && !line.text) }, content);
         if (synced) {
           li.tabIndex = 0;
@@ -381,15 +553,30 @@ BD.feature({
     }
   },
 
-  /** 0..1 progress of line i at time t: singing pace for words, the whole gap for a break. */
+  /**
+   * 0..1 progress of line i at time t. Real end when known (Deezer); otherwise
+   * an estimated singing pace for words, the whole gap for a break.
+   */
   lineProgress(i, t) {
     const s = this.state;
     const line = s.lines[i];
     if (!line) return 0;
-    const end = s.lines[i + 1]?.time ?? (s.track?.duration || line.time + 4);
-    const gap = Math.max(0.3, end - line.time);
-    const span = line.text ? Math.min(gap, Math.max(1.2, line.text.length * 0.075 + 0.4)) : gap;
+    const next = s.lines[i + 1]?.time ?? (s.track?.duration || line.time + 4);
+    const gap = Math.max(0.3, next - line.time);
+    const span = line.end > line.time ? line.end - line.time : line.text ? Math.min(gap, Math.max(1.2, line.text.length * 0.075 + 0.4)) : gap;
     return Math.max(0, Math.min(1, (t - line.time) / span));
+  },
+
+  /** Word timings: each word's --w goes 0 -> 1 over its own duration. */
+  paintWords(li, line, t) {
+    const spans = li.firstChild?.children;
+    if (!spans) return;
+    for (let k = 0; k < line.words.length; k++) {
+      const w = line.words[k];
+      const v = t >= w.end ? 1 : t <= w.start ? 0 : (t - w.start) / Math.max(0.05, w.end - w.start);
+      const str = v.toFixed(3);
+      if (spans[k].style.getPropertyValue("--w") !== str) spans[k].style.setProperty("--w", str);
+    }
   },
 
   loop() {
@@ -421,7 +608,10 @@ BD.feature({
         }
       }
       const current = s.lyricsList.children[i];
-      if (current) current.style.setProperty("--p", this.lineProgress(i, playing).toFixed(3));
+      if (current) {
+        if (s.lines[i].words) this.paintWords(current, s.lines[i], playing);
+        else current.style.setProperty("--p", this.lineProgress(i, playing).toFixed(3));
+      }
     }
     s.frame = requestAnimationFrame(() => this.loop());
   }

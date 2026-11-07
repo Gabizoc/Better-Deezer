@@ -8,9 +8,16 @@
  * (html[data-bd-tip-open]). Previous / next get none: Deezer already shows a
  * card with the previous / next track there.
  */
+// Every kind of tooltip is off by default (Settings > Appearance > Tooltips).
+BD.defaultOff.add("tooltips");
+BD.defaultOff.add("tips");
+BD.defaultOff.add("native-tips");
+BD.defaultOff.add("track-previews");
+
 BD.feature({
   id: "tooltips",
-  label: ["Infobulles avec astuces", "Tooltips with tips"],
+  live: true, // show() checks the switch, so turning it off takes effect at once
+  label: ["Infobulles Better Deezer sur la barre de lecture", "Better Deezer tooltips on the player bar"],
 
   /** By data-testid prefix: [label fr, label en, tip fr, tip en]. */
   hints: {
@@ -39,6 +46,7 @@ BD.feature({
       document.documentElement.removeAttribute("data-bd-tip-open");
     };
     const show = (el) => {
+      if (!BD.isEnabled("tooltips")) return hide();
       if (el === owner) return; // moving between the button and its icon: keep it, no flicker
       const { label, tip: hint } = this.describe(el);
       hide();
@@ -85,4 +93,9 @@ BD.feature({
   }
 });
 
-BD.feature({ id: "tips", label: ["Afficher les astuces dans les infobulles", "Show tips in tooltips"] });
+BD.feature({ id: "tips", live: true, label: ["Astuces dans ces infobulles", "Tips in these tooltips"] });
+
+/* Deezer's own tooltips and the previous / next track card: shown or hidden by the
+   CSS from two attributes on <html> (the elements are tagged in overlays.js). */
+BD.feature({ id: "native-tips", live: true, label: ["Infobulles de Deezer", "Deezer's tooltips"] });
+BD.feature({ id: "track-previews", live: true, label: ["Aperçu du titre précédent / suivant", "Previous / next track preview"] });

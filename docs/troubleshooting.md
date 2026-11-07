@@ -77,7 +77,8 @@ Note: some elements only exist on some pages or for some accounts. `profileButto
 | *Instrumental ♪* | LRCLIB marks the track as instrumental. |
 | *Lyrics unavailable (cannot reach lrclib.net).* | Offline, or a firewall / ad blocker blocks `lrclib.net`. Allow it or turn the module off. |
 | Lyrics not in sync | LRCLIB matched another version of the track (radio edit, live). Better Deezer only accepts versions within 8 seconds of the track's duration and prefers synced ones; when only plain lyrics exist they are shown without sync. |
-| The line fills too fast or too slow | LRCLIB only gives the start of each line, not each word: the fill is an estimate from the line's length. |
+| The line fills too fast or too slow | The source is LRCLIB (shown under the lyrics), which only gives the start of each line: the fill is an estimate. Deezer's word-by-word lyrics are exact when Deezer has them for the track. |
+| Always *Lyrics: LRCLIB*, never Deezer | Deezer has no synced lyrics for that track, or the request to Deezer failed (logged out, network). Check *Settings > Playback & volume > Lyrics* is on *Deezer, then LRCLIB*. The extension needs Chrome / Edge 111 or newer. |
 | `F` does nothing | You are typing in a field, or the *Now playing* module is off (*Settings > Modules*). Nothing playing: the view says so. |
 
 ## Modules

@@ -92,7 +92,9 @@
     schedule();
   });
 
-  new MutationObserver(schedule).observe(html, { childList: true, subtree: true });
+  // Deezer sometimes only swaps an attribute (like on/off = data-testid): watch those too.
+  // Our own marks are data-bd* attributes, not in this list, so they never re-trigger.
+  new MutationObserver(schedule).observe(html, { childList: true, subtree: true, attributes: true, attributeFilter: ["data-testid", "aria-label", "aria-pressed"] });
   addEventListener("resize", schedule);
   addEventListener("popstate", schedule);
   run();

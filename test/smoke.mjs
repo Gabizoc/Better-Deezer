@@ -56,6 +56,18 @@ await context.route("https://lrclib.net/**", (route) =>
     body: JSON.stringify({ trackName: "One More Time", artistName: "Daft Punk", duration: 320, instrumental: false, syncedLyrics: "[00:00.50] One more time\n[01:05.00] We're gonna celebrate\n[01:10.00] Oh yeah, all right\n[01:15.00] Don't stop the dancing\n[01:20.00] \n[02:00.00] One more time" })
   })
 );
+// Deezer's own lyrics (auth.deezer.com token + pipe.deezer.com GraphQL). `deezerLyrics`
+// is null until the word-by-word test sets it, so the first runs fall back to LRCLIB.
+let deezerLyrics = null;
+const cors = { "access-control-allow-origin": "https://www.deezer.com", "access-control-allow-credentials": "true", "access-control-allow-headers": "authorization, content-type, accept", "access-control-allow-methods": "POST, OPTIONS" };
+await context.route("https://auth.deezer.com/**", (route) =>
+  route.request().method() === "OPTIONS" ? route.fulfill({ status: 204, headers: cors }) : route.fulfill({ status: 200, contentType: "application/json", headers: cors, body: JSON.stringify({ jwt: "test-jwt" }) })
+);
+await context.route("https://pipe.deezer.com/**", (route) => {
+  if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers: cors });
+  const auth = route.request().headers().authorization;
+  return route.fulfill({ status: 200, contentType: "application/json", headers: cors, body: JSON.stringify({ data: { track: { id: "3135556", lyrics: auth === "Bearer test-jwt" ? deezerLyrics : null } } }) });
+});
 const page = await context.newPage();
 const errors = [];
 page.on("pageerror", (e) => errors.push(e.message));
@@ -213,6 +225,18 @@ check("Ctrl K hint shown while the field is empty", (await css('[data-bd="search
 await page.fill('[data-testid="search_field"]', "daft");
 check("Ctrl K hint hidden once something is typed (clear button's spot)", (await css('[data-bd="search-field-group"] .bd-kbd', "display")) === "none");
 await page.fill('[data-testid="search_field"]', "");
+// Tooltips: all off by default
+const queueBox = await page.locator('[data-bd="dock"] [data-testid="queue_list_button"]').boundingBox();
+await page.mouse.move(queueBox.x + queueBox.width / 2, queueBox.y + queueBox.height / 2);
+await page.waitForTimeout(100);
+await $eval(() => { const t = document.createElement("div"); t.setAttribute("role", "tooltip"); t.id = "native-tip"; t.textContent = "File d'attente"; document.body.append(t); });
+await page.waitForTimeout(150);
+check("tooltips are all off by default (ours and Deezer's)", await $eval(() => !document.querySelector(".bd-tooltip") && getComputedStyle(document.getElementById("native-tip")).display === "none"));
+await $eval(() => document.getElementById("native-tip").remove());
+await $eval(() => { __betterDeezer.disable("tooltips"); __betterDeezer.disable("native-tips"); });
+await page.mouse.move(700, 300);
+await $eval(() => { __betterDeezer.enable("tooltips"); __betterDeezer.enable("native-tips"); });
+await page.waitForTimeout(100);
 // Tooltip: moving from a button onto its icon keeps the same tooltip (no flicker)
 const prevBox = await page.locator('[data-bd="dock"] [data-testid="previous_track_button"]').boundingBox();
 await page.mouse.move(prevBox.x + prevBox.width / 2, prevBox.y + prevBox.height / 2);
@@ -396,6 +420,43 @@ check("clicking a lyric line seeks there", Math.abs((await $eval(() => Number(do
 await page.keyboard.press("Escape");
 await page.waitForTimeout(300);
 check("Escape closes the view", await $eval(() => !document.getElementById("bd-np")));
+// Deezer word-by-word lyrics: words light up on their own timing.
+deezerLyrics = {
+  id: "1",
+  synchronizedWordByWordLines: [
+    { start: 60000, end: 63000, words: [{ start: 60000, end: 60800, word: "One " }, { start: 60800, end: 61500, word: "more " }, { start: 61500, end: 63000, word: "time" }] },
+    { start: 70000, end: 74000, words: [{ start: 70000, end: 71000, word: "We're" }, { start: 71000, end: 72500, word: "gonna" }, { start: 72500, end: 74000, word: "celebrate" }] },
+    { start: 90000, end: 92000, words: [{ start: 90000, end: 92000, word: "Yeah" }] }
+  ],
+  synchronizedLines: []
+};
+// Switching the lyrics source in the settings clears the cached LRCLIB answer.
+await page.keyboard.press("Control+Comma");
+await page.waitForTimeout(300);
+await page.click('#bd-settings [data-tab="playback"]');
+await page.click('#bd-settings .bd-seg[data-value="lrclib"]');
+await page.click('#bd-settings .bd-seg[data-value="deezer"]');
+await page.keyboard.press("Escape");
+await page.waitForTimeout(300);
+await page.keyboard.press("f");
+await page.waitForTimeout(800);
+await $eval(() => { const i = document.querySelector('[data-testid="progress_bar"]'); i.dispatchEvent(new MouseEvent("mousedown", { bubbles: true })); i.value = "72"; i.dispatchEvent(new Event("input", { bubbles: true })); i.dispatchEvent(new MouseEvent("mouseup", { bubbles: true })); });
+await page.waitForTimeout(400);
+const wbw = await $eval(() => {
+  const cur = document.querySelector('.bd-np-lines li[data-state="current"]');
+  return {
+    source: document.querySelector(".bd-np-source").textContent,
+    text: cur?.textContent,
+    w: [...(cur?.querySelectorAll(".bd-np-w") || [])].map((w) => Number(w.style.getPropertyValue("--w")).toFixed(2)),
+    breaks: document.querySelectorAll('.bd-np-lines li[data-break="true"]').length
+  };
+});
+check("Deezer word-by-word lyrics: source shown, words keep their spaces", /Deezer, mot à mot/.test(wbw.source) && wbw.text === "We're gonna celebrate", JSON.stringify(wbw));
+check("each word fills on its own timing (sung / singing / not yet)", wbw.w[0] === "1.00" && Number(wbw.w[1]) > 0.5 && Number(wbw.w[1]) < 1 && wbw.w[2] === "0.00", wbw.w.join(" "));
+check("intro and long pauses between Deezer lines become breaks", wbw.breaks === 3, String(wbw.breaks));
+await shot("nowplaying-words");
+await page.keyboard.press("Escape");
+await page.waitForTimeout(300);
 
 // ---------- Modules ----------
 check("hide promos: upgrade banner hidden", (await css('[data-testid="conversionBanner"]', "display")) === "none");

@@ -13,7 +13,12 @@ Modules are optional extras, a bit like Spicetify's extensions. Turn them on and
 
 ## Lyrics
 
-Lyrics come from [LRCLIB](https://lrclib.net), a free, open, community-run lyrics database with an open API and no account. Better Deezer asks for the exact title, artist and duration first, then searches and keeps the closest version (within 8 seconds of the track's length, synced lyrics preferred). Deezer's own lyrics are not used: they need your Deezer session and a private API.
+Two sources, chosen in *Settings > Playback & volume > Lyrics*:
+
+1. **Deezer** (default): Deezer's own lyrics, through your Deezer session, exactly like Deezer's lyrics button. Many tracks are synced **word by word**: each word lights up when it is sung. Others are synced line by line with each line's real length.
+2. **[LRCLIB](https://lrclib.net)**, when Deezer has none (or with *LRCLIB only*): a free, open, community-run database. Better Deezer asks for the exact title, artist and duration first, then searches and keeps the closest version (within 8 seconds of the track's length, synced lyrics preferred). Line timings only: the line fills at an estimated singing pace.
+
+The source is shown under the lyrics (*Lyrics: Deezer, word by word*, *Lyrics: Deezer*, *Lyrics: LRCLIB*).
 
 Missing or wrong lyrics can be added or fixed by anyone on lrclib.net, and then show up for everybody.
 

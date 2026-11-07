@@ -61,7 +61,8 @@ Une fonction qui plante est coupée automatiquement pour la session : une seule 
 | *Instrumental ♪* | LRCLIB indique un morceau instrumental. |
 | *Paroles indisponibles (connexion à lrclib.net impossible).* | Hors ligne, ou un pare-feu / bloqueur de pub bloque `lrclib.net`. |
 | Paroles décalées | LRCLIB a trouvé une autre version (radio edit, live). Seules les versions à moins de 8 s de la durée du titre sont acceptées. |
-| La ligne se remplit trop vite ou trop lentement | LRCLIB ne donne que le début de chaque ligne, pas chaque mot : le remplissage est estimé d'après la longueur de la ligne. |
+| La ligne se remplit trop vite ou trop lentement | La source est LRCLIB (indiquée sous les paroles), qui ne donne que le début de chaque ligne : le remplissage est estimé. Les paroles mot à mot de Deezer sont exactes quand Deezer les a pour ce titre. |
+| Toujours « Paroles : LRCLIB », jamais Deezer | Deezer n'a pas de paroles synchronisées pour ce titre, ou la requête à Deezer a échoué (déconnecté, réseau). Vérifiez *Réglages > Lecture et volume > Paroles* : *Deezer puis LRCLIB*. L'extension demande Chrome / Edge 111 ou plus récent. |
 | `F` ne fait rien | Vous tapez dans un champ, ou le module est désactivé (*Réglages > Modules*). |
 
 ## Modules

@@ -218,6 +218,8 @@
     pop.innerHTML = '<section role="dialog" data-testid="popover-content" id="popover-content-notif" class="css-pop" style="position: static; width: 360px"><div data-popper-arrow><div data-popper-arrow-inner></div></div><div><h2>Notifications</h2><li><div role="group"><figure style="position: relative; margin: 0"><img alt="" width="48" height="48"><div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center"><button type="button" class="action-item-tempo-btn" aria-label="Play" style="width: 48px; height: 48px; border-radius: 50%; background: #fff; color: #000"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M8 5v14l11-7z"/></svg></button></div></figure><div role="cell"><h2><a href="/fr/album/1">Toupou</a></h2><p>Moha MMZ</p></div></div><p>IL Y A 11 HEURES - NOUVEAU SINGLE</p></li></div></section>';
     document.body.appendChild(pop);
   };
+  // Deezer's player object (the real one has many more methods).
+  window.dzPlayer = { getCurrentSong: () => ({ SNG_ID: "3135556", SNG_TITLE: "One More Time", DURATION: "320" }) };
   // Deezer's Slider (React, controlled): the value only sticks during a drag
   // (mousedown -> input -> mouseup); otherwise the next render restores it.
   (() => {
