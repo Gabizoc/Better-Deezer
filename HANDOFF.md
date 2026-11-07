@@ -153,7 +153,7 @@ Toujours **non testé** (impossible dans le conteneur) : exécution réelle des 
 
 ## 9. Conventions
 
-- Branche de travail : `claude/modest-davinci-kgm2qs`. Pas de PR sans demande explicite.
+- Branche de travail : `main` (renommée depuis `claude/modest-davinci-kgm2qs` le 2026-11-07, historique réécrit sans le fichier de cookies). Pas de PR sans demande explicite.
 - Messages de commit en anglais, impératif. Un commit par point.
 - Toute nouvelle ancre → `core/10-anchors.js` (+ `BD.optionalAnchors` si elle n'existe que quand un overlay est ouvert).
 - Toute nouvelle couleur → token d'abord (`00-tokens.css`, sombre ET clair).
