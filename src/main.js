@@ -15,6 +15,26 @@
     return;
   }
 
+  // Only the web player. www.deezer.com also serves marketing pages (/explore/...,
+  // download, offers) with none of the player's elements: there Better Deezer stays
+  // asleep instead of warning about "missing" anchors. The player renders late, so
+  // wait for it (layout root, content or player bar) for up to 30 s.
+  const isPlayer = () => Boolean(document.querySelector('.naboo, #page_content, [data-testid="miniplayer_container"]'));
+  if (/^\/explore(\/|$)/.test(location.pathname)) return;
+  if (!isPlayer()) {
+    if (boot.waiting) return;
+    boot.waiting = new MutationObserver(() => {
+      if (!isPlayer()) return;
+      boot.waiting.disconnect();
+      clearTimeout(boot.giveUp);
+      boot.waiting = null;
+      boot();
+    });
+    boot.waiting.observe(document.documentElement, { childList: true, subtree: true });
+    boot.giveUp = setTimeout(() => boot.waiting?.disconnect(), 30000);
+    return;
+  }
+
   const html = document.documentElement;
   if (BD.settings.get("enabled", true) === false) {
     html.setAttribute("data-bd", "off");

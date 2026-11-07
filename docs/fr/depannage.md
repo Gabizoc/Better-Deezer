@@ -77,6 +77,9 @@ Une fonction qui plante est coupée automatiquement pour la session : une seule 
 
 ## Console
 
+Avertissement *anchors not found* dans le panneau *Erreurs* de l'extension : ce n'est pas un plantage. Better Deezer ne démarre que sur le lecteur, jamais sur les pages vitrine de Deezer (`/explore/…`, téléchargement, offres). Si l'avertissement vient d'une de ces pages, c'est une ancienne version.
+
+
 `F12` > *Console*. Avec l'extension, choisissez le contexte **Better Deezer** dans la liste déroulante pour utiliser `__betterDeezer` :
 
 ```js

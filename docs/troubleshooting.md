@@ -99,7 +99,7 @@ Open DevTools with `F12` > *Console*. With the extension, choose **Better Deezer
 | Message | Meaning |
 | --- | --- |
 | `[Better Deezer] vX.Y.Z (extension) running on …` | All good. |
-| `anchors not found (Deezer may have changed, or the element is not on screen): …` | Same list as *About*. Fine if the element simply isn't on this page. |
+| `anchors not found (Deezer may have changed, or the element is not on screen): …` | Same list as *About*. Fine if the element simply isn't on this page. Better Deezer only starts on the web player, never on Deezer's marketing pages (`/explore/…`, download, offers): if you see this there, you have an old version. In Chrome this shows in the extension's *Errors* panel; it is a warning, not a crash. |
 | `feature "x" disabled after error in update: …` | That feature crashed and was switched off for this session. Report the error. |
 | `volume input never mounted` | The volume slider could not reach Deezer's own control (rare). Clicking the speaker again usually fixes it. |
 
