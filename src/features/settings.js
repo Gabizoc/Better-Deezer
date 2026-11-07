@@ -79,6 +79,7 @@ BD.feature({
   /** Built-in tabs, plus the ones other files register with BD.settingsTab (sorted by order). */
   builtinTabs: [
     { id: "appearance", order: 10, label: ["Apparence", "Appearance"] },
+    { id: "sidebar", order: 20, label: ["Barre latérale", "Sidebar"] },
     { id: "playback", order: 30, label: ["Lecture et volume", "Playback & volume"] },
     { id: "home", order: 50, label: ["Accueil", "Home"] },
     { id: "reco", order: 60, label: ["Recommandations", "Recommendations"] },
@@ -258,37 +259,128 @@ BD.feature({
         this.featureToggle("tips"),
         this.featureToggle("native-tips", BD.t("Les bulles que Deezer affiche au survol de ses boutons.", "The bubbles Deezer shows when hovering its buttons.")),
         this.featureToggle("track-previews", BD.t("La carte du titre au survol de Précédent / Suivant.", "The track card when hovering Previous / Next."))
-      ),
-      this.railSection()
+      )
     ];
   },
 
-  /** Settings > Appearance > Sidebar: one switch per navigation entry of the rail (features/shell.js). */
-  railSection() {
-    const hidden = BD.railNav.hidden();
-    const rows = Object.entries(BD.railNav.items).map(([key, [fr, en]]) => {
-      const input = BD.h("input", {
-        type: "checkbox",
-        role: "switch",
-        class: "bd-switch",
-        "aria-label": BD.t(fr, en),
-        onchange: () => BD.railNav.setVisible(key, input.checked)
-      });
-      input.checked = !hidden.has(key);
-      return this.row(BD.t(fr, en), null, input);
-    });
-    return this.section(
-      BD.t("Barre latérale", "Sidebar"),
-      BD.h(
-        "p",
-        { class: "bd-set-hint" },
-        BD.t(
-          "Les entrées affichées dans la barre de gauche. Vos playlists et éléments épinglés restent en dessous.",
-          "The entries shown in the left bar. Your playlists and pinned items stay below them."
-        )
-      ),
-      ...rows
+  /**
+   * Settings > Sidebar: the rail's real entries (features/shell.js, BD.railNav),
+   * with their own icon and name. Switch to show / hide; drag the handle, or
+   * Alt + arrow keys, to reorder inside a group. Changes apply live behind the panel.
+   */
+  tab_sidebar() {
+    const entries = BD.railNav.entries();
+    const intro = BD.h(
+      "p",
+      { class: "bd-set-hint" },
+      BD.t(
+        "Les entrées de la barre de gauche, lues dans Deezer : si une mise à jour en ajoute ou en renomme, elles apparaissent ici. Glissez la poignée (ou Alt + flèches) pour changer l'ordre. Vos playlists et éléments épinglés restent en dessous.",
+        "The left bar's entries, read from Deezer: if an update adds or renames one, it shows up here. Drag the handle (or Alt + arrows) to reorder. Your playlists and pinned items stay below."
+      )
     );
+    if (!entries.length) {
+      return [this.section(BD.t("Barre latérale", "Sidebar"), intro, BD.h("p", { class: "bd-set-empty" }, BD.t("La barre latérale de Deezer n'est pas encore chargée.", "Deezer's sidebar isn't loaded yet.")))];
+    }
+    const hidden = BD.railNav.hidden();
+    const order = BD.railNav.order();
+    const rank = (key, fallback) => (order.includes(key) ? order.indexOf(key) - 1000 : fallback);
+    const groups = [...new Set(entries.map((e) => e.group))].map((g) =>
+      entries
+        .map((e, i) => ({ ...e, rank: rank(e.key, i) }))
+        .filter((e) => e.group === g)
+        .sort((a, b) => a.rank - b.rank)
+    );
+
+    const saveOrder = () => BD.railNav.setOrder(BD.qa("#bd-settings .bd-nav-row").map((r) => r.dataset.key));
+    const move = (row, dir) => {
+      const sibling = dir < 0 ? row.previousElementSibling : row.nextElementSibling;
+      if (!sibling?.classList.contains("bd-nav-row")) return;
+      dir < 0 ? sibling.before(row) : sibling.after(row);
+      row.focus();
+      saveOrder();
+    };
+
+    let dragged = null;
+    const lists = groups.map((items, g) => {
+      const reorder = BD.railNav.canReorder(items[0].list);
+      const list = BD.h("ul", { class: "bd-nav-list", "aria-label": BD.railNav.groupTitle(items[0].list) || "Navigation" });
+      list.addEventListener("dragover", (e) => {
+        if (!dragged || dragged.parentElement !== list) return;
+        e.preventDefault();
+        const after = [...list.children].find((r) => r !== dragged && e.clientY < r.getBoundingClientRect().top + r.offsetHeight / 2);
+        after ? list.insertBefore(dragged, after) : list.append(dragged);
+      });
+      for (const e of items) {
+        const visible = !hidden.has(e.key);
+        const input = BD.h("input", {
+          type: "checkbox",
+          role: "switch",
+          class: "bd-switch",
+          "aria-label": BD.t(`Afficher ${e.label}`, `Show ${e.label}`),
+          onchange: () => {
+            BD.railNav.setVisible(e.key, input.checked);
+            row.dataset.hidden = String(!input.checked);
+          }
+        });
+        input.checked = visible;
+        const icon = e.icon ? e.icon.cloneNode(true) : null;
+        icon?.removeAttribute("data-testid"); // our copy must never be taken for Deezer's
+        icon?.removeAttribute("class");
+        const row = BD.h(
+          "li",
+          {
+            class: "bd-nav-row",
+            "data-key": e.key,
+            "data-hidden": String(!visible),
+            tabindex: reorder ? "0" : "-1",
+            draggable: reorder ? "true" : "false",
+            "aria-label": e.label,
+            title: reorder ? BD.t("Glisser pour réordonner (ou Alt + flèches)", "Drag to reorder (or Alt + arrows)") : ""
+          },
+          reorder ? BD.h("span", { class: "bd-nav-handle", "aria-hidden": "true" }, this.icon("M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01")) : BD.h("span", { class: "bd-nav-handle" }),
+          BD.h("span", { class: "bd-nav-icon", "aria-hidden": "true" }, icon),
+          BD.h("span", { class: "bd-nav-label" }, e.label),
+          input
+        );
+        if (reorder) {
+          row.addEventListener("dragstart", (ev) => {
+            dragged = row;
+            row.dataset.dragging = "true";
+            ev.dataTransfer.effectAllowed = "move";
+            ev.dataTransfer.setData("text/plain", e.key);
+          });
+          row.addEventListener("dragend", () => {
+            delete row.dataset.dragging;
+            dragged = null;
+            saveOrder();
+          });
+          row.addEventListener("keydown", (ev) => {
+            if (!ev.altKey || (ev.key !== "ArrowUp" && ev.key !== "ArrowDown")) return;
+            ev.preventDefault();
+            move(row, ev.key === "ArrowUp" ? -1 : 1);
+          });
+        }
+        list.append(row);
+      }
+      return BD.h("div", { class: "bd-nav-group" }, BD.h("h4", {}, BD.railNav.groupTitle(items[0].list) || (g === 0 ? "Navigation" : BD.t(`Groupe ${g + 1}`, `Group ${g + 1}`))), list);
+    });
+
+    return [
+      this.section(
+        BD.t("Barre latérale", "Sidebar"),
+        intro,
+        ...lists,
+        BD.h(
+          "div",
+          { class: "bd-actions" },
+          BD.h(
+            "button",
+            { type: "button", class: "bd-btn bd-btn-ghost", onclick: () => (BD.railNav.reset(), setTimeout(() => this.refresh(), 50)) },
+            BD.t("Rétablir par défaut", "Reset to default")
+          )
+        )
+      )
+    ];
   },
 
   tab_playback() {

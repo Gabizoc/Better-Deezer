@@ -728,3 +728,109 @@
   clip: rect(0 0 0 0) !important;
   white-space: nowrap !important;
 }
+
+/* ---------- Sidebar tab (tab_sidebar in features/settings.js) ---------- */
+.bd-nav-group {
+  margin-top: 16px;
+}
+
+.bd-nav-group h4 {
+  margin: 0 0 6px;
+  color: var(--bd-text-3);
+  font: 600 12px/1.2 var(--bd-font-ui);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.bd-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 6px;
+  border: 1px solid var(--bd-line);
+  border-radius: var(--bd-r-card);
+  background: var(--bd-surface-2);
+  list-style: none;
+}
+
+.bd-nav-row {
+  display: grid;
+  grid-template-columns: 20px 36px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 10px 0 6px;
+  border-radius: 12px;
+  background: transparent;
+  outline: none;
+  transition: background-color var(--bd-t-fast) var(--bd-ease), opacity var(--bd-t-fast) var(--bd-ease), box-shadow var(--bd-t-fast) var(--bd-ease);
+}
+
+.bd-nav-row:hover,
+.bd-nav-row:focus-visible {
+  background: var(--bd-surface-3);
+}
+
+.bd-nav-row:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--bd-accent);
+}
+
+.bd-nav-row[data-dragging] {
+  background: var(--bd-surface-1);
+  box-shadow: var(--bd-shadow-pop);
+  opacity: 0.92;
+}
+
+.bd-nav-handle {
+  display: grid;
+  place-items: center;
+  color: var(--bd-text-3);
+  cursor: grab;
+}
+
+.bd-nav-row[draggable="false"] .bd-nav-handle {
+  cursor: default;
+}
+
+.bd-nav-handle svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.bd-nav-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--bd-surface-1);
+  color: var(--bd-text);
+  transition: color var(--bd-t-fast) var(--bd-ease), background-color var(--bd-t-fast) var(--bd-ease);
+}
+
+.bd-nav-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.bd-nav-label {
+  color: var(--bd-text);
+  font: 500 14px/1.2 var(--bd-font-ui);
+  transition: color var(--bd-t-fast) var(--bd-ease);
+}
+
+/* Hidden entries stay in the list, dimmed */
+.bd-nav-row[data-hidden="true"] .bd-nav-icon {
+  background: transparent;
+  color: var(--bd-text-3);
+}
+
+.bd-nav-row[data-hidden="true"] .bd-nav-label {
+  color: var(--bd-text-3);
+}
