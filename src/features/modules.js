@@ -100,8 +100,8 @@ BD.feature({
   glyph: "M4 4l16 16M9 5h10a1 1 0 0 1 1 1v10M15 19H5a1 1 0 0 1-1-1V8",
   label: ["Masquer les bannières promotionnelles", "Hide promotional banners"],
   description: [
-    "Cache les bandeaux « Passez à Premium », les encarts publicitaires et les playlists sponsorisées. Purement visuel : rien n'est bloqué sur le réseau.",
-    "Hides “Go Premium” banners, ad slots and sponsored playlists. Visual only: nothing is blocked on the network."
+    "Cache les bandeaux « Passez à Premium » et « Inscription », les encarts publicitaires et les playlists sponsorisées. Purement visuel : rien n'est bloqué sur le réseau.",
+    "Hides “Go Premium” and “Sign up” banners, ad slots and sponsored playlists. Visual only: nothing is blocked on the network."
   ],
 
   /** data-testid values found in Deezer's bundle (HANDOFF §5). */
