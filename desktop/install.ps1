@@ -31,15 +31,30 @@ if (-not $here) {
   Write-Host 'Better Deezer' -ForegroundColor White -NoNewline
   Write-Host ('  downloading {0} files from GitHub...' -f $files.Count) -ForegroundColor DarkGray
   $ProgressPreference = 'SilentlyContinue'
+  $failure = $null
   try {
     foreach ($f in $files) {
       Invoke-WebRequest -UseBasicParsing -Uri "https://github.com/$repo/releases/latest/download/$f" -OutFile (Join-Path $here $f)
     }
-  } catch {
+  } catch { $failure = $_.Exception.Message }
+
+  # While the repository is private, anonymous downloads fail (GitHub answers 404,
+  # which Windows PowerShell 5.1 may report as "connection closed"). GitHub CLI,
+  # signed in with an account that has access, can still fetch the release.
+  if ($failure -and (Get-Command gh -ErrorAction SilentlyContinue)) {
+    Write-Host '    trying GitHub CLI (gh)...' -ForegroundColor DarkGray
+    $patterns = @(); foreach ($f in $files) { $patterns += @('--pattern', $f) }
+    & gh release download --repo $repo --dir $here --clobber @patterns 2>$null
+    $missing = @($files | Where-Object { -not (Test-Path (Join-Path $here $_)) })
+    if ($LASTEXITCODE -eq 0 -and $missing.Count -eq 0) { $failure = $null }
+  }
+
+  if ($failure) {
     Write-Host ''
     Write-Host '  x ' -ForegroundColor Red -NoNewline
-    Write-Host ('Download failed: {0}' -f $_.Exception.Message)
-    Write-Host '    Check your connection, or download better-deezer-windows.zip from' -ForegroundColor DarkGray
+    Write-Host ('Download failed: {0}' -f $failure)
+    Write-Host '    No connection, or the repository is private: install GitHub CLI and run' -ForegroundColor DarkGray
+    Write-Host '    "gh auth login", or download better-deezer-windows.zip from' -ForegroundColor DarkGray
     Write-Host "    https://github.com/$repo/releases and run install.ps1 from it." -ForegroundColor DarkGray
     Write-Host ''
     return
