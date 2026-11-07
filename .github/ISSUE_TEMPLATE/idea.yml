@@ -1,0 +1,16 @@
+name: Idée
+description: Une fonction, un module ou une amélioration.
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Le besoin
+      description: Ce que vous aimeriez pouvoir faire, et pourquoi.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposition
+      description: À quoi ça pourrait ressembler. Une maquette ou une capture d'une autre app aide.
