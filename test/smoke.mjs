@@ -222,6 +222,21 @@ await $eval(() => window.__betterDeezer.theme("dark"));
 // ---------- 5. Overlays ----------
 await page.click('[data-testid="search_field"]');
 check("search pill gets a 2px accent border on focus", /inset.*0px 0px 0px 2px|0px 0px 0px 2px.*inset/.test(await css('[data-bd="search-field-group"]', "boxShadow")));
+await $eval(() => __openRecentSearches());
+await page.waitForTimeout(200);
+const rs = await $eval(() => {
+  const pop = document.querySelector('[data-bd="search-popover"]').getBoundingClientRect();
+  const box = document.querySelector('[data-bd="search-popover"] > *').getBoundingClientRect();
+  const heart = document.querySelector('[data-bd="search-popover"] .fav').getBoundingClientRect();
+  const clear = document.querySelector('[data-testid="recent_search_clear_button"]').getBoundingClientRect();
+  const title = getComputedStyle(document.querySelector('[data-testid="artist_title"]')).paddingLeft;
+  return { pop: Math.round(pop.width), box: Math.round(box.width), heartGap: Math.round(pop.right - heart.right), clearGap: Math.round(pop.right - clear.right), title };
+});
+check("recent searches fill the widened popover (no fixed 450px box)", rs.pop > 500 && rs.box >= rs.pop - 2, JSON.stringify(rs));
+check("hearts and 'Clear all' sit on the right edge", rs.heartGap < 40 && rs.clearGap < 40, JSON.stringify(rs));
+check("result titles get room for the first letter (no clipped B / T)", rs.title === "2px", rs.title);
+await page.screenshot({ path: join(out, "search-recent.png"), clip: await page.locator('[data-bd="search-popover"]').boundingBox() });
+await $eval(() => document.querySelector(".chakra-popover__popper")?.remove());
 check("Ctrl K hint shown while the field is empty", (await css('[data-bd="search-field-group"] .bd-kbd', "display")) !== "none");
 await page.fill('[data-testid="search_field"]', "daft");
 check("Ctrl K hint hidden once something is typed (clear button's spot)", (await css('[data-bd="search-field-group"] .bd-kbd', "display")) === "none");
