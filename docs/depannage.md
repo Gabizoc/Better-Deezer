@@ -41,11 +41,11 @@ Une fonction qui plante est coupée automatiquement pour la session : une partie
 | Symptôme | Cause et solution |
 | --- | --- |
 | `irm … \| iex` affiche du texte rouge sur la *stratégie d'exécution* | Lancez-le dans **Windows PowerShell** (pas cmd), ou clic droit sur `install.ps1` › *Exécuter avec PowerShell*. L'installation se fait pour votre compte seulement, sans droits administrateur. |
-| `irm` : *La connexion a été interrompue de manière inattendue* | Le dépôt est privé : GitHub refuse le téléchargement sans compte. Avec GitHub CLI connecté (`gh auth login`), installez avec `gh release download --repo Gabizoc/Better-Deezer --pattern install.ps1 --output - \| Out-String \| iex`, ou lancez `install.ps1` depuis un clone ou le zip de la version. |
+| `irm` : *La connexion a été interrompue de manière inattendue* | Le téléchargement depuis GitHub a échoué (connexion, proxy ou pare-feu). Réessayez ; sinon téléchargez `better-deezer-windows.zip` depuis les [Releases](https://github.com/Gabizoc/Better-Deezer/releases) et lancez `install.ps1` depuis le dossier décompressé. |
 | *Installation annulée : Deezer.exe introuvable* | L'installation cherche aux emplacements habituels, puis demande le chemin complet de `Deezer.exe` ; Entrée annule. Installez d'abord l'application Deezer ([deezer.com/download](https://www.deezer.com/download)), ou indiquez le chemin à l'avance : `$env:BD_DEEZER_PATH = "C:\chemin\vers\Deezer.exe"` avant la commande d'installation. |
 | Deezer s'ouvre sans le skin | Deezer a sans doute été mis à jour, ce qui remplace le fichier modifié. Fermez puis rouvrez votre session Windows (le correctif est remis à l'ouverture de session si Deezer est fermé), ou lancez `better-deezer apply`. `better-deezer status` dit si Deezer est modifié. Puis lisez le journal (plus bas). |
 | *better-deezer* n'est pas reconnu | L'installation l'ajoute au PATH de l'utilisateur : ouvrez un **nouveau** terminal. Il se trouve dans `%LOCALAPPDATA%\BetterDeezer\bin`. |
-| *Impossible de joindre les versions sur GitHub* (update) | Pas de connexion, ou dépôt privé : installez GitHub CLI et connectez-vous (`gh auth login`), `better-deezer update` l'utilise alors. |
+| *Impossible de joindre les versions sur GitHub* (update) | Pas de connexion, ou GitHub limite les requêtes anonymes : réessayez dans quelques minutes. Avec GitHub CLI connecté (`gh auth login`), `better-deezer update` passe par lui. |
 | *La version … ne contient pas cli.ps1, ui.ps1 : trop ancienne* | Version demandée plus ancienne que la commande elle-même (1.0.0). Installez-la depuis la page des versions. |
 | *Fichier corrompu : … (somme SHA-256 différente)* | Un fichier téléchargé ne correspond pas au `SHA256SUMS.txt` de la version. Rien n'a été installé ; réessayez. |
 | *Impossible de modifier Deezer : accès refusé* | Deezer est installé pour tous les utilisateurs (Program Files). Lancez l'installation depuis un PowerShell ouvert en administrateur. |
@@ -63,7 +63,7 @@ Une fonction qui plante est coupée automatiquement pour la session : une partie
 
 | Message ou symptôme | Signification et solution |
 | --- | --- |
-| *Hors ligne : thèmes de la communauté inclus dans cette version.* | La Marketplace n'a pas pu télécharger la liste à jour depuis GitHub (hors ligne, bloqué, ou dépôt privé). Les thèmes inclus dans cette version marchent. |
+| *Hors ligne : thèmes de la communauté inclus dans cette version.* | La Marketplace n'a pas pu télécharger la liste à jour depuis GitHub (hors ligne ou bloqué). Les thèmes inclus dans cette version marchent. |
 | *invalid link* / *the link must start with https://* | Il faut un lien direct `https://` vers le fichier `.json`. Sur GitHub, le lien **Raw**. |
 | *download failed (HTTP 404)* | Lien faux ou fichier privé. |
 | *download failed: Failed to fetch* | Le site refuse le téléchargement depuis deezer.com (CORS) : téléchargez le fichier et utilisez *Choisir un fichier…* (*Réglages › Thèmes › Installer un thème*). |

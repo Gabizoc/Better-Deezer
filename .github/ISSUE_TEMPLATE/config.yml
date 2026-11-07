@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Signaler une faille de sécurité
+    url: https://github.com/Gabizoc/Better-Deezer/security/advisories/new
+    about: En privé, pas dans une issue publique.
+  - name: Dépannage
+    url: https://github.com/Gabizoc/Better-Deezer/blob/main/docs/depannage.md
+    about: Les messages d'erreur courants et leurs solutions.

@@ -1,0 +1,45 @@
+name: Problème
+description: Quelque chose ne marche pas ou s'affiche mal.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci ! **Ne collez jamais de cookies, de jetons ni votre valeur `arl`.** Une faille de sécurité se signale en privé : voir SECURITY.md.
+  - type: dropdown
+    id: target
+    attributes:
+      label: Où
+      options:
+        - Application Windows
+        - Extension (Chrome, Edge, Brave, Opera)
+        - Userscript
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Versions
+      description: Better Deezer (Réglages › À propos, ou `better-deezer version`), Deezer, navigateur ou Windows.
+      placeholder: Better Deezer 1.1.1, Deezer 8.0.10, Windows 11
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: Ce qui se passe
+      description: Ce que vous faites, ce que vous voyez, ce que vous attendiez. Une capture aide beaucoup.
+    validations:
+      required: true
+  - type: textarea
+    id: health
+    attributes:
+      label: Éléments introuvables
+      description: Ce qu'affiche Réglages › À propos, ou la sortie de `__betterDeezer.health()` dans la console (F12).
+      render: text
+  - type: textarea
+    id: logs
+    attributes:
+      label: Journal (application Windows)
+      description: La sortie de `better-deezer logs`.
+      render: text

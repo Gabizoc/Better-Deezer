@@ -174,6 +174,7 @@ Dans les DevTools (`F12`) sur deezer.com, `__betterDeezer.health()` montre les �
 
 **Publier une version** : changez `version` dans `package.json`, puis poussez un tag `vX.Y.Z` identique. Le workflow `release` construit les zips, le userscript et `SHA256SUMS.txt`, et `better-deezer update` la propose aussitôt.
 
+Pour contribuer : [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Crédits
 

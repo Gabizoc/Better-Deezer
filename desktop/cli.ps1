@@ -88,8 +88,8 @@ function ConvertTo-BdVersion {
   try { return [version]$clean } catch { return [version]'0.0' }
 }
 
-# Latest release: GitHub's public API, or the GitHub CLI (gh) when the repository
-# is private and gh is signed in.
+# Latest release: GitHub's public API, or the GitHub CLI (gh) when the API cannot be
+# reached or rate-limits anonymous calls and gh is signed in.
 function Get-BdLatest {
   [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
   try {
@@ -109,7 +109,7 @@ function Get-BdLatest {
       return @{ Tag = $r.tagName; Version = $r.tagName.TrimStart('v'); Source = 'gh'; Assets = $assets }
     }
   }
-  throw (T 'Impossible de joindre les versions sur GitHub. Le dépôt est peut-être privé : installez et connectez GitHub CLI (gh auth login), ou vérifiez votre connexion.' 'Cannot reach the releases on GitHub. The repository may be private: install and sign in to GitHub CLI (gh auth login), or check your connection.')
+  throw (T 'Impossible de joindre les versions sur GitHub. Vérifiez votre connexion et réessayez dans quelques minutes (GitHub limite les requêtes anonymes), ou connectez GitHub CLI (gh auth login).' 'Cannot reach the releases on GitHub. Check your connection and try again in a few minutes (GitHub rate-limits anonymous calls), or sign in to GitHub CLI (gh auth login).')
 }
 
 function Save-BdRelease {
