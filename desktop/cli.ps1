@@ -24,8 +24,13 @@ param([string]$Command = 'help')
 Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 
-$Root = Split-Path -Parent $MyInvocation.MyCommand.Path
-. (Join-Path $Root 'ui.ps1')
+$Here = Split-Path -Parent $MyInvocation.MyCommand.Path
+. (Join-Path $Here 'ui.ps1')
+# The install folder holds config.json, the payload and the scripts to run. Started
+# from a clone (desktop\cli.ps1), the command still acts on the real install.
+$Root = $Here
+$installed = Join-Path $env:LOCALAPPDATA 'BetterDeezer'
+if (-not (Test-Path (Join-Path $Here 'config.json')) -and (Test-Path (Join-Path $installed 'config.json'))) { $Root = $installed }
 
 $Repo = 'Gabizoc/Better-Deezer'
 $Required = @('setup.ps1', 'patch.ps1', 'uninstall.ps1', 'cli.ps1', 'ui.ps1', 'better-deezer.user.js')
