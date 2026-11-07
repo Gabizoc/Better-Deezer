@@ -12,7 +12,10 @@
         "page-bridge.js"
       ],
       "run_at": "document_idle",
-      "world": "MAIN"
+      "world": "MAIN",
+      "exclude_matches": [
+        "https://www.deezer.com/explore/*"
+      ]
     },
     {
       "matches": [
@@ -24,7 +27,10 @@
       "css": [
         "better-deezer.css"
       ],
-      "run_at": "document_idle"
+      "run_at": "document_idle",
+      "exclude_matches": [
+        "https://www.deezer.com/explore/*"
+      ]
     }
   ],
   "web_accessible_resources": [

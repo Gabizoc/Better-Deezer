@@ -523,6 +523,27 @@ await $eval(() => localStorage.removeItem("bd:home:order"));
 
 //@@CHECKS@@
 
+// Marketing pages on www.deezer.com (download, offers...): Better Deezer stays asleep, no warning.
+const warnings = [];
+page.on("console", (m) => m.type() === "warning" && /Better Deezer/.test(m.text()) && warnings.push(m.text()));
+await page.goto("https://www.deezer.com/explore/fr/download/");
+await page.waitForTimeout(600);
+check("not started on /explore/ pages", await $eval(() => !window.__betterDeezer && !document.documentElement.hasAttribute("data-bd")));
+await context.route("https://www.deezer.com/fr/marketing-test", (route) =>
+  route.fulfill({ status: 200, contentType: "text/html; charset=utf-8", body: "<!doctype html><title>Deezer</title><h1>Offres</h1><p>Pas de lecteur ici.</p>" })
+);
+await page.goto("https://www.deezer.com/fr/marketing-test");
+await page.waitForTimeout(4600);
+check("asleep on a page without the player, and no 'anchors not found' warning", await $eval(() => !window.__betterDeezer && !document.documentElement.hasAttribute("data-bd")) && warnings.length === 0, warnings.join(" | "));
+await page.evaluate(() => {
+  const root = document.createElement("div");
+  root.className = "naboo";
+  root.innerHTML = '<main id="page_content"></main>';
+  document.body.append(root);
+});
+await page.waitForTimeout(400);
+check("wakes up when the player appears later (single-page navigation)", await $eval(() => !!window.__betterDeezer && document.documentElement.dataset.bd === "on"));
+
 check("no page errors", errors.length === 0, errors.join(" | "));
 await browser.close();
 

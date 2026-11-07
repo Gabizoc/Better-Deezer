@@ -100,6 +100,7 @@ const header = `// ==UserScript==
 // @name         Better Deezer
 // @version      ${pkg.version}
 // @match        https://www.deezer.com/*
+// @exclude      https://www.deezer.com/explore/*
 // @run-at       document-idle
 // @grant        none
 // ==/UserScript==
