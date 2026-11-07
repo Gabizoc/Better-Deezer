@@ -7,7 +7,7 @@
 Thèmes, Marketplace, paroles synchronisées, lecteur flottant et des dizaines de petites retouches,<br>
 pour l'application Windows et le lecteur web. L'équivalent de Spicetify, pour Deezer.
 
-![Version](https://img.shields.io/badge/version-1.1.2-a238ff?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.1.3-a238ff?style=flat-square)
 ![Windows](https://img.shields.io/badge/Windows-application_Deezer-0078d4?style=flat-square)
 ![Navigateur](https://img.shields.io/badge/Chrome_·_Edge_·_Brave-extension-4285f4?style=flat-square)
 ![Licence](https://img.shields.io/badge/licence-MIT-22c55e?style=flat-square)

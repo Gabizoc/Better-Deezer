@@ -84,7 +84,7 @@ Also available for the Deezer Windows app.
 Deezer is a trademark of Deezer SA. Better Deezer is not affiliated with or endorsed by Deezer.
 ```
 
-**Store icon**: `extension/icons/icon-128.png`.
+**Store icon**: `extension/icons/icon-128.png` (vector source: `store/icon.svg`).
 
 **Screenshots** (1280×800, at least one, up to five): real deezer.com with the extension on, for example home in dark, home in light, an album page, the Now playing view with lyrics, the settings. Hide your name and avatar first.
 

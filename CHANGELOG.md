@@ -4,6 +4,11 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et les n
 
 ## [Non publié]
 
+## [1.1.3] — 2026-11-07
+
+### Modifié
+- Nouvelle icône : un « b » blanc dont la boucle est un bouton lecture, sur l'accent violet. Source vectorielle dans `store/icon.svg`.
+
 ## [1.1.2] — 2026-11-07
 
 ### Ajouté
@@ -56,7 +61,8 @@ Première version publique.
 - Menus, notifications, modales et toasts restylés ; réglages Better Deezer (`Ctrl ,`) ; carte de bienvenue au premier lancement.
 - Extension Chrome / Edge, userscript et installation Windows en une ligne.
 
-[Non publié]: https://github.com/Gabizoc/Better-Deezer/compare/v1.1.2...HEAD
+[Non publié]: https://github.com/Gabizoc/Better-Deezer/compare/v1.1.3...HEAD
+[1.1.3]: https://github.com/Gabizoc/Better-Deezer/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/Gabizoc/Better-Deezer/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/Gabizoc/Better-Deezer/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/Gabizoc/Better-Deezer/compare/v1.0.0...v1.1.0
