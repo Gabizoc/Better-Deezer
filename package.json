@@ -1,6 +1,6 @@
 {
   "name": "better-deezer",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "description": "A cleaner, modern skin and quality-of-life layer for Deezer (web extension + Windows desktop).",
   "license": "MIT",
