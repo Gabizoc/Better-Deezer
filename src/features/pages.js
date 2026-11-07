@@ -93,28 +93,32 @@ BD.feature({
 
   /** Words in section titles (fr + en) that tell what a carousel is about. */
   KEYWORDS: {
-    familiar: /reprendre|récemment|recent|continue|vos |votre |your |favori|favorite|coups de c|écouté|listened|habitudes|again|encore|flow|bibliothèque|library|mix(es)? (pour|for)|vos mix|your mix/i,
-    discovery: /nouv|new|découv|discover|release|sortie|tendance|trend|top |charts?|populaire|popular|radar|à explorer|explore|nouveaut|genre|podcast/i,
+    pinned: /reprendre|récemment|recently|continue|jump back/i,
+    familiar: /\b(vos|votre|tes|ton|ta|your)\b|chez toi|favori|favorite|coups? de c|écouté|listened|habitudes|again|encore|en boucle|on repeat|flow|suivi|followed|bibliothèque|library|mix/i,
+    discovery: /nouv|new|découv|discover|release|sortie|tendance|trend|\btop\b|charts?|populaire|popular|radar|explor|du moment|podcast/i,
     morning: /matin|morning|réveil|wake|chill|calme|calm|café|coffee|acoustic|douceur|focus|concentr/i,
     day: /focus|concentr|travail|work|study|étude|hits|pop|tendance|trend/i,
     evening: /soir|evening|soirée|party|fête|dance|danse|énergie|energy|workout|sport|club|apéro/i,
-    night: /nuit|night|sleep|sommeil|dormir|lo-?fi|ambient|détente|relax|calme|calm|piano/i
+    night: /nuit|night|sleep|sommeil|dormir|lo-?fi|ambient|détente|relax|calme|calm|apaisement|sérénité|piano|vagues|forêt/i
   },
 
   /** Lower comes first. Keeps Deezer's order among equals. */
   rank(title, index) {
-    const mode = BD.settings.get("home:order", "deezer");
     const k = this.KEYWORDS;
+    // "Recently played" stays on top whatever the mode.
+    if (k.pinned.test(title)) return index - 100000;
+    const mode = BD.settings.get("home:order", "deezer");
+    // Familiar wins ties: "Rediscover your favorites" is about what you know.
+    const familiar = k.familiar.test(title);
+    const discovery = !familiar && k.discovery.test(title);
     let score = 0;
-    if (mode === "familiar") score += k.familiar.test(title) ? 2 : k.discovery.test(title) ? -1 : 0;
-    if (mode === "discovery") score += k.discovery.test(title) ? 2 : k.familiar.test(title) && !/reprendre|recent|continue/i.test(title) ? -1 : 0;
+    if (mode === "familiar") score += familiar ? 2 : discovery ? -1 : 0;
+    if (mode === "discovery") score += discovery ? 2 : familiar ? -1 : 0;
     if (BD.settings.get("home:timeofday", false)) {
       const h = new Date().getHours();
       const slot = h >= 5 && h < 11 ? "morning" : h >= 11 && h < 18 ? "day" : h >= 18 && h < 23 ? "evening" : "night";
       if (k[slot].test(title)) score += 1.5;
     }
-    // "Recently played" stays on top whatever the mode.
-    if (/reprendre|recently played|continue/i.test(title)) score = 10;
     return index - score * 100;
   },
 
