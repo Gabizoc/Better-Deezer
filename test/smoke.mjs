@@ -173,6 +173,34 @@ check("collapsed rail is detected", rb.collapsed === "true");
 check("collapsed rail is centered vertically", Math.abs((rb.top + rb.bottom) / 2 - areaMid) < 8 && rb.height < 600, `mid ${((rb.top + rb.bottom) / 2).toFixed(0)} vs ${areaMid}, h ${rb.height.toFixed(0)}`);
 check("collapsed rail entries are centered horizontally", rb.links.every((x) => Math.abs(x - rb.cx) < 2), rb.links.map((x) => x.toFixed(0)).join(","));
 check("active page marked in the rail", (await $eval(() => document.querySelector('[data-bd="rail"] [data-bd-active="true"]')?.getAttribute("href"))) === "/fr/");
+// Desktop app: deezer.com/fr/ routed on the hash (#/fr/...), so every link shares the path /fr/.
+await $eval(() => {
+  history.replaceState(null, "", "/fr/#/fr/");
+  document.querySelectorAll('[data-bd="rail"] a[href^="/fr"]').forEach((a) => a.setAttribute("href", "#" + a.getAttribute("href")));
+  document.body.append(document.createElement("i")); // wake the observer
+});
+await page.waitForTimeout(300);
+const hashActive = await $eval(() => [...document.querySelectorAll('[data-bd="rail"] [data-bd-active="true"]')].map((a) => a.getAttribute("href")));
+check("hash routing (desktop app): only Home is active in the rail", hashActive.length === 1 && hashActive[0] === "#/fr/", JSON.stringify(hashActive));
+await $eval(() => {
+  document.querySelectorAll('[data-bd="rail"] a[href^="#/"]').forEach((a) => a.setAttribute("href", a.getAttribute("href").slice(1)));
+  history.replaceState(null, "", "/fr/");
+  document.body.append(document.createElement("i"));
+});
+await page.waitForTimeout(300);
+// Deezer hides its carousels' scrollbars with `scrollbar-width: none` on a generated class: ours must not override it.
+check("Deezer's hidden scrollbars stay hidden", await $eval(() => {
+  const st = document.createElement("style");
+  st.textContent = ".fake-carousel { scrollbar-width: none; overflow-x: scroll; }";
+  const el = document.createElement("div");
+  el.className = "fake-carousel";
+  document.head.append(st);
+  document.body.append(el);
+  const ok = getComputedStyle(el).scrollbarWidth === "none";
+  el.remove();
+  st.remove();
+  return ok;
+}));
 check("no css-xxxx class in our stylesheet", !(await $eval(() => /\.css-[a-z0-9]/i.test(document.getElementById("bd-style").textContent))));
 const hoverLink = page.locator('[data-bd="rail"] a[href="/fr/channels/explore/explore-tab"]');
 await hoverLink.hover();
