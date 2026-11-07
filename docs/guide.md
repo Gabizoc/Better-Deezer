@@ -40,7 +40,7 @@ The card appears once. Afterwards a small "Better Deezer x.y.z" badge shows for 
 | --- | --- |
 | **Themes** | Light / dark / auto, pick a theme, browse the Marketplace, install from a link or a file, create or customize a theme ([Themes](themes.md)) |
 | **Modules** | Turn extras on and off, live ([Modules](modules.md)) |
-| **Appearance** | Turn the visual parts on and off, the startup badge, **Tooltips** (Better Deezer's, their tips, Deezer's own, the previous / next track card: all off by default) |
+| **Appearance** | Turn the visual parts on and off, the startup badge, **Tooltips** (Better Deezer's, their tips, Deezer's own: off by default; the previous / next track card: on) |
 | **Sidebar** | The rail's entries as Deezer has them (real icons and names, so a Deezer update that adds or renames one shows up by itself): switch each on or off, drag the handle or use `Alt ↑` `Alt ↓` to reorder within a group, *Reset to default*. The Library entries are hidden by default; your playlists and pinned items always stay. |
 | **Playback & volume** | Player bar features, wheel gestures, volume step, lyrics source (Deezer word by word, or LRCLIB) |
 | **Home** | Hide the home carousels you don't use |

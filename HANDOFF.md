@@ -31,7 +31,7 @@ Une surcouche (CSS + JS) qui redessine Deezer — style « rework de Steam par B
 - **Barre latérale** (session 4) : onglet *Réglages > Barre latérale* **dynamique** : les entrées sont lues dans le vrai rail (lien `a > svg[data-testid$=Icon]`, clé = chemin sans langue sur 2 segments, icône clonée, libellé du titre, groupes = parent des liens, titre du groupe = en-tête Deezer). Afficher / masquer, réordonner (poignée glisser-déposer ou Alt+flèches) dans un groupe via CSS `order` (seulement si le parent est flex/grid), « Rétablir par défaut ». Par défaut les entrées `library/*` sont masquées. Réglages `rail:hidden` (clés, migration des anciens noms) et `rail:order`.
 - **Lecture** (session 4) : bouton play rond accent 44 px (essayé en discret gris, l'utilisateur a redemandé l'accent). Plus de molette sur la barre de progression (seulement sur la pochette du dock).
 - **Thème clair** : jamais de blanc pur `#FFFFFF` ni de noir pur (surface-1 `#FCFBF9`, Encre clair `#FAFAF9` / `#141414`), demande explicite.
-- **Infobulles** : toutes désactivées par défaut (demande explicite), réglables dans Apparence > Infobulles : les nôtres, leurs astuces, celles de Deezer, la carte précédent / suivant. Une seule à la fois (celle de Deezer, taguée `native-tip`, est masquée pendant la nôtre), aucune des nôtres sur précédent / suivant (Deezer y montre déjà le titre).
+- **Infobulles** : par défaut seule la carte de Deezer au survol de Précédent / Suivant reste (demande explicite) ; nos infobulles, leurs astuces et celles de Deezer sont désactivées, réglables dans Apparence > Infobulles : les nôtres, leurs astuces, celles de Deezer, la carte précédent / suivant. Une seule à la fois (celle de Deezer, taguée `native-tip`, est masquée pendant la nôtre), aucune des nôtres sur précédent / suivant (Deezer y montre déjà le titre).
 - **Réglages** : onglet sélectionné en accent doux (plus de barre à gauche, jugée « AI slop »), transitions sur les onglets et sur le contenu. Onglets Thèmes, Modules, Apparence, Lecture et volume, Accueil (sections on/off), Recommandations, Raccourcis, À propos. Aucun « Bientôt » : tout ce qui est affiché fonctionne (demande explicite de l'utilisateur en session 3).
 - **Barre du haut** (session 3) : recherche **toujours centrée sur la fenêtre** (pas sur la zone à droite du rail), bouton Accueil rond à sa gauche, largeur 320–600 px bornée par les actions de droite.
 - **Esprit Spicetify** (session 3) : thèmes communautaires faciles à créer/installer (Marketplace), modules activables à chaud, paroles synchronisées à côté de la pochette, transitions fluides.
@@ -69,7 +69,7 @@ assets/fonts/            woff2 OFL + fonts.json (plages unicode)
 desktop/                 install.ps1 (amorce ASCII) -> setup.ps1, launcher.ps1, uninstall.ps1
 scripts/build.mjs        build sans dépendance -> dist/extension + dist/better-deezer.user.js (CSS + polices base64)
 test/fixture.html        page qui reproduit les vraies ancres de Deezer
-test/smoke.mjs           107 vérifications dans Chromium (npm test) ; route deezer.com, lrclib.net et le registre GitHub vers des fixtures
+test/smoke.mjs           109 vérifications dans Chromium (npm test) ; route deezer.com, lrclib.net et le registre GitHub vers des fixtures
 test/cdp-inject.mjs      rejoue la séquence CDP du lanceur contre Chromium sur le vrai deezer.com
 .github/workflows/       ci.yml (build, smoke, parse PS 5.1, PSScriptAnalyzer) ; release.yml (tag v*)
 ```
