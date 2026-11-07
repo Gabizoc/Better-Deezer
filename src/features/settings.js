@@ -399,6 +399,7 @@ BD.feature({
           { class: "bd-shortcuts" },
           line([mod, "K"], "Rechercher", "Search"),
           line([mod, ","], "Réglages Better Deezer", "Better Deezer settings"),
+          line(["F"], "Vue « En écoute » et paroles", "Now playing view and lyrics"),
           line(["Q"], "File d'attente", "Queue"),
           line([BD.t("Molette", "Wheel")], "Sur le volume : ±5 % · sur la barre de progression : ±5 s", "On volume: ±5% · on the seek bar: ±5 s"),
           line([BD.t("Maj", "Shift"), BD.t("Molette", "Wheel")], "Volume ±1 % · progression ±15 s", "Volume ±1% · seek ±15 s"),
@@ -449,6 +450,32 @@ BD.feature({
             "a",
             { class: "bd-btn bd-btn-ghost", href: "https://github.com/Gabizoc/Better-Deezer", target: "_blank", rel: "noopener" },
             BD.t("Code source", "Source code")
+          ),
+          BD.h(
+            "a",
+            { class: "bd-btn bd-btn-ghost", href: "https://github.com/Gabizoc/Better-Deezer/blob/HEAD/docs/troubleshooting.md", target: "_blank", rel: "noopener" },
+            BD.t("Aide et dépannage", "Help and troubleshooting")
+          ),
+          BD.h(
+            "button",
+            {
+              type: "button",
+              class: "bd-btn bd-btn-ghost",
+              onclick: () => {
+                const ok = confirm(
+                  BD.t(
+                    "Réinitialiser tous les réglages Better Deezer ? Les thèmes installés et vos listes seront supprimés de cet appareil.",
+                    "Reset every Better Deezer setting? Installed themes and your lists will be removed from this device."
+                  )
+                );
+                if (!ok) return;
+                Object.keys(localStorage)
+                  .filter((k) => k.startsWith("bd:"))
+                  .forEach((k) => localStorage.removeItem(k));
+                location.reload();
+              }
+            },
+            BD.t("Réinitialiser", "Reset")
           ),
           BD.h(
             "button",
