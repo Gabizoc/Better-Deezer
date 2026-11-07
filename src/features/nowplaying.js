@@ -488,7 +488,8 @@ BD.feature({
   async load(track) {
     const s = this.state;
     s.track = track;
-    s.title.textContent = track.title;
+    // French spacing: keep "?", "!", ":" and ";" on the same line as the word before.
+    s.title.textContent = track.title.replace(/ ([?!:;»])/g, "\u00a0$1").replace(/« /g, "«\u00a0");
     s.artist.textContent = track.artist;
     if (track.cover) {
       s.cover.src = track.cover;

@@ -4,6 +4,9 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et les n
 
 ## [Non publié]
 
+### Corrigé
+- Vue En écoute : le titre garde « ? », « ! », « : » et « ; » sur la même ligne que le mot précédent, et ses lignes sont équilibrées.
+
 ## [1.1.3] — 2026-11-07
 
 ### Modifié
