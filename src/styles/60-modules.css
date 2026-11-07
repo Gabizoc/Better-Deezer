@@ -1,0 +1,321 @@
+/*
+ * Modules (Settings > Modules): now playing view, transitions, compact mode,
+ * hidden promos, sleep timer badge. Each block is gated by its feature.
+ */
+
+/* ---------- Now playing view (features/nowplaying.js) ---------- */
+html[data-bd="on"] .bd-np-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--bd-r-pill);
+  background: transparent;
+  color: var(--bd-text-2);
+  cursor: pointer;
+}
+
+html[data-bd="on"] .bd-np-btn:hover {
+  background: var(--bd-surface-2);
+  color: var(--bd-text);
+}
+
+html[data-bd="on"] .bd-np-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#bd-np {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483500;
+  overflow: hidden;
+  background: var(--bd-bg);
+  color: var(--bd-text);
+  font-family: var(--bd-font-ui);
+  animation: bd-np-in var(--bd-t-layout) var(--bd-ease) both;
+}
+
+#bd-np[data-closing="true"] {
+  animation: bd-np-out 200ms var(--bd-ease) both;
+}
+
+.bd-np-bg {
+  position: absolute;
+  inset: -10%;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.bd-np-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(90px) saturate(1.4);
+  transform: scale(1.1);
+}
+
+html[data-bd-theme="light"] .bd-np-bg {
+  opacity: 0.35;
+}
+
+.bd-np-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--bd-bg) 45%, transparent);
+}
+
+.bd-np-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: var(--bd-r-pill);
+  background: color-mix(in srgb, var(--bd-surface-2) 70%, transparent);
+  color: var(--bd-text);
+  cursor: pointer;
+}
+
+.bd-np-close:hover {
+  background: var(--bd-surface-3);
+}
+
+#bd-np svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+}
+
+#bd-np svg[data-fill="true"] {
+  fill: currentColor;
+  stroke: none;
+}
+
+.bd-np-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) 1.1fr;
+  align-items: center;
+  gap: clamp(32px, 6vw, 96px);
+  height: 100%;
+  padding: clamp(32px, 6vh, 72px) clamp(32px, 6vw, 96px);
+  box-sizing: border-box;
+}
+
+.bd-np-left {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: min(52vh, 520px);
+  justify-self: end;
+  width: 100%;
+}
+
+.bd-np-cover {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--bd-r-dock);
+  object-fit: cover;
+  background: var(--bd-surface-2);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+}
+
+.bd-np-title {
+  margin: 0;
+  font: 800 clamp(26px, 3.2vw, 44px) / 1.05 var(--bd-font-display);
+  letter-spacing: -0.03em;
+}
+
+.bd-np-artist {
+  margin: 6px 0 0;
+  color: var(--bd-text-2);
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.bd-np-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bd-np-time {
+  color: var(--bd-text-3);
+  font: 500 12px/1 var(--bd-font-ui);
+  font-variant-numeric: tabular-nums;
+}
+
+.bd-np-bar {
+  position: relative;
+  flex: 1;
+  height: 4px;
+  border-radius: var(--bd-r-pill);
+  background: color-mix(in srgb, var(--bd-text) 18%, transparent);
+  cursor: pointer;
+}
+
+.bd-np-bar:hover {
+  height: 6px;
+}
+
+.bd-np-bar span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  background: var(--bd-accent);
+}
+
+.bd-np-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.bd-np-ctl {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: var(--bd-r-pill);
+  background: transparent;
+  color: var(--bd-text);
+  cursor: pointer;
+}
+
+.bd-np-ctl:hover {
+  background: color-mix(in srgb, var(--bd-text) 10%, transparent);
+}
+
+.bd-np-ctl.bd-np-play {
+  width: 64px;
+  height: 64px;
+  background: var(--bd-accent);
+  color: var(--bd-on-accent);
+}
+
+.bd-np-ctl.bd-np-play:hover {
+  background: var(--bd-accent-hover);
+  transform: scale(1.04);
+}
+
+.bd-np-right {
+  display: flex;
+  flex-direction: column;
+  height: min(78vh, 760px);
+  min-width: 0;
+}
+
+.bd-np-lyrics {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(transparent, #000 14%, #000 80%, transparent);
+  mask-image: linear-gradient(transparent, #000 14%, #000 80%, transparent);
+}
+
+.bd-np-lyrics[data-kind="plain"] {
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.bd-np-lines {
+  margin: 0;
+  padding: 30vh 0 40vh;
+  list-style: none;
+  transition: transform 600ms var(--bd-ease);
+  will-change: transform;
+}
+
+.bd-np-lyrics[data-kind="plain"] .bd-np-lines {
+  padding: 10vh 0;
+}
+
+.bd-np-lines li {
+  margin: 0 0 18px;
+  color: color-mix(in srgb, var(--bd-text) 38%, transparent);
+  font: 700 clamp(22px, 2.4vw, 34px) / 1.25 var(--bd-font-display);
+  letter-spacing: -0.015em;
+  transform-origin: left center;
+  transition: color 300ms var(--bd-ease), transform 300ms var(--bd-ease), opacity 300ms var(--bd-ease);
+  cursor: pointer;
+}
+
+.bd-np-lyrics[data-kind="plain"] .bd-np-lines li {
+  color: var(--bd-text);
+  cursor: default;
+}
+
+.bd-np-lines li:hover {
+  color: color-mix(in srgb, var(--bd-text) 70%, transparent);
+}
+
+.bd-np-lines li[data-state="past"] {
+  color: color-mix(in srgb, var(--bd-text) 55%, transparent);
+}
+
+.bd-np-lines li[data-state="current"] {
+  color: var(--bd-text);
+  transform: scale(1.04);
+}
+
+.bd-np-lines .bd-np-note {
+  color: var(--bd-text-2);
+  font-size: 20px;
+  cursor: default;
+}
+
+.bd-np-source {
+  margin: 8px 0 0;
+  color: var(--bd-text-3);
+  font-size: 11px;
+}
+
+@media (max-width: 860px) {
+  .bd-np-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    align-items: start;
+    gap: 20px;
+  }
+  .bd-np-left {
+    max-width: none;
+    justify-self: stretch;
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    align-items: center;
+  }
+  .bd-np-left .bd-np-progress,
+  .bd-np-left .bd-np-controls {
+    grid-column: 1 / -1;
+  }
+  .bd-np-right {
+    height: auto;
+    min-height: 0;
+  }
+}
+
+@keyframes bd-np-in {
+  from { opacity: 0; transform: scale(0.985); }
+}
+
+@keyframes bd-np-out {
+  to { opacity: 0; transform: scale(0.985); }
+}

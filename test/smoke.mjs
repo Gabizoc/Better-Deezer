@@ -47,6 +47,15 @@ const registry = readFileSync(join(root, "themes/index.json"), "utf8");
 await context.route("https://raw.githubusercontent.com/**", (route) =>
   route.fulfill({ status: 200, contentType: "application/json", body: registry, headers: { "access-control-allow-origin": "*" } })
 );
+// LRCLIB (lyrics): a fixed synced answer for the fixture's track.
+await context.route("https://lrclib.net/**", (route) =>
+  route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    headers: { "access-control-allow-origin": "*" },
+    body: JSON.stringify({ trackName: "One More Time", artistName: "Daft Punk", duration: 320, instrumental: false, syncedLyrics: "[00:00.50] One more time\n[01:05.00] We're gonna celebrate\n[01:10.00] Oh yeah, all right\n[01:15.00] Don't stop the dancing\n[02:00.00] One more time" })
+  })
+);
 const page = await context.newPage();
 const errors = [];
 page.on("pageerror", (e) => errors.push(e.message));
@@ -295,6 +304,21 @@ check("saved theme is active after reload", await (async () => { await page.relo
 await $eval(() => localStorage.setItem("bd:themes:active", '"graphite"'));
 await page.reload();
 await page.waitForFunction(() => window.__betterDeezer);
+
+// ---------- Now playing view + synced lyrics ----------
+check("now playing button added to the player bar", await $eval(() => !!document.querySelector('[data-bd="dock"] .bd-np-btn')));
+await page.keyboard.press("f");
+await page.waitForTimeout(800);
+check("F opens the now playing view", await $eval(() => !!document.getElementById("bd-np")));
+const np = await $eval(() => ({ title: document.querySelector(".bd-np-title")?.textContent, lines: document.querySelectorAll(".bd-np-lines li").length, current: document.querySelector('.bd-np-lines li[data-state="current"]')?.textContent }));
+check("synced lyrics loaded and the current line follows the seek bar (1:12)", np.lines === 5 && np.current === "Oh yeah, all right", JSON.stringify(np));
+await shot("nowplaying");
+await page.locator(".bd-np-lines li", { hasText: "One more time" }).last().click();
+await page.waitForTimeout(150);
+check("clicking a lyric line seeks there", Math.abs((await $eval(() => Number(document.querySelector('[data-testid="progress_bar"]').value))) - 120) <= 1);
+await page.keyboard.press("Escape");
+await page.waitForTimeout(300);
+check("Escape closes the view", await $eval(() => !document.getElementById("bd-np")));
 
 //@@CHECKS@@
 
