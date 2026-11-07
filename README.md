@@ -45,7 +45,19 @@ Or download `better-deezer-windows.zip` from the [Releases](https://github.com/G
 
 Like Spicetify for Spotify, this patches the Deezer app itself: open Deezer as usual (its own shortcut, taskbar, Start menu) and the skin is there. There is no second app. Uninstall from *Settings > Apps > Better Deezer*, which puts Deezer back as it was.
 
-How it works: Deezer's desktop app is Electron showing deezer.com. `patch.ps1` appends a few lines to `build/main.js` inside Deezer's `resources\app.asar` (a copy of the original is kept as `app.asar.bd-backup`). On each deezer.com page load, those lines read `%LOCALAPPDATA%\BetterDeezer\better-deezer.user.js` and run it in the page; if the file is gone, Deezer runs unchanged. A Deezer update replaces `app.asar`: the installer registers `patch.ps1 -Quiet` at sign-in to put the hook back (or run `%LOCALAPPDATA%\BetterDeezer\patch.ps1` yourself). Log: `%LOCALAPPDATA%\BetterDeezer\patch.log`.
+The install also adds a `better-deezer` command (open a new terminal after installing):
+
+| Command | What it does |
+| --- | --- |
+| `better-deezer status` | Installed version, Deezer version, whether Deezer is patched, whether an update is out |
+| `better-deezer update` | Downloads the latest release, checks its SHA-256 sums and installs it (`-f` to reinstall the same version) |
+| `better-deezer apply` | Patches Deezer again, for instance right after a Deezer update |
+| `better-deezer restore` | Puts Deezer back as it was but keeps Better Deezer installed (`apply` brings it back) |
+| `better-deezer restart` | Restarts Deezer |
+| `better-deezer logs` | Last lines of the log |
+| `better-deezer uninstall` | Uninstalls Better Deezer (`-y`: no question) |
+
+How it works: Deezer's desktop app is Electron showing deezer.com. `patch.ps1` appends a few lines to `build/main.js` inside Deezer's `resources\app.asar` (a copy of the original is kept as `app.asar.bd-backup`). On each deezer.com page load, those lines read `%LOCALAPPDATA%\BetterDeezer\better-deezer.user.js` and run it in the page; if the file is gone, Deezer runs unchanged. A Deezer update replaces `app.asar`: the installer registers `patch.ps1 -Quiet` at sign-in to put the hook back (or run `better-deezer apply`). Log: `%LOCALAPPDATA%\BetterDeezer\patch.log`.
 
 ### Browser (Chrome, Edge, Brave, Opera)
 

@@ -9,14 +9,15 @@
   This file is plain ASCII on purpose: "irm | iex" may decode it with the wrong
   charset. It downloads the release files to %TEMP%\BetterDeezer-setup (or uses
   the ones next to it in an extracted release zip) and runs setup.ps1 as a real
-  file, which does the actual install. See setup.ps1 for what is installed.
+  file, which does the actual install and draws the real interface.
+  See setup.ps1 for what is installed.
 
   Options for setup.ps1 through environment variables (handy with iex):
     $env:BD_DEEZER_PATH = 'D:\Apps\Deezer\Deezer.exe'   unusual Deezer location
 #>
 $ErrorActionPreference = 'Stop'
 $repo = 'Gabizoc/Better-Deezer'
-$files = @('setup.ps1', 'patch.ps1', 'uninstall.ps1', 'better-deezer.user.js')
+$files = @('setup.ps1', 'patch.ps1', 'uninstall.ps1', 'cli.ps1', 'ui.ps1', 'better-deezer.user.js')
 $here = $null
 if ($PSScriptRoot -and (Test-Path (Join-Path $PSScriptRoot 'setup.ps1'))) { $here = $PSScriptRoot }
 
@@ -25,10 +26,23 @@ if (-not $here) {
   [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
   $here = Join-Path $env:TEMP 'BetterDeezer-setup'
   $null = New-Item -ItemType Directory -Force -Path $here
-  foreach ($f in $files) {
-    Write-Host "  downloading $f"
-    $ProgressPreference = 'SilentlyContinue'
-    Invoke-WebRequest -UseBasicParsing -Uri "https://github.com/$repo/releases/latest/download/$f" -OutFile (Join-Path $here $f)
+  Write-Host ''
+  Write-Host '  > ' -ForegroundColor Magenta -NoNewline
+  Write-Host 'Better Deezer' -ForegroundColor White -NoNewline
+  Write-Host ('  downloading {0} files from GitHub...' -f $files.Count) -ForegroundColor DarkGray
+  $ProgressPreference = 'SilentlyContinue'
+  try {
+    foreach ($f in $files) {
+      Invoke-WebRequest -UseBasicParsing -Uri "https://github.com/$repo/releases/latest/download/$f" -OutFile (Join-Path $here $f)
+    }
+  } catch {
+    Write-Host ''
+    Write-Host '  x ' -ForegroundColor Red -NoNewline
+    Write-Host ('Download failed: {0}' -f $_.Exception.Message)
+    Write-Host '    Check your connection, or download better-deezer-windows.zip from' -ForegroundColor DarkGray
+    Write-Host "    https://github.com/$repo/releases and run install.ps1 from it." -ForegroundColor DarkGray
+    Write-Host ''
+    return
   }
 }
 
