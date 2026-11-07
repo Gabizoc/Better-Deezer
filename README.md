@@ -1,6 +1,8 @@
 <div align="center">
 
-# ▌ Better Deezer
+<img src="store/icon.svg" width="96" height="96" alt="">
+
+# Better Deezer
 
 **Un Deezer plus propre, plus moderne, à votre goût.**
 
