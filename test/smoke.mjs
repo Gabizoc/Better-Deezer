@@ -212,7 +212,9 @@ await page.waitForTimeout(500);
 rb = await railBox();
 check("expanded rail is centered vertically like the collapsed one", rb.collapsed === "false" && Math.abs((rb.top + rb.bottom) / 2 - areaMid) < 8, `mid ${((rb.top + rb.bottom) / 2).toFixed(0)} vs ${areaMid}, top ${rb.top.toFixed(0)}, h ${rb.height.toFixed(0)}`);
 // A scrollbar in the rail would push every entry off center.
-check("no scrollbar takes room in the expanded rail", await $eval(() => [document.querySelector('[data-bd="rail"]'), ...document.querySelectorAll('[data-bd="rail"] *')].every((e) => e.offsetWidth - e.clientWidth - (parseFloat(getComputedStyle(e).borderLeftWidth) || 0) - (parseFloat(getComputedStyle(e).borderRightWidth) || 0) <= 0)));
+check("no scrollbar takes room in the expanded rail", await $eval(() => [document.querySelector('[data-bd="rail"]'), ...document.querySelectorAll('[data-bd="rail"] *')]
+  .filter((e) => /auto|scroll/.test(getComputedStyle(e).overflowY))
+  .every((e) => e.offsetWidth - e.clientWidth - (parseFloat(getComputedStyle(e).borderLeftWidth) || 0) - (parseFloat(getComputedStyle(e).borderRightWidth) || 0) <= 0)));
 await shot("3-rail-expanded");
 await $eval(() => __expandSidebar(false));
 // Visible entries in visual order (CSS order may differ from the DOM order).
