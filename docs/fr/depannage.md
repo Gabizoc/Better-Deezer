@@ -13,7 +13,8 @@ In English: [Troubleshooting](../troubleshooting.md) (plus détaillé).
 | Le bon site ? | Better Deezer ne tourne que sur `www.deezer.com` (pas `account.deezer.com`). |
 | Après avoir décompressé une nouvelle version | Cliquez sur la flèche de rechargement de la carte de l'extension, puis rechargez deezer.com. |
 | Une autre extension ou un userscript Deezer | Désactivez-le : deux skins se battent pour les mêmes éléments. |
-| *Coups de cœur*, *Albums*… absents de la barre latérale | Masqués par défaut. *Réglages > Apparence > Barre latérale* les réaffiche un par un. |
+| *Coups de cœur*, *Albums*… absents de la barre latérale | Masqués par défaut. *Réglages > Barre latérale* les réaffiche un par un (ou *Rétablir par défaut*). |
+| Une entrée ne se déplace pas dans *Réglages > Barre latérale* | Deezer dispose ce groupe d'une façon qu'on ne peut pas réordonner sans déplacer ses éléments, ce que Better Deezer ne fait jamais. Afficher / masquer marche toujours. |
 | Userscript | Une seule copie installée (extension **ou** userscript), autorisée sur deezer.com. |
 
 ## Après une mise à jour de Deezer

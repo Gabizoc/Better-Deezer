@@ -22,7 +22,8 @@ En français : [Dépannage](fr/depannage.md).
 | Is it the right site? | Better Deezer runs on `www.deezer.com` only (not `account.deezer.com`, not the old `deezer.com/en/` marketing pages). |
 | After unzipping a new version | *Load unpacked* points to a folder: after replacing its contents, click the reload arrow on the extension card, then reload deezer.com. |
 | Another Deezer extension or userscript | Turn it off and reload: two skins fight over the same elements. |
-| *Favourite tracks*, *Albums*… are missing from the sidebar | Hidden by default. *Settings > Appearance > Sidebar* brings each one back. |
+| *Favourite tracks*, *Albums*… are missing from the sidebar | Hidden by default. *Settings > Sidebar* brings each one back (or *Reset to default*). |
+| An entry can't be dragged in *Settings > Sidebar* | Deezer lays that group out in a way that can't be reordered without moving its elements, which Better Deezer never does. Show / hide still works. |
 | Userscript | Violentmonkey / Tampermonkey must be allowed on deezer.com, and the script enabled. Only one copy installed (extension **or** userscript). |
 
 ## After a Deezer update

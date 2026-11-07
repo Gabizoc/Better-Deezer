@@ -68,28 +68,72 @@ BD.feature({
 });
 
 /*
- * Sidebar entries: choose which of Deezer's navigation links the rail shows
- * (Settings > Appearance > Sidebar). Only the icon links are concerned (Home,
- * Explore and the Library ones), never the pinned items or the playlists list.
- * By default the Library links are hidden: Favourite tracks, playlists, albums,
- * artists and podcasts stay one click away from the profile and the library page.
+ * Sidebar entries (Settings > Sidebar): show, hide and reorder the navigation
+ * links of Deezer's rail. Nothing is hard-coded: entries are discovered in the
+ * live rail, so a Deezer update that adds, renames or removes one shows up here
+ * by itself.
+ *
+ *  - An entry is a rail link whose icon is a direct child: `a > svg[data-testid$=Icon]`
+ *    (Deezer's NavLink). Pinned items and playlists use covers, so they never match.
+ *  - Its key is its path without the language, first two segments ("", "channels/explore",
+ *    "library/albums"): stable across tabs and query strings.
+ *  - A group is the links' parent (e.g. Home + Explore, then the Library list).
+ *    Order is applied with CSS `order` inside a group (never by moving React's
+ *    nodes), and only when the group is a flex or grid box.
+ *  - Library entries are hidden until the user shows them (rail:hidden unset).
  */
 BD.railNav = {
-  /** key -> [fr, en, test on the path after the language segment]. Order = rail order. */
-  items: {
-    home: ["Accueil", "Home", (p) => p === ""],
-    explore: ["Explorer", "Explore", (p) => p.startsWith("channels/explore")],
-    loved: ["Coups de cœur", "Favourite tracks", (p) => p === "library/loved"],
-    playlists: ["Playlists", "Playlists", (p) => p === "library/playlists"],
-    albums: ["Albums", "Albums", (p) => p === "library/albums"],
-    artists: ["Artistes", "Artists", (p) => p === "library/artists"],
-    podcasts: ["Podcasts", "Podcasts", (p) => p === "library/podcasts" || p === "library/shows"]
+  keyOf(a) {
+    if (!a.querySelector(':scope > svg[data-testid$="Icon"]')) return null;
+    try {
+      const path = new URL(a.href, location.href).pathname
+        .replace(/^\/[a-z]{2}(?:-[a-z]{2})?(?=\/|$)/i, "")
+        .replace(/^\/|\/$/g, "");
+      return path.split("/").slice(0, 2).join("/");
+    } catch {
+      return null;
+    }
   },
-  defaultHidden: ["loved", "playlists", "albums", "artists", "podcasts"],
+
+  /** Entries as they are in the rail now: [{ key, label, icon, group, link }]. */
+  entries() {
+    const rail = BD.q('[data-bd="rail"]');
+    if (!rail) return [];
+    const seen = new Set();
+    const groups = [];
+    const out = [];
+    rail.querySelectorAll("a[href]").forEach((a) => {
+      const key = this.keyOf(a);
+      if (key === null || seen.has(key)) return;
+      seen.add(key);
+      if (!groups.includes(a.parentElement)) groups.push(a.parentElement);
+      const label = (a.querySelector("h2, h3, p, span")?.textContent || a.getAttribute("aria-label") || a.textContent || key).trim();
+      out.push({ key, label, icon: a.querySelector(':scope > svg[data-testid$="Icon"]'), group: groups.indexOf(a.parentElement), list: a.parentElement, link: a });
+    });
+    return out;
+  },
+
+  /** Title of a group: the heading of its block ("Library"), if it has one. */
+  groupTitle(list) {
+    const block = list.parentElement;
+    if (!block || BD.q('[data-bd="rail"]') === block) return null;
+    const heading = [...block.children].find((el) => el !== list && !el.querySelector("a[href]") && el.textContent.trim());
+    return heading ? heading.textContent.trim() : null;
+  },
+
+  canReorder(list) {
+    return /flex|grid/.test(getComputedStyle(list).display);
+  },
 
   hidden() {
-    return new Set(BD.settings.get("rail:hidden", this.defaultHidden));
+    const stored = BD.settings.get("rail:hidden", null);
+    if (stored) return new Set(stored.map((k) => this.legacy[k] ?? k));
+    // Default: the Library links (Favourite tracks, playlists, albums, artists, podcasts...).
+    return new Set(this.entries().filter((e) => e.key.startsWith("library/")).map((e) => e.key));
   },
+
+  /** Keys used by version 1.0.0 of this setting. */
+  legacy: { home: "", explore: "channels/explore", loved: "library/loved", playlists: "library/playlists", albums: "library/albums", artists: "library/artists", podcasts: "library/podcasts" },
 
   setVisible(key, visible) {
     const set = this.hidden();
@@ -98,17 +142,19 @@ BD.railNav = {
     BD.schedule?.();
   },
 
-  /** Which entry a rail link is, or null. Nav links are `a > svg[data-testid$=Icon] + heading`. */
-  keyOf(a) {
-    if (!a.querySelector(':scope > svg[data-testid$="Icon"]')) return null;
-    let path;
-    try {
-      path = new URL(a.href, location.href).pathname.replace(/^\/[a-z]{2}(?:-[a-z]{2})?(?=\/|$)/i, "").replace(/^\/|\/$/g, "");
-    } catch {
-      return null;
-    }
-    for (const [key, [, , test]] of Object.entries(this.items)) if (test(path)) return key;
-    return null;
+  order() {
+    return BD.settings.get("rail:order", []);
+  },
+
+  setOrder(keys) {
+    BD.settings.set("rail:order", keys);
+    BD.schedule?.();
+  },
+
+  reset() {
+    BD.settings.set("rail:hidden", null);
+    BD.settings.set("rail:order", []);
+    BD.schedule?.();
   }
 };
 
@@ -117,29 +163,32 @@ BD.feature({
   live: true,
 
   update() {
-    const rail = BD.q('[data-bd="rail"]');
-    if (!rail) return;
+    const entries = BD.railNav.entries();
+    if (!entries.length) return;
     const hidden = BD.railNav.hidden();
-    const groups = new Set();
-    rail.querySelectorAll("a[href]").forEach((a) => {
-      const key = BD.railNav.keyOf(a);
-      if (!key) return;
-      BD.mark(a, key, "data-bd-nav");
-      BD.mark(a, String(hidden.has(key)), "data-bd-nav-hidden");
-      groups.add(a.parentElement);
-    });
-    // A Library block with every link hidden goes too (its "Library" title and shuffle button).
-    groups.forEach((list) => {
-      const links = BD.qa(":scope > [data-bd-nav]", list);
+    const order = BD.railNav.order();
+    const lists = new Set();
+    for (const e of entries) {
+      BD.mark(e.link, e.key || "home", "data-bd-nav");
+      BD.mark(e.link, String(hidden.has(e.key)), "data-bd-nav-hidden");
+      lists.add(e.list);
+      // Saved order first, entries the user never placed keep Deezer's order after them.
+      const pos = order.indexOf(e.key);
+      const value = pos === -1 ? "" : String(pos - 1000);
+      if (BD.railNav.canReorder(e.list) && e.link.style.order !== value) e.link.style.order = value;
+    }
+    // A block whose links are all hidden goes too (e.g. the "Library" title and its shuffle button).
+    lists.forEach((list) => {
+      const links = entries.filter((e) => e.list === list);
+      const empty = links.every((e) => hidden.has(e.key));
       const block = list.parentElement;
-      const empty = links.length > 0 && links.every((a) => a.getAttribute("data-bd-nav-hidden") === "true");
-      const own = block && block !== rail && !BD.q('[data-bd-nav="home"]', block) && BD.qa("[data-bd-nav]", block).length === links.length;
-      if (own) BD.mark(block, String(empty), "data-bd-nav-hidden");
-      else BD.mark(list, String(empty), "data-bd-nav-hidden");
+      const own = block && block.getAttribute("data-bd") !== "rail" && BD.qa("[data-bd-nav]", block).length === links.length;
+      BD.mark(own ? block : list, String(empty), "data-bd-nav-hidden");
     });
   },
 
   teardown() {
     BD.qa("[data-bd-nav-hidden]").forEach((el) => el.removeAttribute("data-bd-nav-hidden"));
+    BD.qa("[data-bd-nav]").forEach((el) => (el.style.order = ""));
   }
 });
