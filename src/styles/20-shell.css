@@ -415,3 +415,47 @@ html[data-bd="on"] [data-bd="page"] {
     border-radius: 18px !important;
   }
 }
+
+/* Logged-out "Sign up for free" bar: a card floating just above the player bar. */
+html[data-bd="on"] [data-bd="signup-banner"] {
+  left: calc(var(--layout-sidebar-width, 80px) + var(--bd-gap)) !important;
+  right: var(--bd-gap) !important;
+  bottom: calc(var(--bd-dock-h) + var(--bd-gap) * 2) !important;
+  width: auto !important;
+  min-height: 64px !important;
+  height: auto !important;
+  box-sizing: border-box !important;
+  padding: 10px 12px 10px 14px !important;
+  border: 1px solid var(--bd-line) !important;
+  border-radius: var(--bd-r-dock) !important;
+  background: var(--bd-surface-2) !important;
+  box-shadow: var(--bd-shadow-pop) !important;
+}
+
+html[data-bd="on"] [data-bd="signup-banner"] h2 {
+  color: var(--bd-text) !important;
+  font-family: var(--bd-font-display) !important;
+  font-size: 16px !important;
+}
+
+html[data-bd="on"] [data-bd="signup-banner"] p {
+  color: var(--bd-text-2) !important;
+}
+
+html[data-bd="on"] [data-bd="signup-banner"] > div:first-child {
+  border-radius: var(--bd-r-chip) !important;
+  background: var(--bd-accent-soft) !important;
+  color: var(--bd-accent-text) !important;
+}
+
+html[data-bd="on"] [data-bd="signup-banner"] a {
+  border-radius: var(--bd-r-pill) !important;
+  background: var(--bd-accent) !important;
+  color: var(--bd-on-accent) !important;
+}
+
+@media (max-width: 899px) {
+  html[data-bd="on"] [data-bd="signup-banner"] {
+    left: var(--bd-gap) !important;
+  }
+}

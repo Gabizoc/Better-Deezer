@@ -32,7 +32,8 @@ BD.optionalAnchors = new Set([
   "pageToolbar",
   "trackGrid",
   "homeSections",
-  "switchTracks"
+  "switchTracks",
+  "signupBanner" // logged-out visitors only
 ]);
 
 BD.anchors = {
@@ -121,6 +122,12 @@ BD.anchors = {
 
   /** The player root (full width, Deezer's own wrapper). */
   playerRoot: () => BD.q("#page_player") || BD.q('[data-testid="miniplayer_container"]') || BD.q(".page-player"),
+
+  /** Logged-out "Sign up for free" bar: a direct child of the layout root with a link to the signup page. */
+  signupBanner: () => {
+    const root = BD.anchors.layoutRoot();
+    return root ? [...root.children].find((el) => !el.id && el.querySelector('a[href*="/signup"]')) || null : null;
+  },
 
   /** The visible player bar: the fixed box inside the player root that holds the play button. */
   dock: () => {

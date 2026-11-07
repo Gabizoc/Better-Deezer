@@ -354,6 +354,7 @@ html[data-bd-theme="light"] .bd-np-bg {
 
 /* ---------- Hide promos (modules.js: hide-promos) ---------- */
 html[data-bd-hide-promos="true"] [data-bd-promo="true"],
+html[data-bd-hide-promos="true"] [data-bd="signup-banner"],
 html[data-bd-hide-promos="true"] [data-testid="conversionBanner"],
 html[data-bd-hide-promos="true"] [data-testid="minibanner-root"],
 html[data-bd-hide-promos="true"] [data-testid="subscriptionBanner"],

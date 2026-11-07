@@ -31,6 +31,9 @@ BD.feature({
 
     const group = BD.anchors.searchGroup();
     if (group) BD.mark(group, "search-field-group");
+
+    const banner = BD.anchors.signupBanner();
+    if (banner) BD.mark(banner, "signup-banner");
   },
 
   /**
