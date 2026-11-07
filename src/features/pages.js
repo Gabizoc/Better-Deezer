@@ -82,10 +82,58 @@ BD.feature({
   }
 });
 
-/* Home: greeting + hideable sections (Settings > Home). */
+/*
+ * Home: greeting, hideable sections (Settings > Home) and section order
+ * (Settings > Recommendations). Sections are never moved in the DOM: their
+ * common parent becomes a flex column and each one gets a CSS `order`.
+ */
 BD.feature({
   id: "home",
   label: ["Accueil : salutation et sections masquables", "Home: greeting and hideable sections"],
+
+  /** Words in section titles (fr + en) that tell what a carousel is about. */
+  KEYWORDS: {
+    familiar: /reprendre|récemment|recent|continue|vos |votre |your |favori|favorite|coups de c|écouté|listened|habitudes|again|encore|flow|bibliothèque|library|mix(es)? (pour|for)|vos mix|your mix/i,
+    discovery: /nouv|new|découv|discover|release|sortie|tendance|trend|top |charts?|populaire|popular|radar|à explorer|explore|nouveaut|genre|podcast/i,
+    morning: /matin|morning|réveil|wake|chill|calme|calm|café|coffee|acoustic|douceur|focus|concentr/i,
+    day: /focus|concentr|travail|work|study|étude|hits|pop|tendance|trend/i,
+    evening: /soir|evening|soirée|party|fête|dance|danse|énergie|energy|workout|sport|club|apéro/i,
+    night: /nuit|night|sleep|sommeil|dormir|lo-?fi|ambient|détente|relax|calme|calm|piano/i
+  },
+
+  /** Lower comes first. Keeps Deezer's order among equals. */
+  rank(title, index) {
+    const mode = BD.settings.get("home:order", "deezer");
+    const k = this.KEYWORDS;
+    let score = 0;
+    if (mode === "familiar") score += k.familiar.test(title) ? 2 : k.discovery.test(title) ? -1 : 0;
+    if (mode === "discovery") score += k.discovery.test(title) ? 2 : k.familiar.test(title) && !/reprendre|recent|continue/i.test(title) ? -1 : 0;
+    if (BD.settings.get("home:timeofday", false)) {
+      const h = new Date().getHours();
+      const slot = h >= 5 && h < 11 ? "morning" : h >= 11 && h < 18 ? "day" : h >= 18 && h < 23 ? "evening" : "night";
+      if (k[slot].test(title)) score += 1.5;
+    }
+    // "Recently played" stays on top whatever the mode.
+    if (/reprendre|recently played|continue/i.test(title)) score = 10;
+    return index - score * 100;
+  },
+
+  order(sections) {
+    const parent = sections[0]?.el.parentElement;
+    const reorder = BD.settings.get("home:order", "deezer") !== "deezer" || BD.settings.get("home:timeofday", false);
+    const same = parent && sections.every((s) => s.el.parentElement === parent);
+    if (!reorder || !same) {
+      BD.unmarkAll("home-list");
+      sections.forEach(({ el }) => el.style.order && el.style.removeProperty("order"));
+      return;
+    }
+    BD.unmarkAll("home-list", parent);
+    BD.mark(parent, "home-list");
+    sections.forEach(({ el, title }, i) => {
+      const value = String(Math.round(this.rank(title, i)));
+      if (el.style.order !== value) el.style.order = value;
+    });
+  },
 
   setup() {
     BD.home = { sections: () => this.sections().map((s) => s.title) };
@@ -141,6 +189,7 @@ BD.feature({
       if (hidden.has(title)) BD.mark(el, "true", "data-bd-hidden");
       else if (el.hasAttribute("data-bd-hidden")) el.removeAttribute("data-bd-hidden");
     });
+    this.order(sections);
 
     const first = sections[0]?.el;
     if (!first) return;

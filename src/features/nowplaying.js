@@ -15,7 +15,7 @@ BD.feature({
   id: "nowplaying",
   module: true,
   live: true,
-  icon: "M4 4h6v2H6v4H4zm10 0h6v6h-2V6h-4zM4 14h2v4h4v2H4zm14 0h2v6h-6v-2h4z",
+  glyph: "M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5",
   label: ["Vue « En écoute » + paroles synchronisées", "“Now playing” view + synced lyrics"],
   description: [
     "Grande pochette et paroles qui défilent avec la musique. Touche F ou bouton dans la barre de lecture. Paroles : LRCLIB (titre et artiste envoyés à lrclib.net).",
@@ -164,7 +164,7 @@ BD.feature({
     if (!anchor || BD.q(".bd-np-btn")) return;
     const btn = BD.h(
       "button",
-      { type: "button", class: "bd-np-btn", "aria-label": BD.t("Vue En écoute (F)", "Now playing view (F)"), onclick: () => (this.state ? this.close() : this.open()) },
+      { type: "button", class: "bd-np-btn", "aria-label": BD.t("En écoute", "Now playing"), "data-bd-tip": BD.t("Paroles et grande pochette · touche F", "Lyrics and big cover · F key"), onclick: () => (this.state ? this.close() : this.open()) },
       this.icon("M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5")
     );
     anchor.parentNode.insertBefore(btn, anchor);

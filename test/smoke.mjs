@@ -320,6 +320,43 @@ await page.keyboard.press("Escape");
 await page.waitForTimeout(300);
 check("Escape closes the view", await $eval(() => !document.getElementById("bd-np")));
 
+// ---------- Modules ----------
+check("hide promos: upgrade banner hidden", (await css('[data-testid="conversionBanner"]', "display")) === "none");
+await $eval(() => window.__betterDeezer.settings());
+await page.waitForTimeout(300);
+await page.locator("#bd-settings [data-tab=modules]").click();
+check("Modules tab lists the modules", (await $eval(() => document.querySelectorAll("#bd-settings .bd-module").length)) >= 6);
+await shot("modules");
+await page.locator("#bd-settings .bd-chip-btn", { hasText: "15 min" }).click();
+await page.waitForTimeout(1100);
+const badge = await $eval(() => document.querySelector('[data-bd="dock"] .bd-sleep-badge')?.textContent || "");
+check("sleep timer shows a countdown badge in the player bar", /^1[45]:\d\d$/.test(badge), badge);
+const promoSwitch = page.locator("#bd-settings .bd-module", { hasText: "bannières" }).locator("input");
+await promoSwitch.click();
+await page.waitForTimeout(150);
+check("turning hide promos off shows the banner again (live)", (await css('[data-testid="conversionBanner"]', "display")) !== "none");
+await promoSwitch.click();
+await page.waitForTimeout(150);
+check("turning it back on hides it again", (await css('[data-testid="conversionBanner"]', "display")) === "none");
+await page.locator("#bd-settings .bd-module", { hasText: "compact" }).locator("input").click();
+await page.waitForTimeout(150);
+check("compact mode applies live", (await $eval(() => document.documentElement.dataset.bdCompact)) === "true");
+await page.locator("#bd-settings .bd-module", { hasText: "compact" }).locator("input").click();
+await page.keyboard.press("Escape");
+await page.waitForTimeout(250);
+await page.locator(".bd-sleep-badge").click();
+check("clicking the badge cancels the sleep timer", await $eval(() => !document.querySelector(".bd-sleep-badge")));
+
+// Home order: Discovery puts "Nouveautés" first, Deezer's order otherwise.
+const homeOrder = () => $eval(() => [...document.querySelectorAll('[data-testid="section-renderer"]')].sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top).map((el) => el.textContent));
+check("home keeps Deezer's order by default", (await homeOrder())[0] === "Vos mix");
+await $eval(() => localStorage.setItem("bd:home:order", '"discovery"'));
+await page.reload();
+await page.waitForFunction(() => window.__betterDeezer);
+await page.waitForTimeout(300);
+check("Discovery priority moves new releases first", (await homeOrder())[0] === "Nouveautés pour vous", (await homeOrder()).join(" / "));
+await $eval(() => localStorage.removeItem("bd:home:order"));
+
 //@@CHECKS@@
 
 check("no page errors", errors.length === 0, errors.join(" | "));

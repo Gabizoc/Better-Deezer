@@ -150,14 +150,14 @@ BD.feature({
     return BD.h("div", { class: "bd-set-section" }, title ? BD.h("h3", {}, title) : null, ...rows);
   },
 
-  row(label, hint, control, opts = {}) {
+  row(label, hint, control) {
     return BD.h(
       "div",
-      { class: "bd-set-row", "data-soon": opts.soon ? "true" : null },
+      { class: "bd-set-row" },
       BD.h(
         "div",
         { class: "bd-set-text" },
-        BD.h("span", { class: "bd-set-label" }, label, opts.soon ? BD.h("em", { class: "bd-soon" }, BD.t("Bientôt", "Soon")) : null),
+        BD.h("span", { class: "bd-set-label" }, label),
         hint ? BD.h("span", { class: "bd-set-hint" }, hint) : null
       ),
       control
@@ -335,16 +335,25 @@ BD.feature({
     input.addEventListener("keydown", (e) => e.key === "Enter" && add());
     return [
       this.section(
-        BD.t("Équilibre", "Balance"),
-        this.row(
-          BD.t("Flow et mixes", "Flow and mixes"),
-          BD.t("Familier : surtout des titres connus. Découverte : surtout du neuf.", "Familiar: mostly known tracks. Discovery: mostly new ones."),
-          this.segmented("reco:mode", "balanced", [["familiar", "Familier", "Familiar"], ["balanced", "Équilibré", "Balanced"], ["discovery", "Découverte", "Discovery"]], null, true),
-          { soon: true }
+        BD.t("Ordre de l'accueil", "Home order"),
+        BD.h(
+          "p",
+          { class: "bd-set-hint" },
+          BD.t(
+            "Réordonne les carrousels de l'accueil d'après leur titre. Les recommandations elles-mêmes restent celles de Deezer.",
+            "Reorders the home carousels by their title. The recommendations themselves are still Deezer's."
+          )
         ),
-        this.row(BD.t("« Pourquoi ce titre ? »", "“Why this track?”"), BD.t("Une étiquette sous les cartes recommandées.", "A label under recommended cards."), this.toggle("reco:why", false, null, true), { soon: true }),
-        this.row(BD.t("Éviter les répétitions pendant 7 jours", "Avoid repeats for 7 days"), null, this.toggle("reco:norepeat", false, null, true), { soon: true }),
-        this.row(BD.t("Accueil selon l'heure", "Home by time of day"), BD.t("Calme le matin, énergique le soir.", "Calm in the morning, upbeat at night."), this.toggle("reco:timeofday", false, null, true), { soon: true })
+        this.row(
+          BD.t("Priorité", "Priority"),
+          BD.t("Familier : vos mix et favoris d'abord. Découverte : nouveautés et tendances d'abord.", "Familiar: your mixes and favorites first. Discovery: new releases and trends first."),
+          this.segmented("home:order", "deezer", [["deezer", "Deezer", "Deezer"], ["familiar", "Familier", "Familiar"], ["discovery", "Découverte", "Discovery"]])
+        ),
+        this.row(
+          BD.t("Selon l'heure", "By time of day"),
+          BD.t("Calme le matin, concentration la journée, énergie le soir, détente la nuit.", "Calm in the morning, focus by day, upbeat at night, relaxing late."),
+          this.toggle("home:timeofday", false)
+        )
       ),
       this.section(
         BD.t("Ne plus me recommander", "Don't recommend"),

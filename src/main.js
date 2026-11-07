@@ -44,7 +44,8 @@
   html.setAttribute("data-bd-version", BD.version);
 
   // Features run while enabled. Toggling one in the settings takes effect live:
-  // setup() runs the first time it is on, teardown() (optional) when it goes off.
+  // setup() runs when it is switched on, teardown() (optional) when it goes off.
+  // Without a teardown, setup() runs only once per page load.
   const failed = new Set();
   const started = new Set();
   BD.failed = failed;
@@ -82,8 +83,11 @@
     const id = key.startsWith("feature:") ? key.slice(8) : null;
     const f = id && BD.features.find((x) => x.id === id);
     if (f) {
-      if (value === false) safe(f, "teardown");
-      else start(f);
+      if (value === false) {
+        safe(f, "teardown");
+        // A feature that cleans up after itself sets up again when switched back on.
+        if (typeof f.teardown === "function") started.delete(f.id);
+      } else start(f);
     }
     schedule();
   });

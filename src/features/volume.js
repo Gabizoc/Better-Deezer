@@ -155,6 +155,7 @@ BD.feature({
   },
 
   setup() {
+    BD.volume = this; // used by the sleep timer (features/modules.js) to fade out
     document.documentElement.setAttribute("data-bd-volume", "inline");
 
     // Capture phase on document: runs before React's root listener, so the

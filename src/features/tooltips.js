@@ -21,7 +21,8 @@ BD.feature({
     const key = Object.keys(this.hints).find((k) => testid.startsWith(k));
     const h = key ? this.hints[key] : [];
     const label = BD.t(h[0], h[1]) || el.getAttribute("aria-label") || "";
-    const tip = BD.isEnabled("tips") ? BD.t(h[2], h[3]) : null;
+    // Our own buttons carry their tip in data-bd-tip.
+    const tip = BD.isEnabled("tips") ? el.getAttribute("data-bd-tip") || BD.t(h[2], h[3]) : null;
     return { label, tip };
   },
 

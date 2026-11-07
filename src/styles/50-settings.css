@@ -31,6 +31,7 @@
   background: var(--bd-surface-1);
   box-shadow: var(--bd-shadow-pop);
   overflow: hidden;
+  overflow: clip; /* focus() or scrollIntoView must never scroll the panel itself */
   animation: bd-pop var(--bd-t-base) var(--bd-ease) both;
 }
 
@@ -125,6 +126,7 @@
   background: var(--bd-surface-3);
   color: var(--bd-text);
   font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--bd-accent);
 }
 
 .bd-settings-body {
@@ -159,10 +161,6 @@
   padding: 8px 0;
 }
 
-.bd-set-row[data-soon="true"] {
-  opacity: 0.6;
-}
-
 .bd-set-text {
   display: flex;
   flex-direction: column;
@@ -186,15 +184,6 @@
 .bd-set-empty {
   margin: 12px 0;
   color: var(--bd-text-3);
-}
-
-.bd-soon {
-  padding: 2px 7px;
-  border-radius: var(--bd-r-pill);
-  background: var(--bd-accent-soft);
-  color: var(--bd-accent-text);
-  font: 600 11px/1.3 var(--bd-font-ui);
-  font-style: normal;
 }
 
 /* Switch */
