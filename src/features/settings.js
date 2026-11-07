@@ -55,6 +55,7 @@ BD.feature({
   close() {
     const root = document.getElementById("bd-settings");
     if (!root) return;
+    BD.skins.apply(); // drop any unsaved theme preview
     root.setAttribute("data-closing", "true");
     setTimeout(() => root.remove(), 160);
     this.lastFocus?.focus?.();
@@ -75,17 +76,22 @@ BD.feature({
     }
   },
 
-  tabs: [
-    ["appearance", "Apparence", "Appearance"],
-    ["playback", "Lecture et volume", "Playback & volume"],
-    ["home", "Accueil", "Home"],
-    ["reco", "Recommandations", "Recommendations"],
-    ["shortcuts", "Raccourcis", "Shortcuts"],
-    ["about", "À propos", "About"]
+  /** Built-in tabs, plus the ones other files register with BD.settingsTab (sorted by order). */
+  builtinTabs: [
+    { id: "appearance", order: 10, label: ["Apparence", "Appearance"] },
+    { id: "playback", order: 30, label: ["Lecture et volume", "Playback & volume"] },
+    { id: "home", order: 50, label: ["Accueil", "Home"] },
+    { id: "reco", order: 60, label: ["Recommandations", "Recommendations"] },
+    { id: "shortcuts", order: 80, label: ["Raccourcis", "Shortcuts"] },
+    { id: "about", order: 90, label: ["À propos", "About"] }
   ],
 
-  open(tab = BD.settings.get("settings:tab", "appearance")) {
-    if (!this.tabs.some(([id]) => id === tab)) tab = "appearance";
+  get tabs() {
+    return [...this.builtinTabs, ...BD.settingsTabs].sort((a, b) => a.order - b.order);
+  },
+
+  open(tab = BD.settings.get("settings:tab", "themes")) {
+    if (!this.tabs.some((t) => t.id === tab)) tab = this.tabs[0].id;
     this.lastFocus = document.activeElement;
     document.getElementById("bd-settings")?.remove();
 
@@ -95,10 +101,12 @@ BD.feature({
       BD.settings.set("settings:tab", id);
       BD.qa("button", nav).forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === id)));
       body.replaceChildren(...this.render(id));
-      body.setAttribute("aria-label", BD.t(...this.tabs.find((t) => t[0] === id).slice(1)));
+      body.setAttribute("aria-label", BD.t(...this.tabs.find((t) => t.id === id).label));
+      body.scrollTop = 0;
     };
-    for (const [id, fr, en] of this.tabs) {
-      nav.append(BD.h("button", { type: "button", role: "tab", "data-tab": id, onclick: () => select(id) }, BD.t(fr, en)));
+    this.select = select;
+    for (const t of this.tabs) {
+      nav.append(BD.h("button", { type: "button", role: "tab", "data-tab": t.id, onclick: () => select(t.id) }, BD.t(...t.label)));
     }
 
     const root = BD.h(
@@ -171,10 +179,12 @@ BD.feature({
     return input;
   },
 
-  featureToggle(id) {
+  /** Toggle for a feature. Live features (`live: true`) apply at once, others ask for a reload. */
+  featureToggle(id, hint) {
     const f = BD.features.find((x) => x.id === id);
     if (!f?.label) return null;
-    return this.row(BD.t(...f.label), null, this.toggle(`feature:${id}`, true, () => this.needsReload()));
+    const desc = hint || (f.description ? BD.t(...f.description) : null);
+    return this.row(BD.t(...f.label), desc, this.toggle(`feature:${id}`, !BD.defaultOff.has(id), () => !f.live && this.needsReload()));
   },
 
   segmented(key, fallback, options, onChange, disabled) {
@@ -219,19 +229,19 @@ BD.feature({
 
   // ---------- tabs ----------
   render(tab) {
-    return this[`tab_${tab}`]().concat(this.reloadBar());
+    const extra = BD.settingsTabs.find((t) => t.id === tab);
+    const nodes = extra ? extra.render(this) : this[`tab_${tab}`]();
+    return nodes.filter(Boolean).concat(this.reloadBar());
+  },
+
+  /** Re-render the current tab (after an install, a delete...). */
+  refresh() {
+    const current = BD.settings.get("settings:tab", "themes");
+    if (this.isOpen()) this.select?.(current);
   },
 
   tab_appearance() {
     return [
-      this.section(
-        BD.t("Thème", "Theme"),
-        this.row(
-          BD.t("Apparence", "Appearance"),
-          BD.t("Auto suit le réglage de Windows / du navigateur.", "Auto follows your system setting."),
-          this.segmented("theme", BD.theme.get(), [["light", "Clair", "Light"], ["dark", "Sombre", "Dark"], ["system", "Auto", "Auto"]], (v) => BD.theme.set(v))
-        )
-      ),
       this.section(
         BD.t("Interface", "Interface"),
         this.featureToggle("content"),

@@ -42,6 +42,11 @@ await context.route(/fonts\.(googleapis|gstatic)\.com/, (route) => {
   googleFontRequests++;
   route.abort();
 });
+// Community theme registry (raw.githubusercontent.com): serve the repository's own index.
+const registry = readFileSync(join(root, "themes/index.json"), "utf8");
+await context.route("https://raw.githubusercontent.com/**", (route) =>
+  route.fulfill({ status: 200, contentType: "application/json", body: registry, headers: { "access-control-allow-origin": "*" } })
+);
 const page = await context.newPage();
 const errors = [];
 page.on("pageerror", (e) => errors.push(e.message));
@@ -260,6 +265,36 @@ for (const width of [1440, 1100]) {
 }
 await page.setViewportSize({ width: 1440, height: 900 });
 await shot("topbar");
+
+// ---------- Themes ----------
+await page.keyboard.press("Control+Comma");
+await page.waitForTimeout(300);
+await page.click('#bd-settings [data-tab="themes"]');
+await page.waitForTimeout(500);
+check("themes tab lists the built-in themes", (await $eval(() => document.querySelectorAll("#bd-settings .bd-theme-card").length)) >= 8);
+check("Marketplace loaded the registry online", (await $eval(() => document.querySelector("#bd-settings").textContent)).includes("à jour"));
+await shot("themes-tab");
+await page.locator("#bd-settings .bd-theme-card", { hasText: "Nocturne" }).first().locator("button", { hasText: "Appliquer" }).click();
+await page.waitForTimeout(200);
+check("applying Nocturne changes the ground", (await bodyBg()) === "rgb(10, 13, 20)", await bodyBg());
+await page.locator("#bd-settings .bd-theme-card", { hasText: "Aurora" }).first().locator("button", { hasText: "Installer" }).click();
+await page.waitForTimeout(200);
+check("installing Aurora (dark only) applies it and forces dark", (await bodyBg()) === "rgb(7, 16, 18)" && (await $eval(() => document.documentElement.dataset.bdTheme)) === "dark");
+await shot("themes-aurora");
+const bad = await $eval(() => window.__betterDeezer.themes.install({ id: "evil", name: "Evil", css: "body{background:url(https://evil.example/t.gif)}" }));
+check("a theme with url() in its CSS is rejected", bad.ok === false && bad.errors.join(" ").includes("url()"), bad.errors?.join(" "));
+await page.locator("#bd-settings button", { hasText: "Créer un thème" }).click();
+await page.waitForTimeout(300);
+check("theme editor opens with 13 color pickers", (await $eval(() => document.querySelectorAll("#bd-settings .bd-color input[type=color]").length)) === 13);
+await page.locator("#bd-settings .bd-color", { hasText: "Fond" }).locator("input").evaluate((el) => { el.value = "#202040"; el.dispatchEvent(new Event("input", { bubbles: true })); });
+check("editor previews live", (await bodyBg()) === "rgb(32, 32, 64)", await bodyBg());
+await shot("themes-editor");
+await page.locator("#bd-settings button", { hasText: "Enregistrer et appliquer" }).click();
+await page.waitForTimeout(200);
+check("saved theme is active after reload", await (async () => { await page.reload(); await page.waitForFunction(() => window.__betterDeezer); return (await bodyBg()) === "rgb(32, 32, 64)"; })());
+await $eval(() => localStorage.setItem("bd:themes:active", '"graphite"'));
+await page.reload();
+await page.waitForFunction(() => window.__betterDeezer);
 
 //@@CHECKS@@
 

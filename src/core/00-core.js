@@ -93,4 +93,14 @@ BD.h = (tag, props = {}, ...children) => {
  */
 BD.feature = (def) => BD.features.push(def);
 
-BD.isEnabled = (id) => BD.settings.get(`feature:${id}`, true) !== false;
+/** Features that are off until the user turns them on (opt-in modules). */
+BD.defaultOff = new Set();
+BD.isEnabled = (id) => BD.settings.get(`feature:${id}`, !BD.defaultOff.has(id)) !== false;
+
+/**
+ * Extra tabs for the settings panel, registered by feature files:
+ *   BD.settingsTab({ id, order, label: [fr, en], render(ui) => Node[] })
+ * `ui` is the settings feature (helpers: section, row, toggle, segmented, ...).
+ */
+BD.settingsTabs = [];
+BD.settingsTab = (tab) => BD.settingsTabs.push(tab);

@@ -16,6 +16,8 @@ BD.theme = {
 
   /** What is actually shown: "dark" or "light". */
   resolve(pref = this.get()) {
+    // A color theme that only has one palette (BD.skins) forces that mode.
+    if (this.forced) return this.forced;
     if (pref === "system") return this.media?.matches ? "light" : "dark";
     return pref;
   },
