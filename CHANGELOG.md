@@ -4,7 +4,11 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et les n
 
 ## [Non publié]
 
+## [1.1.2] — 2026-11-07
+
 ### Ajouté
+- Icônes de l'extension, prête pour le Chrome Web Store (textes et visuels de la fiche dans `store/`).
+- Politique de confidentialité en anglais (`docs/privacy.md`).
 - Fichiers de projet open source : guide de contribution, politique de sécurité, modèles d'issues et de pull requests, ce journal.
 
 ### Modifié
@@ -52,7 +56,8 @@ Première version publique.
 - Menus, notifications, modales et toasts restylés ; réglages Better Deezer (`Ctrl ,`) ; carte de bienvenue au premier lancement.
 - Extension Chrome / Edge, userscript et installation Windows en une ligne.
 
-[Non publié]: https://github.com/Gabizoc/Better-Deezer/compare/v1.1.1...HEAD
+[Non publié]: https://github.com/Gabizoc/Better-Deezer/compare/v1.1.2...HEAD
+[1.1.2]: https://github.com/Gabizoc/Better-Deezer/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/Gabizoc/Better-Deezer/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/Gabizoc/Better-Deezer/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/Gabizoc/Better-Deezer/releases/tag/v1.0.0

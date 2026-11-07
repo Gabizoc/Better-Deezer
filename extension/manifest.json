@@ -2,7 +2,14 @@
   "manifest_version": 3,
   "name": "Better Deezer",
   "version": "0.0.0",
-  "description": "A cleaner, modern Deezer: floating rail and player, custom search, volume wheel, light and dark themes.",
+  "description": "Unofficial skin for the Deezer web player: themes, synced lyrics, floating player, volume wheel and more.",
+  "homepage_url": "https://github.com/Gabizoc/Better-Deezer",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
   "content_scripts": [
     {
       "matches": [
