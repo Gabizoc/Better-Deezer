@@ -14,7 +14,7 @@ A cleaner, more modern Deezer, built as an open-source skin and quality-of-life 
   - **Sleep timer** with a volume fade
   - **Accent color from the cover**, **Compact mode**
 - **Top bar**: the search is always centered on the window, with a round **Home** button on its left (`Ctrl K`)
-- A **floating rail**, centered when collapsed, and a **floating player bar**: quiet round play button, filled heart when liked, thin seek bar between the two times
+- A **floating rail**, centered when collapsed, and a **floating player bar**: round accent play button, filled heart when liked, thin seek bar between the two times
 - **Volume**: click the icon to unfold a slider, mouse wheel over it (5% steps, 1% with Shift), Alt+click or middle click to mute
 - **Seek with the wheel** over the player bar's cover (5 s)
 - Restyled modals, menus, notifications (with Releases / Social filters), profile menu and toasts

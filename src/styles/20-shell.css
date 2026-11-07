@@ -314,33 +314,33 @@ html[data-bd="on"] [data-bd="dock"] [role="group"] > div:has(> button) {
   align-items: center !important;
 }
 
-/* Main play button: a quiet round button (neutral surface, text-colored glyph),
-   a little larger than its neighbours. The accent stays for the seek bar and states. */
+/* Main play button: round accent disc, glyph in on-accent */
 html[data-bd="on"] [data-bd="dock"] [data-bd-role="play"] {
-  width: 40px !important;
-  height: 40px !important;
-  min-width: 40px !important;
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
   border-radius: var(--bd-r-pill) !important;
-  background: var(--bd-surface-3) !important;
-  color: var(--bd-text) !important;
+  background: var(--bd-accent) !important;
+  color: var(--bd-on-accent) !important;
   box-shadow: none !important;
   transition: background-color var(--bd-t-fast) var(--bd-ease), transform var(--bd-t-fast) var(--bd-ease) !important;
 }
 
 html[data-bd="on"] [data-bd="dock"] [data-bd-role="play"]:hover {
-  background: var(--bd-surface-4) !important;
-  color: var(--bd-text) !important;
-  transform: scale(1.04);
+  background: var(--bd-accent-hover) !important;
+  color: var(--bd-on-accent) !important;
+  transform: scale(1.05);
 }
 
 html[data-bd="on"] [data-bd="dock"] [data-bd-role="play"]:active {
+  background: var(--bd-accent-pressed) !important;
   transform: scale(0.96);
 }
 
 html[data-bd="on"] [data-bd="dock"] [data-bd-role="play"] svg {
   width: 20px !important;
   height: 20px !important;
-  color: var(--bd-text) !important;
+  color: var(--bd-on-accent) !important;
   fill: currentColor !important;
 }
 

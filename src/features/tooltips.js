@@ -2,6 +2,11 @@
  * Consistent tooltips for the dock's icon-only buttons, from their aria-label,
  * plus a short usage tip where Better Deezer adds a gesture (wheel, shortcuts).
  * Some Deezer labels are raw ids ("volume button", "open queuelist"): replaced.
+ *
+ * One tooltip at a time: while ours is shown, Deezer's own tooltip for the same
+ * button (tagged data-bd="native-tip" by overlays.js) is hidden by the CSS
+ * (html[data-bd-tip-open]). Previous / next get none: Deezer already shows a
+ * card with the previous / next track there.
  */
 BD.feature({
   id: "tooltips",
@@ -31,6 +36,7 @@ BD.feature({
     const hide = () => {
       tip?.remove();
       tip = owner = null;
+      document.documentElement.removeAttribute("data-bd-tip-open");
     };
     const show = (el) => {
       if (el === owner) return; // moving between the button and its icon: keep it, no flicker
@@ -38,6 +44,7 @@ BD.feature({
       hide();
       if (!label && !hint) return;
       owner = el;
+      document.documentElement.setAttribute("data-bd-tip-open", "");
       tip = BD.h("div", { class: "bd-tooltip", role: "tooltip" }, label ? BD.h("strong", {}, label) : null, hint ? BD.h("span", {}, hint) : null);
       document.body.appendChild(tip);
       const r = el.getBoundingClientRect();
@@ -45,7 +52,11 @@ BD.feature({
       tip.style.left = `${Math.max(8, Math.min(innerWidth - t.width - 8, r.left + r.width / 2 - t.width / 2))}px`;
       tip.style.top = `${Math.max(8, r.top - t.height - 10)}px`;
     };
-    const target = (node) => node?.closest?.('[data-bd="dock"] button[aria-label]') || null;
+    const skip = '[data-testid="previous_track_button"], [data-testid="next_track_button"]';
+    const target = (node) => {
+      const el = node?.closest?.('[data-bd="dock"] button[aria-label]');
+      return el && !el.matches(skip) ? el : null;
+    };
 
     document.addEventListener("pointerover", (e) => {
       const el = target(e.target);

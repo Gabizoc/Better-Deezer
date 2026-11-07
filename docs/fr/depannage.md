@@ -61,6 +61,7 @@ Une fonction qui plante est coupée automatiquement pour la session : une seule 
 | *Instrumental ♪* | LRCLIB indique un morceau instrumental. |
 | *Paroles indisponibles (connexion à lrclib.net impossible).* | Hors ligne, ou un pare-feu / bloqueur de pub bloque `lrclib.net`. |
 | Paroles décalées | LRCLIB a trouvé une autre version (radio edit, live). Seules les versions à moins de 8 s de la durée du titre sont acceptées. |
+| La ligne se remplit trop vite ou trop lentement | LRCLIB ne donne que le début de chaque ligne, pas chaque mot : le remplissage est estimé d'après la longueur de la ligne. |
 | `F` ne fait rien | Vous tapez dans un champ, ou le module est désactivé (*Réglages > Modules*). |
 
 ## Modules

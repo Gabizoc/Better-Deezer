@@ -338,7 +338,7 @@ BD.feature({
     }
     const hover = BD.color.fromHsl([h, s, dark ? Math.min(0.97, l + 0.06) : Math.max(0.03, l - 0.06)]);
     const pressed = BD.color.fromHsl([h, s, dark ? Math.max(0.05, l - 0.06) : Math.min(0.97, l + 0.06)]);
-    const on = BD.color.contrast(out, [255, 255, 255]) >= BD.color.contrast(out, [10, 10, 12]) ? "#ffffff" : "#0a0a0c";
+    const on = BD.color.contrast(out, [255, 255, 255]) >= BD.color.contrast(out, [10, 10, 12]) ? "#fcfbf9" : "#0a0a0c";
     return { accent: BD.color.toHex(out), hover: BD.color.toHex(hover), pressed: BD.color.toHex(pressed), on };
   },
 

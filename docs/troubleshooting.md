@@ -77,6 +77,7 @@ Note: some elements only exist on some pages or for some accounts. `profileButto
 | *Instrumental ♪* | LRCLIB marks the track as instrumental. |
 | *Lyrics unavailable (cannot reach lrclib.net).* | Offline, or a firewall / ad blocker blocks `lrclib.net`. Allow it or turn the module off. |
 | Lyrics not in sync | LRCLIB matched another version of the track (radio edit, live). Better Deezer only accepts versions within 8 seconds of the track's duration and prefers synced ones; when only plain lyrics exist they are shown without sync. |
+| The line fills too fast or too slow | LRCLIB only gives the start of each line, not each word: the fill is an estimate from the line's length. |
 | `F` does nothing | You are typing in a field, or the *Now playing* module is off (*Settings > Modules*). Nothing playing: the view says so. |
 
 ## Modules

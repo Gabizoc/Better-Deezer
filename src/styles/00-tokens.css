@@ -46,7 +46,7 @@ html[data-bd-theme="light"] {
   color-scheme: light;
 
   --bd-bg: #f5f3f0;
-  --bd-surface-1: #ffffff;
+  --bd-surface-1: #fcfbf9; /* never pure white in light mode */
   --bd-surface-2: #ece9e5;
   --bd-surface-3: #e2ded9;
   --bd-surface-4: #d6d1cb;
@@ -63,7 +63,7 @@ html[data-bd-theme="light"] {
   --bd-accent-pressed: #6c10c0;
   --bd-accent-text: #7a14d6;
   --bd-accent-soft: rgba(138, 31, 232, 0.12);
-  --bd-on-accent: #ffffff;
+  --bd-on-accent: #fcfbf9;
   --bd-warn: #b86e00;
   --bd-danger: #d93636;
   --bd-success: #12935b;

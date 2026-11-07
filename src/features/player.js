@@ -9,15 +9,21 @@ BD.feature({
   id: "player",
   label: ["Barre de lecture Better Deezer", "Better Deezer player bar"],
 
-  /** Deezer's Slider seeks on mouseup (props.onChange(e.target.value)). */
+  /**
+   * Seek like a drag on Deezer's Slider: mousedown (isDragging = true), then the
+   * new value (onChange keeps it as the drag position), then mouseup, which calls
+   * props.onChange(e.target.value). Without the mousedown, React re-renders the
+   * input with the old value before mouseup and the seek goes nowhere.
+   */
   seek(input, value) {
     const max = Number(input.max || 0);
     const next = Math.max(0, Math.min(max - 1, value));
+    const r = input.getBoundingClientRect();
+    const init = { bubbles: true, cancelable: true, button: 0, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 };
+    input.dispatchEvent(new MouseEvent("mousedown", init));
     const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set;
     setter.call(input, String(next));
     input.dispatchEvent(new Event("input", { bubbles: true }));
-    const r = input.getBoundingClientRect();
-    const init = { bubbles: true, cancelable: true, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 };
     input.dispatchEvent(new MouseEvent("mouseup", init));
   },
 

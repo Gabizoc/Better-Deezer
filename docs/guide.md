@@ -22,7 +22,7 @@ The card appears once. Afterwards a small "Better Deezer x.y.z" badge shows for 
 
 ### Side rail and player bar
 - The rail floats; collapsed, its icons are centered. The active page is marked with an accent bar.
-- The player bar floats at the bottom: quiet round play button, filled heart when liked, thin seek bar between the two times.
+- The player bar floats at the bottom: round accent play button, filled heart when liked, thin seek bar between the two times.
 - **Volume**: click the speaker to unfold a slider, click it again to mute. Wheel over the speaker or the slider: ±5 % (±1 % with Shift; the step can be 2, 5 or 10 % in *Settings > Playback*). Alt+click or middle click: mute.
 - **Seek with the wheel** over the cover in the player bar: ±5 s. The seek bar itself ignores the wheel, so scrolling the page never moves the music.
 - Double-click the title in the player bar to open its album.
