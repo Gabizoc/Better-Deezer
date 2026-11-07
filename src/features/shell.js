@@ -24,6 +24,9 @@ BD.feature({
       BD.mark(rail, String(BD.anchors.railCollapsed()), "data-bd-collapsed");
       this.markActiveLinks(rail);
       this.markSticky(rail);
+      const history = BD.anchors.railHistory();
+      BD.unmarkAll("rail-history", history, "data-bd-role");
+      BD.mark(history, "rail-history", "data-bd-role");
     }
     if (dock) BD.mark(dock, "dock");
     if (topbar) BD.mark(topbar, "topbar");
