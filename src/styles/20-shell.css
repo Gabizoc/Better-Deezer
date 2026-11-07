@@ -331,9 +331,9 @@ html[data-bd="on"] [data-bd="dock"] [role="group"] > div:has(> button) {
 
 /* Main play button: round accent disc, glyph in on-accent */
 html[data-bd="on"] [data-bd="dock"] [data-bd-role="play"] {
-  width: 44px !important;
-  height: 44px !important;
-  min-width: 44px !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
   border-radius: var(--bd-r-pill) !important;
   background: var(--bd-accent) !important;
   color: var(--bd-on-accent) !important;
