@@ -105,7 +105,7 @@
     else BD.log("all anchors resolved");
   }, 4000);
 
-  if (BD.settings.get("badge", true) && document.body) {
+  if (BD.settings.get("badge", true) && !BD.welcomeShown && document.body) {
     const badge = document.createElement("div");
     badge.className = "bd-badge";
     badge.textContent = `Better Deezer ${BD.version}`;

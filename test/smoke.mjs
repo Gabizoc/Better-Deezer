@@ -75,6 +75,12 @@ const shot = (name) => page.screenshot({ path: join(out, `${name}.png`) });
 
 // ---------- Boot ----------
 await open(() => localStorage.clear());
+await page.waitForSelector("#bd-welcome", { timeout: 4000 }).catch(() => {});
+check("first run shows the welcome card", await $eval(() => !!document.getElementById("bd-welcome")));
+await shot("welcome");
+await page.locator("#bd-welcome button", { hasText: "Plus tard" }).click();
+await page.waitForTimeout(300);
+check("welcome card is shown only once", await (async () => { await page.reload(); await page.waitForTimeout(2200); return $eval(() => !document.getElementById("bd-welcome")); })());
 check("boots once (no double injection)", (await $eval(() => document.querySelectorAll("#bd-style").length)) === 1);
 const health = await $eval(() => window.__betterDeezer.health());
 const visibleAnchors = ["topbar", "page", "searchField", "searchContainer", "volumeButton", "rail", "dock", "playButton", "progressInput", "likeButton"];
