@@ -82,4 +82,5 @@ In the browser's `localStorage` for deezer.com, under keys starting with `bd:` (
 
 - One feature: its switch in the settings.
 - Everything, for now: *Settings > About > Turn off Better Deezer*. Deezer reloads untouched. `Ctrl ,` asks to turn it back on.
-- For good: remove the extension, or uninstall *Better Deezer* from *Windows Settings > Apps*. Deezer itself is never modified.
+- Keep it installed but give the desktop app back its original look: `better-deezer restore` (`better-deezer apply` brings it back).
+- For good: remove the extension, or run `better-deezer uninstall` (or *Windows Settings > Apps > Better Deezer > Uninstall*). The desktop app is put back exactly as it was. Your Better Deezer settings stay in Deezer's storage until you clear its cache or use *Reset* first.
