@@ -50,7 +50,7 @@ Pour la pull request :
 - un sujet par pull request, avec des messages de commit en anglais, à l'impératif ;
 - `npm run check` passe ;
 - une capture avant / après pour tout changement visuel ;
-- la doc à jour (`docs/`, et une ligne dans `CHANGELOG.md` sous *Non publié*).
+- la doc à jour (`docs/` et une ligne dans `CHANGELOG.md` sous *Non publié*).
 
 Les scripts Windows (`desktop/*.ps1`) doivent tourner sous Windows PowerShell 5.1. `install.ps1` reste en ASCII pur, les autres en UTF-8 avec BOM ; la CI vérifie les deux, ainsi que PSScriptAnalyzer.
 
