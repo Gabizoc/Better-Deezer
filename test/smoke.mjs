@@ -376,6 +376,7 @@ await page.click('#bd-settings .bd-font-card[data-font="grotesk"]');
 await page.waitForTimeout(900);
 check("back to the default typeface leaves the theme's fonts", (await fontVar()) === "", await fontVar());
 await page.click('#bd-settings [data-tab="themes"]');
+check("built-in theme descriptions are translated, also after a language change", (await $eval(() => document.querySelector("#bd-settings .bd-theme-card p")?.textContent || "")).startsWith("Par défaut"));
 await page.click('#bd-settings .bd-seg[data-value="light"]');
 check("theme from the settings panel", (await $eval(() => document.documentElement.dataset.bdTheme)) === "light");
 await shot("6-settings-light");

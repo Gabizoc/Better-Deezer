@@ -5,6 +5,22 @@
  * request to themes/community, see docs/themes.md).
  * The engine lives in core/30-themes.js (BD.skins, BD.themeSchema).
  */
+// Built-in themes keep an English description in their JSON. Shown translated while
+// unchanged; an edited copy or a community theme shows its own text as it is.
+// A plain function on BD: the settings panel re-renders cards from other objects.
+BD.themeDescriptions = {
+  "The default: warm graphite, one violet accent. Light and dark.": "Par défaut : graphite chaud, un seul accent violet. Clair et sombre.",
+  "Embers: warm browns and a glowing orange.": "Braises : bruns chauds et un orange incandescent.",
+  "Black and white, maximum contrast.": "Noir et blanc, contraste maximal.",
+  "Moss greens, calm and natural.": "Verts mousse, calmes et naturels.",
+  "Deep navy with an electric blue accent.": "Bleu marine profond et accent bleu électrique.",
+  "Soft plum and a candy pink accent.": "Prune douce et accent rose bonbon."
+};
+BD.describeTheme = (text) => {
+  const fr = BD.themeDescriptions[text];
+  return fr ? BD.t(fr, text) : text;
+};
+
 BD.feature({
   id: "themes",
   setup() {
@@ -67,7 +83,7 @@ BD.themesUI = {
         { class: "bd-theme-meta" },
         BD.h("strong", {}, theme.name, active ? BD.h("em", { class: "bd-badge-on" }, BD.t("Actif", "Active")) : null),
         BD.h("span", {}, [theme.author, badge].filter(Boolean).join(" · ")),
-        theme.description ? BD.h("p", {}, theme.description) : null
+        theme.description ? BD.h("p", {}, BD.describeTheme(theme.description)) : null
       ),
       BD.h("div", { class: "bd-theme-actions" }, ...actions.filter(Boolean))
     );

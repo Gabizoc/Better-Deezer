@@ -36,12 +36,16 @@ La fiche existe en 8 langues, selon la [méthode de Chrome](https://developer.ch
 | --- | --- |
 | Catégorie | **Lifestyle › Entertainment** |
 | Icône | `extension/icons/icon-128.png` (source vectorielle : `store/icon.svg`) |
-| Petite tuile promo (440×280) | `store/promo-small-440x280.png` |
-| Grande tuile promo (1400×560) | `store/promo-marquee-1400x560.png` |
+| Petite tuile promo (440×280) | `store/promo/<langue>/small-440x280.png` |
+| Grande tuile promo (1400×560) | `store/promo/<langue>/marquee-1400x560.png` |
 | Site | https://github.com/Gabizoc/Better-Deezer |
 | Assistance | https://github.com/Gabizoc/Better-Deezer/issues |
 
-**Captures** (1280×800, PNG sans transparence), dans `store/screenshots/` et dans cet ordre : vue En écoute avec paroles synchronisées, page artiste, album *Ceinture noire*, album *Subliminal* en clair, Réglages Better Deezer. Prises sur le vrai deezer.com, déconnecté, skin injecté (GIMS en exemple). En réserve dans `store/screenshots/extra/` : En écoute en clair, une playlist. Les mêmes captures servent pour toutes les langues.
+**Captures** (1280×800, PNG sans transparence), une série par langue dans `store/screenshots/<langue>/`, à déposer dans cet ordre : vue En écoute avec paroles synchronisées, page artiste, album *Ceinture noire*, album *Subliminal* en clair, Réglages Better Deezer. Prises sur le vrai deezer.com (`/en/` ou `/fr/`), déconnecté, skin injecté et réglé dans la langue (GIMS en exemple). En réserve dans `extra/` : En écoute en clair.
+
+**Quelles images pour quelle langue** : dans Dashboard › **Store listing**, les captures et les tuiles se changent par langue, comme la description. `en` sert pour l'anglais et pour toutes les langues sans série dédiée (es, de, it, pt_BR, pt_PT, nl) ; `fr` pour le français.
+
+**Cover GitHub** (1280×640, en anglais comme le README) : `store/social-preview.png`, à envoyer dans Settings › General › Social preview.
 
 ## Onglet Privacy practices
 

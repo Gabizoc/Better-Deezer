@@ -4,6 +4,13 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et les n
 
 ## [Non publié]
 
+### Corrigé
+- Vue En écoute : plusieurs artistes s'affichaient collés après la virgule (« GIMS,Mauvais djo »).
+- Réglages › Thèmes : les descriptions des thèmes intégrés s'affichent dans la langue choisie, au lieu de rester en anglais.
+
+### Modifié
+- Captures et tuiles du Chrome Web Store refaites en anglais et en français, avec les polices actuelles ; cover GitHub en anglais.
+
 ## [1.2.0] — 2026-11-25
 
 ### Ajouté

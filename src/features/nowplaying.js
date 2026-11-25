@@ -77,7 +77,11 @@ BD.feature({
     if (!dock) return null;
     const title = BD.q('[data-testid="item_title"]', dock)?.textContent.trim();
     if (!title) return null;
-    const artist = BD.q('[data-testid="item_subtitle"]', dock)?.textContent.replace(/\s+/g, " ").trim() || "";
+    // Several artists are separate links with a bare "," between them (the gap is CSS):
+    // join the links, or at least put a space after each comma.
+    const sub = BD.q('[data-testid="item_subtitle"]', dock);
+    const names = sub ? [...sub.querySelectorAll("a")].map((a) => a.textContent.trim()).filter(Boolean) : [];
+    const artist = names.length > 1 ? names.join(", ") : (sub?.textContent || "").replace(/\s+/g, " ").replace(/\s*,\s*/g, ", ").trim();
     const img = BD.q('[data-testid="item_cover"] img', dock);
     const cover = img?.currentSrc || img?.src || "";
     const input = BD.anchors.progressInput();
