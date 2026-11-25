@@ -55,7 +55,8 @@ jobs:
             Déjà installé : `better-deezer update`.
 
             ### Navigateur
-            Décompressez `better-deezer-extension.zip`, puis chargez le dossier comme extension non empaquetée
+            Chrome Web Store : https://chromewebstore.google.com/detail/miceabadgmpgdkfgjihkihbgeonlekbb
+            Ou décompressez `better-deezer-extension.zip`, puis chargez le dossier comme extension non empaquetée
             (chrome://extensions, Mode développeur, « Charger l'extension non empaquetée »).
 
             ### Userscript

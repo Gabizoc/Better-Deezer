@@ -1,5 +1,7 @@
 # Chrome Web Store listing
 
+Published: https://chromewebstore.google.com/detail/miceabadgmpgdkfgjihkihbgeonlekbb
+
 Everything to copy into the [Developer Dashboard](https://chrome.google.com/webstore/devconsole) for Better Deezer. Keep it in sync with the extension.
 
 ## Package

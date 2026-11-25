@@ -11,7 +11,7 @@ pour l'application Windows et le lecteur web. L'équivalent de Spicetify, pour D
 
 ![Version](https://img.shields.io/badge/version-1.1.3-a238ff?style=flat-square)
 ![Windows](https://img.shields.io/badge/Windows-application_Deezer-0078d4?style=flat-square)
-![Navigateur](https://img.shields.io/badge/Chrome_·_Edge_·_Brave-extension-4285f4?style=flat-square)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/miceabadgmpgdkfgjihkihbgeonlekbb?label=Chrome%20Web%20Store&color=4285f4&style=flat-square)](https://chromewebstore.google.com/detail/miceabadgmpgdkfgjihkihbgeonlekbb)
 ![Licence](https://img.shields.io/badge/licence-MIT-22c55e?style=flat-square)
 
 [Installer](#installer) · [Fonctionnalités](#ce-qui-change) · [Commande](#la-commande-better-deezer) · [Documentation](#documentation) · [Développement](#développement)
@@ -46,9 +46,16 @@ Téléchargez `better-deezer-windows.zip` depuis les [Releases](https://github.c
 
 ### Navigateur — Chrome, Edge, Brave, Opera
 
+**[Installer depuis le Chrome Web Store](https://chromewebstore.google.com/detail/miceabadgmpgdkfgjihkihbgeonlekbb)**, puis rechargez deezer.com. Les mises à jour arrivent toutes seules.
+
+<details>
+<summary>Sans le Chrome Web Store</summary>
+
 1. Téléchargez `better-deezer-extension.zip` depuis les [Releases](https://github.com/Gabizoc/Better-Deezer/releases) et décompressez-le.
 2. Ouvrez `chrome://extensions` (ou `edge://extensions`) et activez le **Mode développeur**.
 3. **Charger l'extension non empaquetée** › choisissez le dossier, puis rechargez deezer.com.
+
+</details>
 
 ### Userscript
 
