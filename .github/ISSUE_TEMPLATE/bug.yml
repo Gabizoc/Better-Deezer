@@ -1,17 +1,17 @@
-name: Problème
-description: Quelque chose ne marche pas ou s'affiche mal.
+name: Bug report
+description: Something doesn't work or looks wrong.
 labels: ["bug"]
 body:
   - type: markdown
     attributes:
       value: |
-        Merci ! **Ne collez jamais de cookies, de jetons ni votre valeur `arl`.** Une faille de sécurité se signale en privé : voir SECURITY.md.
+        Thanks! **Never paste cookies, tokens or your `arl` value.** Security issues are reported privately: see SECURITY.md.
   - type: dropdown
     id: target
     attributes:
-      label: Où
+      label: Where
       options:
-        - Application Windows
+        - Windows app
         - Extension (Chrome, Edge, Brave, Opera)
         - Userscript
     validations:
@@ -20,26 +20,26 @@ body:
     id: version
     attributes:
       label: Versions
-      description: Better Deezer (Réglages › À propos, ou `better-deezer version`), Deezer, navigateur ou Windows.
-      placeholder: Better Deezer 1.1.1, Deezer 8.0.10, Windows 11
+      description: Better Deezer (Settings › About, or `better-deezer version`), Deezer, browser or Windows.
+      placeholder: Better Deezer 1.2.0, Deezer 8.0.10, Windows 11
     validations:
       required: true
   - type: textarea
     id: what
     attributes:
-      label: Ce qui se passe
-      description: Ce que vous faites, ce que vous voyez, ce que vous attendiez. Une capture aide beaucoup.
+      label: What happens
+      description: What you do, what you see, what you expected. A screenshot helps a lot.
     validations:
       required: true
   - type: textarea
     id: health
     attributes:
-      label: Éléments introuvables
-      description: Ce qu'affiche Réglages › À propos, ou la sortie de `__betterDeezer.health()` dans la console (F12).
+      label: Missing elements
+      description: What Settings › About shows, or the output of `__betterDeezer.health()` in the console (F12).
       render: text
   - type: textarea
     id: logs
     attributes:
-      label: Journal (application Windows)
-      description: La sortie de `better-deezer logs`.
+      label: Log (Windows app)
+      description: The output of `better-deezer logs`.
       render: text

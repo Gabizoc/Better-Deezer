@@ -1,16 +1,16 @@
-name: Idée
-description: Une fonction, un module ou une amélioration.
+name: Feature request
+description: A feature, a module or an improvement.
 labels: ["enhancement"]
 body:
   - type: textarea
     id: need
     attributes:
-      label: Le besoin
-      description: Ce que vous aimeriez pouvoir faire, et pourquoi.
+      label: The need
+      description: What you would like to do, and why.
     validations:
       required: true
   - type: textarea
     id: proposal
     attributes:
-      label: Proposition
-      description: À quoi ça pourrait ressembler. Une maquette ou une capture d'une autre app aide.
+      label: Proposal
+      description: What it could look like. A mockup or a screenshot from another app helps.

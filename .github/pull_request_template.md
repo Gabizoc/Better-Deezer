@@ -1,15 +1,16 @@
-## Ce que ça change
+## What this changes
 
-<!-- Le problème réglé ou la fonction ajoutée, en quelques lignes. -->
+<!-- The problem fixed or the feature added, in a few lines. -->
 
-## Captures
+## Screenshots
 
-<!-- Avant / après pour tout changement visuel, en sombre et en clair si ça les touche. -->
+<!-- Before / after for any visual change, in dark and light if both are affected. -->
 
-## Vérifications
+## Checklist
 
-- [ ] `npm run check` passe
-- [ ] Aucune classe générée de Deezer (`css-xxxx`) ; les nouvelles ancres sont dans `src/core/10-anchors.js`
-- [ ] Les nouvelles couleurs sont des tokens, en sombre et en clair
-- [ ] Doc à jour (`docs/`) et une ligne dans `CHANGELOG.md` sous *Non publié*
-- [ ] Testé sur : <!-- application Windows / Chrome / Edge / userscript -->
+- [ ] `npm run check` passes
+- [ ] No Deezer generated classes (`css-xxxx`); new anchors live in `src/core/10-anchors.js`
+- [ ] New colors are tokens, in dark and light
+- [ ] New text goes through `BD.t`
+- [ ] Docs updated (`docs/`) and a line in `CHANGELOG.md` under *Non publié*
+- [ ] Tested on: <!-- Windows app / Chrome / Edge / userscript -->
