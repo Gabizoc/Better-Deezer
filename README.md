@@ -4,195 +4,220 @@
 
 # Better Deezer
 
-**Un Deezer plus propre, plus moderne, à votre goût.**
+**A cleaner, more modern Deezer, made your way.**
 
-Thèmes, Marketplace, paroles synchronisées, lecteur flottant et des dizaines de petites retouches,<br>
-pour l'application Windows et le lecteur web. L'équivalent de Spicetify, pour Deezer.
+Themes, a theme Marketplace, synced lyrics, a floating player and dozens of small touches,<br>
+for the Windows app and the web player. Spicetify, for Deezer.
 
-![Version](https://img.shields.io/badge/version-1.1.3-a238ff?style=flat-square)
-![Windows](https://img.shields.io/badge/Windows-application_Deezer-0078d4?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.2.0-a238ff?style=flat-square)
+![Windows](https://img.shields.io/badge/Windows-Deezer_app-0078d4?style=flat-square)
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/miceabadgmpgdkfgjihkihbgeonlekbb?label=Chrome%20Web%20Store&color=4285f4&style=flat-square)](https://chromewebstore.google.com/detail/miceabadgmpgdkfgjihkihbgeonlekbb)
-![Licence](https://img.shields.io/badge/licence-MIT-22c55e?style=flat-square)
+![License](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)
 
-[Installer](#installer) · [Fonctionnalités](#ce-qui-change) · [Commande](#la-commande-better-deezer) · [Documentation](#documentation) · [Développement](#développement)
+[Install](#install) · [Features](#features) · [Command](#the-better-deezer-command) · [Documentation](#documentation) · [Development](#development) · [Français](README.fr.md)
 
 </div>
 
 > [!NOTE]
-> Projet non officiel, sans lien avec Deezer. Il ne change que l'apparence et le comportement de Deezer **sur votre machine**. Pas de compte, pas de statistiques, pas de serveur : voir [Confidentialité](docs/confidentialite.md).
+> Unofficial project, not affiliated with Deezer. It only changes how Deezer looks and behaves **on your machine**. No account, no analytics, no server: see [Privacy](docs/privacy.md).
 
-## Installer
+## Install
 
-### Application Windows
+### Windows app
 
-Ouvrez **PowerShell** (pas l'invite de commandes) et collez :
+Open **PowerShell** (not the Command Prompt) and paste:
 
 ```powershell
 irm https://github.com/Gabizoc/Better-Deezer/releases/latest/download/install.ps1 | iex
 ```
 
-C'est tout. Ouvrez Deezer comme d'habitude, depuis son propre raccourci : le skin est là.
+That's it. Open Deezer as usual, from its own shortcut: the skin is there.
 
-- **Pas de deuxième application** : Better Deezer modifie l'application Deezer elle-même, comme Spicetify le fait pour Spotify.
-- **Pas de droits administrateur** : tout s'installe pour votre compte Windows.
-- **Les mises à jour de Deezer sont gérées** : le correctif est remis à l'ouverture de session.
+- **No second app**: Better Deezer patches the Deezer app itself, like Spicetify does for Spotify.
+- **No admin rights**: everything installs for your Windows account.
+- **Deezer updates are handled**: the patch is put back at sign-in.
 
 <details>
-<summary>Sans la commande PowerShell</summary>
+<summary>Without the PowerShell command</summary>
 
-Téléchargez `better-deezer-windows.zip` depuis les [Releases](https://github.com/Gabizoc/Better-Deezer/releases), décompressez-le, puis clic droit sur `install.ps1` › *Exécuter avec PowerShell*.
+Download `better-deezer-windows.zip` from the [Releases](https://github.com/Gabizoc/Better-Deezer/releases), unzip it, then right-click `install.ps1` › *Run with PowerShell*.
 
 </details>
 
-### Navigateur — Chrome, Edge, Brave, Opera
+### Browser — Chrome, Edge, Brave, Opera
 
-**[Installer depuis le Chrome Web Store](https://chromewebstore.google.com/detail/miceabadgmpgdkfgjihkihbgeonlekbb)**, puis rechargez deezer.com. Les mises à jour arrivent toutes seules.
+**[Install from the Chrome Web Store](https://chromewebstore.google.com/detail/miceabadgmpgdkfgjihkihbgeonlekbb)**, then reload deezer.com. Updates arrive on their own.
 
 <details>
-<summary>Sans le Chrome Web Store</summary>
+<summary>Without the Chrome Web Store</summary>
 
-1. Téléchargez `better-deezer-extension.zip` depuis les [Releases](https://github.com/Gabizoc/Better-Deezer/releases) et décompressez-le.
-2. Ouvrez `chrome://extensions` (ou `edge://extensions`) et activez le **Mode développeur**.
-3. **Charger l'extension non empaquetée** › choisissez le dossier, puis rechargez deezer.com.
+1. Download `better-deezer-extension.zip` from the [Releases](https://github.com/Gabizoc/Better-Deezer/releases) and unzip it.
+2. Open `chrome://extensions` (or `edge://extensions`) and turn on **Developer mode**.
+3. **Load unpacked** › pick the folder, then reload deezer.com.
 
 </details>
 
 ### Userscript
 
-Installez `better-deezer.user.js` depuis les [Releases](https://github.com/Gabizoc/Better-Deezer/releases) avec Violentmonkey ou Tampermonkey. L'extension **ou** le userscript, pas les deux.
+Install `better-deezer.user.js` from the [Releases](https://github.com/Gabizoc/Better-Deezer/releases) with Violentmonkey or Tampermonkey. Use the extension **or** the userscript, not both.
 
-## Ce qui change
+## Features
 
-<table>
-<tr>
-<td width="50%" valign="top">
+Everything is set in the **Better Deezer settings**: `Ctrl ,` (`⌘ ,` on Mac), or from the profile menu. Changes apply at once; the few that need a reload say so.
 
-### 🎨 Thèmes
-- 6 thèmes inclus, clair / sombre / auto
-- Une **Marketplace** de thèmes de la communauté
-- Installation depuis un lien ou un fichier
-- Un **éditeur** avec aperçu en direct et contrôle de lisibilité
-- Un thème = un fichier JSON sans code : [créer le vôtre](docs/themes.md)
+### 🎨 Themes
+- **6 built-in themes**, each in light, dark or following your system
+- A **Marketplace** of community themes, kept up to date, with offline copies shipped in each version
+- Install a theme from a **link** or a **file**, export any theme as `.json`
+- A **theme editor** with a live preview on Deezer, every color of both palettes, advanced CSS, and a **readability check** that warns about low contrast
+- **Customize** any theme into your own copy
+- A theme is a JSON file with colors and CSS, never code: [make your own](docs/themes.md)
 
-</td>
-<td width="50%" valign="top">
+### 🔤 Language and typeface
+- **7 languages**: English, French, Spanish, German, Italian, Portuguese and Dutch. *Auto* follows Deezer's language; dates follow it too
+- **6 typefaces**: Space Grotesk + Inter (default), Bricolage Grotesque + Instrument Sans, Manrope, Sora + DM Sans, Outfit + Figtree, Plus Jakarta Sans. Switching cross-fades the window, no reload. The default lets a theme pick its own fonts
+
+### 🎤 Now playing (`F`)
+- A full-window view with a **big cover**, the background tinted by it, the title, a seek bar you can drag, and previous / play / next
+- **Synced lyrics**: **word by word** when Deezer has them (through your Deezer session), line by line from [LRCLIB](https://lrclib.net) otherwise. Choose the source in *Playback & volume*
+- The current line fills with the rhythm of the song, instrumental breaks show three breathing dots, and **clicking a line jumps there**
+- With no lyrics (none found, instrumental, offline), the cover and controls **move to the center** and say why
+
+### 🪟 Layout
+- **Centered search** on the window, whatever the sidebar width, with a round **Home** button. `Ctrl K` puts the cursor in it; results open right below at the same width
+- **Floating sidebar**, centered on screen, collapsed or not, with the active page marked
+- **Floating player**: round play button in the accent color, filled heart when liked, thin seek bar between the two times
+- Album, playlist and artist headers **tinted by the cover**
+- **Reworked album and artist pages**, restyled cards, rows and titles, the playing track highlighted, popularity as a thin bar
+- Restyled **modals, menus, notifications** (with *Releases / Social* filters), profile menu and messages
+- **Tooltips** on every player icon with the gesture it accepts, and a **preview card** of the previous / next track
+
+### 🎛️ Player and comfort
+- **Volume**: one click unfolds a slider, a second click mutes. Mouse wheel on it: ±5% (±1% with Shift; step of 2, 5 or 10% in the settings). Alt+click or middle click mutes
+- **Mouse wheel on the player's cover** skips ±5 s. The seek bar ignores the wheel, so scrolling the page never moves the music
+- **Double-click the title** in the player to open its album
+- `Q` opens the queue
+
+### 🏠 Home and recommendations
+- A **greeting** with the date on the home page
+- **Hide** the home carousels you don't use
+- **Reorder** the home page: *Deezer* (unchanged), *Familiar* (your mixes and favorites first) or *Discovery* (new releases and trends first), plus *By time of day* (calm in the morning, focus by day, upbeat at night, relaxing late)
+- A **"Don't recommend" list**: cards and tracks matching an artist, a genre or a word are hidden everywhere, on this device
+- A **Hide explicit tracks** filter
+
+### 🧭 Sidebar
+- The sidebar's entries as Deezer has them, with their real icons and names: an entry Deezer adds or renames shows up by itself
+- **Show, hide and reorder** each entry (drag the handle or `Alt ↑` `Alt ↓`), *Reset to default*. Your playlists and pinned items always stay
 
 ### 🧩 Modules
-- **En écoute** (`F`) : grande pochette et **paroles synchronisées**, mot à mot quand Deezer les a
-- **Transitions fluides** entre les pages
-- **Masquer les bannières promotionnelles**
-- **Minuteur de sommeil** avec fondu du volume
-- **Couleur d'accent selon la pochette**, **Mode compact**
+Extras you turn on or off live, in *Settings › Modules*:
+- **Now playing view + synced lyrics**
+- **Smooth transitions**: fades on page and cover changes, cards that lift on hover (off when your system asks for reduced motion)
+- **Hide promotional banners**: "Go Premium" and "Sign up" banners, ad slots, sponsored playlists. Visual only, nothing is blocked on the network
+- **Sleep timer**: pause after a while or at the end of the track, fading the volume over the last minute; a badge in the player shows the time left
+- **Accent color from the cover**: buttons and the seek bar take the cover's main color, adjusted to stay readable
+- **Compact mode**: tighter rows and cards to fit more on screen
 
-</td>
-</tr>
-<tr>
-<td valign="top">
+### ⌨️ Shortcuts
+| Keys | Action |
+| --- | --- |
+| `Ctrl K` / `⌘ K` | Search |
+| `Ctrl ,` / `⌘ ,` | Better Deezer settings (also turns Better Deezer back on) |
+| `F` | Now playing view with lyrics |
+| `Esc` | Close the view, the settings or a menu |
+| `Q` | Queue |
 
-### 🪟 Une nouvelle mise en page
-- Recherche **centrée** et bouton **Accueil** rond (`Ctrl K`)
-- **Barre latérale flottante**, centrée à l'écran
-- **Lecteur flottant** : bouton lecture rond, cœur plein, barre de progression fine
-- En-têtes d'album et d'artiste **teintés par la pochette**
-- Fenêtres, menus, notifications et messages restylés
+Deezer's own shortcuts keep working (`Space`, arrows, `M`, `L`…); the full list is in *Settings › Shortcuts*.
 
-</td>
-<td valign="top">
+### 🛟 Safety nets
+- *Settings › About* lists the Deezer elements Better Deezer recognizes, links to help, **resets** everything, or **turns Better Deezer off** (`Ctrl ,` turns it back on)
+- A feature that breaks is switched off for the session and named in the console; the rest keeps working
+- A short welcome card on first run, then a 3-second "Better Deezer x.y.z" badge at startup (can be turned off)
 
-### 🎛️ Du confort
-- **Volume** : un clic déplie un curseur, molette dessus (5 %, 1 % avec Maj)
-- **Molette sur la pochette** du lecteur pour avancer de 5 s
-- **Accueil** : sections à masquer, ordre au choix, liste **Ne plus me recommander**
-- **Barre latérale** : afficher, masquer, réordonner les entrées
-- Filtre **Masquer les titres explicites**, `Q` pour la file d'attente
-- **6 polices** au choix, qui changent en fondu
-- En **7 langues** : français, anglais, espagnol, allemand, italien, portugais, néerlandais
+The [guide](docs/guide.md) (in French) details every option.
 
-</td>
-</tr>
-</table>
+## The `better-deezer` command
 
-Tout se règle dans les **Réglages Better Deezer** : `Ctrl ,`, ou depuis le menu du profil. Le [guide](docs/guide.md) détaille chaque option.
-
-## La commande `better-deezer`
-
-L'installation Windows ajoute une commande, comme `spicetify`. Ouvrez un **nouveau** terminal après l'installation.
+The Windows install adds a command, like `spicetify`. Open a **new** terminal after installing.
 
 ```text
-better-deezer status       état : versions, Deezer modifié, mise à jour disponible
-better-deezer update       installe la dernière version (-f : réinstalle la même)
-better-deezer apply        remodifie Deezer, par exemple après une mise à jour de Deezer
-better-deezer restore      remet Deezer d'origine, garde Better Deezer installé
-better-deezer restart      relance Deezer
-better-deezer logs         dernières lignes du journal
-better-deezer uninstall    désinstalle tout et remet Deezer d'origine (-y : sans question)
-better-deezer version      affiche la version installée
+better-deezer status       state: versions, Deezer patched or not, update available
+better-deezer update       install the latest version (-f: reinstall the same one)
+better-deezer apply        patch Deezer again, for example after a Deezer update
+better-deezer restore      put Deezer back to original, keep Better Deezer installed
+better-deezer restart      restart Deezer
+better-deezer logs         last lines of the log
+better-deezer uninstall    remove everything and restore Deezer (-y: no question)
+better-deezer version      show the installed version
 ```
 
-`update` vérifie chaque fichier téléchargé avec les sommes SHA-256 de la version avant d'installer quoi que ce soit.
+`update` checks every downloaded file against the release's SHA-256 sums before installing anything.
 
-### Désinstaller
+### Uninstall
 
-`better-deezer uninstall`, ou *Paramètres Windows › Applications › Better Deezer › Désinstaller*. Deezer est remis exactement comme avant. Dans le navigateur, supprimez l'extension.
+`better-deezer uninstall`, or *Windows Settings › Apps › Better Deezer › Uninstall*. Deezer is put back exactly as before. In the browser, remove the extension.
 
 <details>
-<summary><b>Comment Better Deezer modifie l'application</b></summary>
+<summary><b>How Better Deezer patches the app</b></summary>
 
 <br>
 
-L'application Deezer est une application Electron qui affiche deezer.com.
+The Deezer app is an Electron app that shows deezer.com.
 
-1. `patch.ps1` ajoute quelques lignes à `build/main.js` dans `resources\app.asar` de Deezer, et garde l'original sous le nom `app.asar.bd-backup`.
-2. À chaque chargement de deezer.com, ces lignes lisent `%LOCALAPPDATA%\BetterDeezer\better-deezer.user.js` et l'exécutent dans la page. Si le fichier n'existe plus, Deezer tourne sans modification.
-3. Une mise à jour de Deezer remplace `app.asar` : l'installation enregistre `patch.ps1 -Quiet` à l'ouverture de session pour remettre le correctif, et `better-deezer apply` le fait à la demande.
+1. `patch.ps1` adds a few lines to `build/main.js` inside Deezer's `resources\app.asar`, and keeps the original as `app.asar.bd-backup`.
+2. Each time deezer.com loads, those lines read `%LOCALAPPDATA%\BetterDeezer\better-deezer.user.js` and run it in the page. If the file is gone, Deezer runs unmodified.
+3. A Deezer update replaces `app.asar`: the install registers `patch.ps1 -Quiet` at sign-in to put the patch back, and `better-deezer apply` does it on demand.
 
-Le correctif n'ouvre aucun port et ne fait aucune requête. Tout se trouve dans `%LOCALAPPDATA%\BetterDeezer` : les scripts (en texte clair), le skin, `config.json`, le journal `patch.log`, et `bin\better-deezer.cmd`, ajouté au PATH de l'utilisateur.
+The patch opens no port and makes no request. Everything lives in `%LOCALAPPDATA%\BetterDeezer`: the scripts (plain text), the skin, `config.json`, the `patch.log` log, and `bin\better-deezer.cmd`, added to the user's PATH.
 
 </details>
 
 ## Documentation
 
-| Page | Contenu |
+| Page | Content |
 | --- | --- |
-| [Guide](docs/guide.md) | Chaque fonction, les réglages, les raccourcis, réinitialiser ou couper Better Deezer |
-| [Dépannage](docs/depannage.md) | Symptômes, messages d'erreur et solutions |
-| [Thèmes](docs/themes.md) | Le format, l'éditeur, publier sur la Marketplace |
-| [Modules](docs/modules.md) | Ce que fait chaque module, et comment en écrire un |
-| [Confidentialité](docs/confidentialite.md) | Ce qui reste sur votre machine (tout) et les seules requêtes faites |
+| [Guide](docs/guide.md) (French) | Every feature, the settings, the shortcuts, resetting or turning off Better Deezer |
+| [Troubleshooting](docs/troubleshooting.md) | Symptoms, error messages and fixes |
+| [Themes](docs/themes.md) (French) | The format, the editor, publishing to the Marketplace |
+| [Modules](docs/modules.md) (French) | What each module does, and how to write one |
+| [Privacy](docs/privacy.md) | What stays on your machine (everything) and the only requests made |
 
 > [!TIP]
-> **Quelque chose ne va pas ?** Ouvrez *Réglages Better Deezer › À propos* : la page liste les éléments de Deezer introuvables et permet de couper Better Deezer (`Ctrl ,` le réactive). Puis voyez le [Dépannage](docs/depannage.md).
+> **Something wrong?** Open *Better Deezer settings › About*: it lists the Deezer elements it cannot find and lets you turn Better Deezer off (`Ctrl ,` turns it back on). Then see [Troubleshooting](docs/troubleshooting.md).
 
-## Développement
+## Development
 
 ```bash
-npm run build              # Node 18+, aucune dépendance ; sortie dans dist/
-npm test                   # test de fumée dans Chromium (Playwright installé globalement)
-npm run check              # build + vérification de syntaxe + test de fumée
-node test/cdp-inject.mjs   # injecte la build dans le vrai deezer.com via DevTools
+npm run build              # Node 18+, no dependencies; output in dist/
+npm test                   # smoke test in Chromium (Playwright installed globally)
+npm run check              # build + syntax check + smoke test
+node test/cdp-inject.mjs   # inject the build into the real deezer.com through DevTools
 ```
 
-| Dossier | Contenu |
+| Folder | Content |
 | --- | --- |
-| `src/core` | Le noyau, les repères sur la page de Deezer (`data-testid`, rôles ARIA, jamais les classes générées), le moteur de thèmes |
-| `src/features` | Un fichier par fonction : barre du haut, barre latérale, lecteur, volume, paroles, réglages… |
-| `src/styles` | Le CSS, des variables aux modules |
-| `themes/` | Thèmes inclus et de la communauté, et `index.json` pour la Marketplace |
-| `desktop/` | Les scripts Windows : `install`, `setup`, `patch`, `cli` (la commande), `ui` (l'affichage commun), `uninstall` |
-| `test/` | Test de fumée Playwright sur une page qui reprend les repères de Deezer |
+| `src/core` | The core, the anchors on Deezer's page (`data-testid`, ARIA roles, never generated classes), the theme engine |
+| `src/features` | One file per feature: top bar, sidebar, player, volume, lyrics, settings… |
+| `src/i18n` | Translations beyond French and English, keyed by the English text |
+| `src/styles` | The CSS, from tokens to modules |
+| `themes/` | Built-in and community themes, and `index.json` for the Marketplace |
+| `desktop/` | The Windows scripts: `install`, `setup`, `patch`, `cli` (the command), `ui` (shared display), `uninstall` |
+| `extension/` | The extension manifest, icons and store translations (`_locales`) |
+| `store/` | The Chrome Web Store listing: texts per language, screenshots, promo tiles |
+| `test/` | Playwright smoke test on a page that mirrors Deezer's anchors |
 
-Dans les DevTools (`F12`) sur deezer.com, `__betterDeezer.health()` montre les éléments de Deezer reconnus et `__betterDeezer.features()` l'état de chaque fonction. Avec l'extension, choisissez d'abord le contexte **Better Deezer**.
+In DevTools (`F12`) on deezer.com, `__betterDeezer.health()` shows the Deezer elements found and `__betterDeezer.features()` the state of each feature. With the extension, pick the **Better Deezer** context first.
 
-**Publier une version** : changez `version` dans `package.json`, puis poussez un tag `vX.Y.Z` identique. Le workflow `release` construit les zips, le userscript et `SHA256SUMS.txt`, et `better-deezer update` la propose aussitôt.
+**Releasing**: change `version` in `package.json`, then push a matching `vX.Y.Z` tag. The `release` workflow builds the zips, the userscript and `SHA256SUMS.txt`, and `better-deezer update` offers it right away.
 
-Pour contribuer : [CONTRIBUTING.md](CONTRIBUTING.md). [CHANGELOG.md](CHANGELOG.md) liste les versions. Faille de sécurité : [SECURITY.md](SECURITY.md).
+To contribute: [CONTRIBUTING.md](CONTRIBUTING.md). [CHANGELOG.md](CHANGELOG.md) lists the versions. Security issue: [SECURITY.md](SECURITY.md).
 
-## Crédits
+## Credits
 
-- Paroles : [LRCLIB](https://lrclib.net), la base de paroles ouverte
-- Inspiration : [Spicetify](https://spicetify.app)
-- Polices : [Space Grotesk](https://github.com/floriankarsten/space-grotesk), [Inter](https://github.com/rsms/inter), [Bricolage Grotesque](https://github.com/ateliertriay/bricolage), [Instrument Sans](https://github.com/Instrument/instrument-sans), [Manrope](https://github.com/sharanda/manrope), [Sora](https://github.com/sora-xor/sora-font), [DM Sans](https://github.com/googlefonts/dm-fonts), [Outfit](https://github.com/Outfitio/Outfit-Fonts), [Figtree](https://github.com/erikdkennedy/figtree) et [Plus Jakarta Sans](https://github.com/tokotype/PlusJakartaSans), SIL Open Font License 1.1 ([détails](assets/fonts/README.md))
+- Lyrics: [LRCLIB](https://lrclib.net), the open lyrics database
+- Inspiration: [Spicetify](https://spicetify.app)
+- Fonts: [Space Grotesk](https://github.com/floriankarsten/space-grotesk), [Inter](https://github.com/rsms/inter), [Bricolage Grotesque](https://github.com/ateliertriay/bricolage), [Instrument Sans](https://github.com/Instrument/instrument-sans), [Manrope](https://github.com/sharanda/manrope), [Sora](https://github.com/sora-xor/sora-font), [DM Sans](https://github.com/googlefonts/dm-fonts), [Outfit](https://github.com/Outfitio/Outfit-Fonts), [Figtree](https://github.com/erikdkennedy/figtree) and [Plus Jakarta Sans](https://github.com/tokotype/PlusJakartaSans), SIL Open Font License 1.1 ([details](assets/fonts/README.md))
 
-## Licence
+## License
 
 MIT

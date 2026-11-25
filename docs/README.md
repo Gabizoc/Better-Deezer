@@ -10,4 +10,4 @@ Première visite ? Commencez par le [README](../README.md) : installation, la co
 | [Modules](modules.md) | tout le monde, développeurs | ce que fait et envoie chaque module, comment en écrire un |
 | [Confidentialité](confidentialite.md) ([English](privacy.md)) | tout le monde | ce qui reste sur votre machine et les seules requêtes réseau de Better Deezer |
 
-Pour contribuer : [CONTRIBUTING.md](../CONTRIBUTING.md). Compilation, tests et publication : [README › Développement](../README.md#développement).
+Pour contribuer : [CONTRIBUTING.md](../CONTRIBUTING.md). Compilation, tests et publication : [README › Développement](../README.fr.md#développement).

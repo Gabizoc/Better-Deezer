@@ -28,4 +28,4 @@ Un thème, ce sont des données, pas du code : des couleurs, des tailles, des no
 
 ## L'application Windows
 
-L'installation ajoute quelques lignes au fichier `app.asar` de Deezer. Elles exécutent `%LOCALAPPDATA%\BetterDeezer\better-deezer.user.js` dans les pages deezer.com de l'application. Elles n'ouvrent aucun port et ne font aucune requête ; le skin se comporte ensuite exactement comme dans le navigateur. Détails dans le [README](../README.md#la-commande-better-deezer).
+L'installation ajoute quelques lignes au fichier `app.asar` de Deezer. Elles exécutent `%LOCALAPPDATA%\BetterDeezer\better-deezer.user.js` dans les pages deezer.com de l'application. Elles n'ouvrent aucun port et ne font aucune requête ; le skin se comporte ensuite exactement comme dans le navigateur. Détails dans le [README](../README.fr.md#la-commande-better-deezer).

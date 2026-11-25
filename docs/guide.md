@@ -2,7 +2,7 @@
 
 Better Deezer restyle le lecteur web de Deezer (www.deezer.com) et l'application Windows, et ajoute ce que Deezer n'a pas. Tout se passe sur votre machine : les serveurs de Deezer voient un Deezer normal.
 
-L'installation est décrite dans le [README](../README.md#installer). Un souci ? Voir le [Dépannage](depannage.md).
+L'installation est décrite dans le [README](../README.fr.md#installer). Un souci ? Voir le [Dépannage](depannage.md).
 
 ## Premier lancement
 
