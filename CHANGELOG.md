@@ -8,6 +8,9 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et les n
 - Better Deezer parle espagnol, allemand, italien, portugais et néerlandais, en plus du français et de l'anglais. La langue suit celle de Deezer, ou se choisit dans *Réglages › Apparence*.
 - Lien vers la fiche du Chrome Web Store.
 
+### Modifié
+- Nouvelles polices : Space Grotesk pour les titres, Inter pour l'interface.
+
 ### Corrigé
 - Vue En écoute : le titre garde « ? », « ! », « : » et « ; » sur la même ligne que le mot précédent, et ses lignes sont équilibrées.
 

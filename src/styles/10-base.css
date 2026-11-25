@@ -26,7 +26,7 @@ html[data-bd="on"] [data-bd-role="page-title"] {
 }
 
 html[data-bd="on"] [data-bd-role="page-title"] {
-  font-weight: 800 !important;
+  font-weight: 700 !important;
   letter-spacing: -0.035em !important;
   line-height: 0.95 !important;
 }

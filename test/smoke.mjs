@@ -428,7 +428,7 @@ const fonts = await $eval(async () => {
   await Promise.all([...document.fonts].map((f) => f.load().catch(() => null)));
   return [...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family.replace(/"/g, ""));
 });
-check("Bricolage Grotesque + Instrument Sans loaded from the payload", fonts.includes("Bricolage Grotesque") && fonts.includes("Instrument Sans"), [...new Set(fonts)].join(", "));
+check("Space Grotesk + Inter loaded from the payload", fonts.includes("Space Grotesk") && fonts.includes("Inter"), [...new Set(fonts)].join(", "));
 check("no request to Google Fonts", !googleFontRequests, String(googleFontRequests));
 
 // ---------- Top bar: search centered on the window, Home on its left ----------

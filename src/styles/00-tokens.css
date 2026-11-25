@@ -76,8 +76,8 @@ html[data-bd-theme="light"] {
 
 :root {
   /* Type */
-  --bd-font-display: "Bricolage Grotesque", "Segoe UI Variable Display", system-ui, sans-serif;
-  --bd-font-ui: "Instrument Sans", "Segoe UI Variable Text", system-ui, sans-serif;
+  --bd-font-display: "Space Grotesk", "Segoe UI Variable Display", system-ui, sans-serif;
+  --bd-font-ui: "Inter", "Segoe UI Variable Text", system-ui, sans-serif;
 
   /* Radii */
   /* Accent text that stays readable on light pills (toasts) in both themes */

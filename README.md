@@ -190,7 +190,7 @@ Pour contribuer : [CONTRIBUTING.md](CONTRIBUTING.md). [CHANGELOG.md](CHANGELOG.m
 
 - Paroles : [LRCLIB](https://lrclib.net), la base de paroles ouverte
 - Inspiration : [Spicetify](https://spicetify.app)
-- Polices : [Bricolage Grotesque](https://github.com/ateliertriay/bricolage) et [Instrument Sans](https://github.com/Instrument/instrument-sans), SIL Open Font License 1.1 ([détails](assets/fonts/README.md))
+- Polices : [Space Grotesk](https://github.com/floriankarsten/space-grotesk) et [Inter](https://github.com/rsms/inter), SIL Open Font License 1.1 ([détails](assets/fonts/README.md))
 
 ## Licence
 
