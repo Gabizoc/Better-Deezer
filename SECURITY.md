@@ -1,21 +1,45 @@
-# Sécurité
+# Security policy
 
-Better Deezer s'exécute dans votre session Deezer et, sur Windows, modifie l'application Deezer. Une faille peut donc toucher votre compte ou votre machine : merci de la signaler de façon privée.
+Better Deezer runs inside your Deezer session and, on Windows, modifies the Deezer app. A flaw could therefore reach your account or your computer, so please report it privately.
 
-## Signaler une faille
+## Supported versions
 
-Utilisez le signalement privé de GitHub : onglet **Security › Report a vulnerability** du dépôt ([lien direct](https://github.com/Gabizoc/Better-Deezer/security/advisories/new)). N'ouvrez pas d'issue publique.
+Only the [latest release](https://github.com/Gabizoc/Better-Deezer/releases/latest) receives fixes. Update with `better-deezer update` on Windows; the Chrome extension updates itself.
 
-Indiquez la version concernée, la cible (application Windows, extension, userscript) et les étapes pour reproduire. Vous recevrez une réponse dès que possible ; un correctif est publié dans une nouvelle version, et le signalement rendu public ensuite, avec votre accord pour vous citer.
+| Version | Supported |
+|---|---|
+| 1.2.x | ✅ |
+| < 1.2 | ❌ |
 
-## Ce qui est concerné
+## Report a vulnerability
 
-- Le code de la surcouche (`src/`), l'extension (`extension/`) et le userscript.
-- Les scripts Windows (`desktop/`), en particulier le correctif de `app.asar` et la commande `better-deezer update` (téléchargement et vérification SHA-256).
-- La validation des thèmes : un thème ne doit jamais pouvoir exécuter du code ni charger une ressource externe.
+Use GitHub's private reporting: **Security › Report a vulnerability** on the repository ([direct link](https://github.com/Gabizoc/Better-Deezer/security/advisories/new)). **Do not open a public issue.**
 
-Les failles de Deezer lui-même sont à signaler à Deezer.
+Include:
 
-## Vos données
+- the affected version and target (Windows app, Chrome extension, userscript);
+- steps to reproduce, or a proof of concept;
+- what an attacker could do with it.
 
-Better Deezer n'a ni serveur, ni compte, ni télémétrie. Les seules requêtes réseau sont listées dans [docs/confidentialite.md](docs/confidentialite.md). Personne ne vous demandera jamais vos cookies, vos jetons ou votre valeur `arl`.
+You will get a reply as soon as possible. The fix ships in a new release, and the advisory is published afterwards, crediting you if you agree.
+
+## Scope
+
+In scope:
+
+- the skin code (`src/`), the Chrome extension (`extension/`) and the userscript;
+- the Windows scripts (`desktop/`), especially the `app.asar` patch, the installer and `better-deezer update` (download and SHA-256 check);
+- theme validation: a theme must never run code or load an external resource;
+- the release pipeline (`.github/workflows/`) and published files.
+
+Out of scope:
+
+- flaws in Deezer itself: report them to Deezer;
+- issues that need an already compromised computer or browser;
+- a theme you wrote yourself and imported by hand doing something you asked it to.
+
+## Your data
+
+Better Deezer has no server, no account and no telemetry. Fonts and assets ship inside the extension and the app. The only network requests are listed in [docs/privacy.md](docs/privacy.md).
+
+Nobody will ever ask for your cookies, tokens or `arl` value. If someone does in the name of Better Deezer, it is not us.

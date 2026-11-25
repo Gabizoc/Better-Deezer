@@ -1,59 +1,105 @@
-# Contribuer à Better Deezer
+# Contributing to Better Deezer
 
-Merci de votre intérêt. Les contributions sont bienvenues en français ou en anglais.
+Thanks for your interest! Issues and pull requests are welcome in English or French.
 
-## Signaler un problème
+- [Report a bug](#report-a-bug)
+- [Suggest a feature](#suggest-a-feature)
+- [Share a theme](#share-a-theme)
+- [Translate](#translate)
+- [Contribute code](#contribute-code)
+- [Pull requests](#pull-requests)
 
-Ouvrez une [issue](https://github.com/Gabizoc/Better-Deezer/issues/new/choose) avec :
+## Report a bug
 
-- votre version de Better Deezer (*Réglages › À propos*, ou `better-deezer version`) et la cible : application Windows, extension ou userscript ;
-- la version de Deezer, du navigateur ou de Windows ;
-- ce qui s'affiche dans *Réglages › À propos* (éléments de Deezer introuvables), ou la sortie de `__betterDeezer.health()` dans la console (`F12`) ;
-- pour l'application Windows, la fin du journal : `better-deezer logs`.
+Open an [issue](https://github.com/Gabizoc/Better-Deezer/issues/new/choose) and include:
 
-**Ne collez jamais de cookies, de jetons ni votre valeur `arl`** : personne n'en a besoin pour déboguer Better Deezer. Une faille de sécurité ne va pas dans une issue publique : voir [SECURITY.md](SECURITY.md).
+- your Better Deezer version (*Settings › About*, or `better-deezer version`) and where you use it: Windows app, Chrome extension or userscript;
+- your Deezer, browser or Windows version;
+- what *Settings › About* says about Deezer elements it cannot find, or the output of `__betterDeezer.health()` in the console (`F12`);
+- for the Windows app, the end of the log: `better-deezer logs`;
+- a screenshot if something looks wrong.
 
-Après une mise à jour de Deezer, la plupart des problèmes viennent d'un élément de la page qui a changé de nom. Le signaler avec la sortie de `health()` suffit souvent à le corriger.
+> [!CAUTION]
+> **Never paste cookies, tokens or your `arl` value.** Nobody needs them to debug Better Deezer. Security issues do not go in a public issue: see [SECURITY.md](SECURITY.md).
 
-## Proposer un thème
+After a Deezer update, most breakages come from a page element that changed its name. A report with the `health()` output is usually enough to fix it.
 
-Un thème est un seul fichier JSON, sans code. Tout est expliqué dans [docs/themes.md](docs/themes.md) :
+## Suggest a feature
 
-1. créez-le avec l'éditeur (*Réglages › Thèmes › Créer*) et exportez-le ;
-2. ajoutez-le dans `themes/community/` ;
-3. lancez `npm run build`, qui valide le thème, vérifie la lisibilité et régénère `themes/index.json` ;
-4. ouvrez une pull request avec une capture en mode sombre et/ou clair.
+Open an issue that describes the problem first, then the change you have in mind. Better Deezer stays a skin and comfort layer: no downloads, no ad blocking, nothing that touches your account or Deezer's servers.
 
-## Proposer du code
+## Share a theme
 
-Prérequis : Node 18 ou plus récent. Le build n'a aucune dépendance.
+A theme is a single JSON file, no code. [docs/themes.md](docs/themes.md) (French) explains every field.
+
+1. Create it with the editor (*Settings › Themes › Create*) and export it.
+2. Add it to `themes/community/`.
+3. Run `npm run build`. It validates the theme, checks readability and regenerates `themes/index.json`.
+4. Open a pull request with a screenshot in dark and/or light mode.
+
+## Translate
+
+Better Deezer speaks English, French, Spanish, German, Italian, Portuguese and Dutch.
+
+- **Interface:** `src/i18n/<code>.json` maps each English sentence to its translation. Keep `{placeholders}` as they are. A missing sentence falls back to English, so partial translations are fine.
+- **New language:** add `src/i18n/<code>.json` with a `_name` entry (the language's own name, e.g. `"Deutsch"`). The language picker lists it automatically.
+- **Chrome Web Store:** the extension name and summary live in `extension/_locales/<locale>/messages.json` (name ≤ 75 characters, summary ≤ 132; the build checks both). The full description lives in `store/listing/<locale>.txt`.
+
+Fixing an awkward phrase is a perfectly good first pull request.
+
+## Contribute code
+
+Requirements: Node 18 or later. The build has no dependencies.
 
 ```bash
-npm run build              # sortie dans dist/
-npm test                   # test de fumée dans Chromium (Playwright installé globalement)
-npm run check              # build + vérification de syntaxe + test de fumée
-node test/cdp-inject.mjs   # injecte la build dans le vrai deezer.com via DevTools
+npm run build              # output in dist/
+npm test                   # smoke test in Chromium (Playwright installed globally)
+npm run check              # build + syntax check + smoke test
+node test/cdp-inject.mjs   # inject the build into the real deezer.com through DevTools
 ```
 
-Pour tester l'extension : `chrome://extensions` › Mode développeur › *Charger l'extension non empaquetée* › `dist/extension`.
+To try the extension: `chrome://extensions` › Developer mode › *Load unpacked* › `dist/extension`.
 
-Avant d'écrire du code, retenez les **règles anti-casse** :
+### Layout
 
-- le CSS ne cible jamais les classes générées de Deezer (`css-xxxx`) ;
-- seul `src/core/10-anchors.js` sait trouver les éléments de Deezer ;
-- on ne déplace jamais un nœud géré par React ;
-- toute nouvelle couleur passe par un token, en sombre et en clair ;
-- toute nouvelle requête réseau est documentée dans [docs/confidentialite.md](docs/confidentialite.md).
+| Path | Contents |
+|---|---|
+| `src/core/` | The `BD` object, Deezer anchors, theme engine |
+| `src/features/` | One file per feature (settings, now playing, fonts, sidebar…) |
+| `src/styles/` | CSS, split by area, built on `--bd-*` tokens |
+| `src/i18n/` | Translations (English is in the code) |
+| `themes/` | Built-in and community themes |
+| `assets/fonts/` | Bundled typefaces (SIL OFL) |
+| `extension/` | Chrome manifest and `_locales` |
+| `desktop/` | Windows install, patch, update and CLI scripts |
+| `store/` | Chrome Web Store listing |
 
-Pour la pull request :
+[docs/modules.md](docs/modules.md) (French) describes how a feature is written.
 
-- un sujet par pull request, avec des messages de commit en anglais, à l'impératif ;
-- `npm run check` passe ;
-- une capture avant / après pour tout changement visuel ;
-- la doc à jour (`docs/` et une ligne dans `CHANGELOG.md` sous *Non publié*).
+### Rules that keep Better Deezer from breaking
 
-Les scripts Windows (`desktop/*.ps1`) doivent tourner sous Windows PowerShell 5.1. `install.ps1` reste en ASCII pur, les autres en UTF-8 avec BOM ; la CI vérifie les deux, ainsi que PSScriptAnalyzer.
+- CSS never targets Deezer's generated classes (`css-xxxx`).
+- Only `src/core/10-anchors.js` knows how to find Deezer elements.
+- Never move a node that React manages.
+- Every new color is a token, in dark and light.
+- User-facing text goes through `BD.t("Français", "English")`, with `{name}` for values.
+- Nothing loads from the network unless it is documented in [docs/privacy.md](docs/privacy.md). Fonts and assets are bundled.
+- Motion respects `prefers-reduced-motion`.
 
-## Licence
+### Windows scripts
 
-En contribuant, vous acceptez que votre contribution soit publiée sous la [licence MIT](LICENSE) du projet.
+`desktop/*.ps1` must run on Windows PowerShell 5.1, with no external modules. `install.ps1` stays pure ASCII; the others are UTF-8 with BOM. CI checks both, along with PSScriptAnalyzer.
+
+## Pull requests
+
+- One topic per pull request.
+- Commit messages in English, imperative mood ("Add…", "Fix…").
+- `npm run check` passes.
+- A before/after screenshot for any visual change.
+- Docs updated (`docs/`) and a line in `CHANGELOG.md` under *Non publié*.
+
+Maintainers handle versions and releases: pushing a `v*` tag builds and publishes them.
+
+## License
+
+By contributing, you agree that your work is released under the project's [MIT license](LICENSE).
