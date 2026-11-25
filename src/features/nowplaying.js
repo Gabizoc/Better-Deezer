@@ -419,6 +419,8 @@ BD.feature({
     const playBtn = proxy("play_button_", this.glyphs.play, BD.t("Lecture / pause", "Play / pause"));
     playBtn.classList.add("bd-np-play");
     const lyricsBox = BD.h("div", { class: "bd-np-lyrics", "aria-live": "off" });
+    // Shown under the controls when there are no lyrics and the view centers itself.
+    const status = BD.h("p", { class: "bd-np-status", "aria-live": "polite" });
     const lyricsList = BD.h("ol", { class: "bd-np-lines" });
     lyricsBox.append(lyricsList);
 
@@ -444,14 +446,15 @@ BD.feature({
             proxy("previous_track_button", this.glyphs.previous, BD.t("Précédent", "Previous")),
             playBtn,
             proxy("next_track_button", this.glyphs.next, BD.t("Suivant", "Next"))
-          )
+          ),
+          status
         ),
         BD.h("section", { class: "bd-np-right" }, lyricsBox, BD.h("p", { class: "bd-np-source" }))
       )
     );
     document.body.append(root);
     document.documentElement.setAttribute("data-bd-np", "open");
-    this.state = { root, bg, cover, title, artist, elapsed, total, bar, lyricsBox, lyricsList, playBtn, lines: [], current: -1, lastValue: -1, lastAt: 0, track: null };
+    this.state = { root, bg, cover, title, artist, elapsed, total, bar, lyricsBox, lyricsList, status, playBtn, lines: [], current: -1, lastValue: -1, lastAt: 0, track: null };
     if (track) this.load(track);
     else title.textContent = BD.t("Rien en lecture", "Nothing playing");
     this.syncTransport();
@@ -508,13 +511,19 @@ BD.feature({
     }
     if (this.state !== s || s.track !== track) return; // closed or track changed meanwhile
     s.lyricsBox.dataset.kind = result.kind;
+    // No lyrics: cover and controls take the center (the layout keeps its state while loading).
+    s.root.dataset.lyrics = ["none", "instrumental", "error"].includes(result.kind) ? "none" : "shown";
+    s.status.textContent = "";
     const sources = {
       "deezer-words": ["Paroles : Deezer, mot à mot", "Lyrics: Deezer, word by word"],
       "deezer-lines": ["Paroles : Deezer", "Lyrics: Deezer"],
       lrclib: ["Paroles : LRCLIB", "Lyrics: LRCLIB"]
     };
     BD.q(".bd-np-source", s.root).textContent = BD.t(...(sources[result.source] || sources.lrclib));
-    const note = (fr, en) => s.lyricsList.replaceChildren(BD.h("li", { class: "bd-np-note" }, BD.t(fr, en)));
+    const note = (fr, en) => {
+      s.lyricsList.replaceChildren(BD.h("li", { class: "bd-np-note" }, BD.t(fr, en)));
+      s.status.textContent = BD.t(fr, en);
+    };
     if (result.kind === "none") return note("Pas de paroles trouvées pour ce titre.", "No lyrics found for this track.");
     if (result.kind === "instrumental") return note("Instrumental ♪", "Instrumental ♪");
     if (result.kind === "error") return note("Paroles indisponibles (connexion à lrclib.net impossible).", "Lyrics unavailable (cannot reach lrclib.net).");

@@ -506,6 +506,16 @@ check("dragging the Now playing bar previews, then seeks Deezer on release", mid
 await page.locator(".bd-np-lines li", { hasText: "One more time" }).last().click();
 await page.waitForTimeout(150);
 check("clicking a lyric line seeks there", Math.abs((await $eval(() => Number(document.querySelector('[data-testid="progress_bar"]').value))) - 120) <= 1);
+const npLayout = () => $eval(() => {
+  const l = document.querySelector(".bd-np-left").getBoundingClientRect();
+  return { state: document.getElementById("bd-np").dataset.lyrics, offCenter: Math.round(Math.abs(l.left + l.width / 2 - document.documentElement.clientWidth / 2)), right: getComputedStyle(document.querySelector(".bd-np-right")).display };
+});
+const withLyrics = await npLayout();
+check("with lyrics, cover on the left and lyrics on the right", withLyrics.state === "shown" && withLyrics.right !== "none" && withLyrics.offCenter > 100, JSON.stringify(withLyrics));
+await $eval(() => (document.getElementById("bd-np").dataset.lyrics = "none"));
+await page.waitForTimeout(600);
+const noLyrics = await npLayout();
+check("without lyrics, cover and controls are centered", noLyrics.right === "none" && noLyrics.offCenter <= 2, JSON.stringify(noLyrics));
 await page.keyboard.press("Escape");
 await page.waitForTimeout(300);
 check("Escape closes the view", await $eval(() => !document.getElementById("bd-np")));
