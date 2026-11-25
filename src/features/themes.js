@@ -99,7 +99,7 @@ BD.themesUI = {
       ui.refresh();
       setTimeout(() => this.message(ui, okText, "ok"), 0);
     } else {
-      this.message(ui, `${BD.t("Thème refusé", "Theme rejected")} : ${result.errors.join(" · ")}`, "error");
+      this.message(ui, BD.t("Thème refusé : {errors}", "Theme rejected: {errors}", { errors: result.errors.join(" · ") }), "error");
     }
   },
 
@@ -120,7 +120,7 @@ BD.themesUI = {
             ? this.button(
                 BD.t("Supprimer", "Delete"),
                 () => {
-                  if (confirm(BD.t(`Supprimer le thème « ${theme.name} » ?`, `Delete the theme "${theme.name}"?`))) {
+                  if (confirm(BD.t("Supprimer le thème « {name} » ?", "Delete the theme “{name}”?", { name: theme.name }))) {
                     BD.skins.remove(theme.id);
                     ui.refresh();
                   }
@@ -138,7 +138,7 @@ BD.themesUI = {
     BD.skins.registry().then(({ online, themes }) => {
       market.removeAttribute("aria-busy");
       marketStatus.textContent = online
-        ? BD.t(`${themes.length} thèmes de la communauté, à jour.`, `${themes.length} community themes, up to date.`)
+        ? BD.t("{n} thèmes de la communauté, à jour.", "{n} community themes, up to date.", { n: themes.length })
         : BD.t("Hors ligne : thèmes de la communauté inclus dans cette version.", "Offline: community themes shipped with this version.");
       const installed = new Map(BD.skins.installed().map((t) => [t.id, t]));
       market.replaceChildren(
@@ -152,7 +152,7 @@ BD.themesUI = {
                 ? this.button(label, () => {
                     const r = BD.skins.install(theme);
                     if (r.ok) BD.skins.activate(theme.id);
-                    this.report(ui, r, BD.t(`« ${theme.name} » installé et appliqué.`, `"${theme.name}" installed and applied.`));
+                    this.report(ui, r, BD.t("« {name} » installé et appliqué.", "“{name}” installed and applied.", { name: theme.name }));
                   })
                 : BD.h("span", { class: "bd-set-hint" }, BD.t("Installé", "Installed"))
             ],
@@ -170,9 +170,9 @@ BD.themesUI = {
       try {
         const r = BD.skins.install(JSON.parse(await file.text()));
         if (r.ok) BD.skins.activate(r.theme.id);
-        this.report(ui, r, BD.t(`« ${r.theme?.name} » installé et appliqué.`, `"${r.theme?.name}" installed and applied.`));
+        this.report(ui, r, BD.t("« {name} » installé et appliqué.", "“{name}” installed and applied.", { name: r.theme?.name }));
       } catch (err) {
-        this.message(ui, `${BD.t("Fichier illisible", "Unreadable file")} : ${err.message}`, "error");
+        this.message(ui, BD.t("Fichier illisible : {error}", "Unreadable file: {error}", { error: err.message }), "error");
       }
     });
 
@@ -183,7 +183,7 @@ BD.themesUI = {
         ui.row(
           BD.t("Clair, sombre ou automatique", "Light, dark or automatic"),
           forced
-            ? BD.t(`Le thème actif n'existe qu'en ${forced === "dark" ? "sombre" : "clair"}.`, `The active theme only exists in ${forced}.`)
+            ? forced === "dark" ? BD.t("Le thème actif n'existe qu'en sombre.", "The active theme only exists in dark mode.") : BD.t("Le thème actif n'existe qu'en clair.", "The active theme only exists in light mode.")
             : BD.t("Auto suit le réglage de Windows / du navigateur.", "Auto follows your system setting."),
           ui.segmented("theme", BD.theme.get(), [["light", "Clair", "Light"], ["dark", "Sombre", "Dark"], ["system", "Auto", "Auto"]], (v) => (BD.theme.set(v), ui.refresh()), Boolean(forced))
         )
@@ -212,7 +212,7 @@ BD.themesUI = {
             this.message(ui, BD.t("Téléchargement…", "Downloading…"));
             const r = await BD.skins.installFromUrl(urlInput.value.trim());
             if (r.ok) BD.skins.activate(r.theme.id);
-            this.report(ui, r, BD.t(`« ${r.theme?.name} » installé et appliqué.`, `"${r.theme?.name}" installed and applied.`));
+            this.report(ui, r, BD.t("« {name} » installé et appliqué.", "“{name}” installed and applied.", { name: r.theme?.name }));
           })
         ),
         BD.h("div", { class: "bd-actions" }, fileInput, this.button(BD.t("Choisir un fichier…", "Choose a file…"), () => fileInput.click(), "bd-btn-ghost"))
@@ -232,7 +232,7 @@ BD.themesUI = {
     const draft = {
       schema: 1,
       id: own ? base.id : "",
-      name: own ? base.name : fresh ? BD.t("Mon thème", "My theme") : `${base?.name || "Graphite"} ${BD.t("perso", "custom")}`,
+      name: own ? base.name : fresh ? BD.t("Mon thème", "My theme") : BD.t("{name} perso", "{name} custom", { name: base?.name || "Graphite" }),
       author: own ? base.author || "" : "",
       description: own ? base.description || "" : "",
       version: own ? base.version || "1.0.0" : "1.0.0",
@@ -259,7 +259,7 @@ BD.themesUI = {
       if (sourceId && sourceId !== draft.id) draft.css = draft.css.split(`data-bd-skin="${sourceId}"`).join(`data-bd-skin="${draft.id}"`);
       BD.skins.apply({ ...draft }, { preview: true });
       const warnings = BD.themeSchema.checkContrast(draft.colors[mode]);
-      warn.textContent = warnings.length ? `${BD.t("Lisibilité", "Readability")} : ${warnings.join(" · ")}` : BD.t("Contrastes OK.", "Contrast OK.");
+      warn.textContent = warnings.length ? BD.t("Lisibilité : {list}", "Readability: {list}", { list: warnings.join(" · ") }) : BD.t("Contrastes OK.", "Contrast OK.");
       warn.dataset.kind = warnings.length ? "warn" : "ok";
     };
 
@@ -297,7 +297,7 @@ BD.themesUI = {
       if (save) {
         const r = BD.skins.install({ ...draft, css: draft.css.trim() || undefined, radius: Object.keys(draft.radius).length ? draft.radius : undefined });
         if (!r.ok) {
-          warn.textContent = `${BD.t("Impossible d'enregistrer", "Cannot save")} : ${r.errors.join(" · ")}`;
+          warn.textContent = BD.t("Impossible d'enregistrer : {errors}", "Cannot save: {errors}", { errors: r.errors.join(" · ") });
           warn.dataset.kind = "error";
           return;
         }

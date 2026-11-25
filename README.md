@@ -105,6 +105,7 @@ Installez `better-deezer.user.js` depuis les [Releases](https://github.com/Gabiz
 - **Accueil** : sections à masquer, ordre au choix, liste **Ne plus me recommander**
 - **Barre latérale** : afficher, masquer, réordonner les entrées
 - Filtre **Masquer les titres explicites**, `Q` pour la file d'attente
+- En **7 langues** : français, anglais, espagnol, allemand, italien, portugais, néerlandais
 
 </td>
 </tr>

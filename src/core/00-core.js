@@ -65,9 +65,40 @@ BD.settings = {
   }
 };
 
-/** UI language: French when Deezer (or the browser) is in French, English otherwise. */
-BD.lang = () => ((document.documentElement.lang || navigator.language || "en").toLowerCase().startsWith("fr") ? "fr" : "en");
-BD.t = (fr, en) => (BD.lang() === "fr" ? fr : en);
+/**
+ * UI language. French and English are written in the code: BD.t("Français", "English").
+ * Other languages come from src/i18n/<code>.json, keyed by the English text (the build
+ * puts them in __BD_I18N__). Settings > Appearance > Language overrides the automatic
+ * choice, which follows Deezer's page language, then the browser's.
+ */
+BD.i18n = typeof __BD_I18N__ !== "undefined" ? __BD_I18N__ : {};
+BD.languages = () => [
+  ["fr", "Français"],
+  ["en", "English"],
+  ...Object.entries(BD.i18n).map(([code, table]) => [code, table._name || code])
+];
+BD.lang = () => {
+  const supported = BD.languages().map(([code]) => code);
+  const chosen = BD.settings.get("lang", "auto");
+  if (chosen !== "auto" && supported.includes(chosen)) return chosen;
+  for (const raw of [document.documentElement.lang, navigator.language, ...(navigator.languages || [])]) {
+    const code = String(raw || "").toLowerCase().split(/[-_]/)[0];
+    if (supported.includes(code)) return code;
+  }
+  return "en";
+};
+/** BCP 47 locale for dates and numbers. */
+BD.locale = () => ({ fr: "fr-FR", en: "en-GB", es: "es-ES", de: "de-DE", it: "it-IT", pt: "pt-BR", nl: "nl-NL" })[BD.lang()] || undefined;
+/**
+ * BD.t("Bonjour {name}", "Hello {name}", { name }) — {placeholders} are filled from `vars`
+ * in every language, so translations keep them as they are.
+ */
+BD.t = (fr, en, vars) => {
+  const lang = BD.lang();
+  let text = lang === "fr" ? fr : lang === "en" ? en : (BD.i18n[lang] && BD.i18n[lang][en]) || en;
+  if (vars) text = String(text).replace(/\{(\w+)\}/g, (m, k) => (k in vars ? String(vars[k]) : m));
+  return text;
+};
 
 BD.isVisible = (el) => {
   if (!el || !el.isConnected) return false;

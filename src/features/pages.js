@@ -202,7 +202,7 @@ BD.feature({
     let greeting = old;
     if (!greeting || greeting.nextElementSibling !== first) {
       old?.remove();
-      const date = new Date().toLocaleDateString(BD.lang() === "fr" ? "fr-FR" : undefined, { weekday: "long", day: "numeric", month: "long" });
+      const date = new Date().toLocaleDateString(BD.locale(), { weekday: "long", day: "numeric", month: "long" });
       greeting = BD.h("div", { class: "bd-greeting" }, BD.h("p", { class: "bd-greeting-date" }, date), BD.h("h1", { class: "bd-greeting-title" }, text));
       first.before(greeting);
     }

@@ -455,7 +455,7 @@ BD.modulesUI = {
           ? BD.h(
               "button",
               { type: "button", class: "bd-chip-btn", "data-variant": "stop", onclick: () => (s.stop(), paint()) },
-              BD.t(`Annuler (${s.countdown()})`, `Cancel (${s.countdown()})`)
+              BD.t("Annuler ({time})", "Cancel ({time})", { time: s.countdown() })
             )
           : null
       ];

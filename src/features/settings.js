@@ -241,8 +241,37 @@ BD.feature({
     if (this.isOpen()) this.select?.(current);
   },
 
+  /** Language picker: Auto (Deezer's language) or one of BD.languages(). */
+  languageSelect() {
+    const current = BD.settings.get("lang", "auto");
+    const select = BD.h(
+      "select",
+      {
+        class: "bd-input bd-select",
+        "aria-label": BD.t("Langue", "Language"),
+        onchange: () => {
+          BD.settings.set("lang", select.value);
+          // Rebuild the whole panel so the tabs and title switch language too.
+          const back = this.lastFocus;
+          this.open();
+          this.lastFocus = back;
+          BD.q("#bd-settings .bd-select")?.focus();
+          this.needsReload();
+        }
+      },
+      BD.h("option", { value: "auto" }, BD.t("Auto (langue de Deezer)", "Auto (Deezer's language)")),
+      ...BD.languages().map(([code, name]) => BD.h("option", { value: code }, name))
+    );
+    select.value = current;
+    return select;
+  },
+
   tab_appearance() {
     return [
+      this.section(
+        BD.t("Langue", "Language"),
+        this.row(BD.t("Langue de Better Deezer", "Better Deezer language"), BD.t("Les textes de Deezer restent dans la langue de votre compte.", "Deezer's own texts stay in your account's language."), this.languageSelect())
+      ),
       this.section(
         BD.t("Interface", "Interface"),
         this.featureToggle("content"),
@@ -316,7 +345,7 @@ BD.feature({
           type: "checkbox",
           role: "switch",
           class: "bd-switch",
-          "aria-label": BD.t(`Afficher ${e.label}`, `Show ${e.label}`),
+          "aria-label": BD.t("Afficher {name}", "Show {name}", { name: e.label }),
           onchange: () => {
             BD.railNav.setVisible(e.key, input.checked);
             row.dataset.hidden = String(!input.checked);
@@ -362,7 +391,7 @@ BD.feature({
         }
         list.append(row);
       }
-      return BD.h("div", { class: "bd-nav-group" }, BD.h("h4", {}, BD.railNav.groupTitle(items[0].list) || (g === 0 ? "Navigation" : BD.t(`Groupe ${g + 1}`, `Group ${g + 1}`))), list);
+      return BD.h("div", { class: "bd-nav-group" }, BD.h("h4", {}, BD.railNav.groupTitle(items[0].list) || (g === 0 ? "Navigation" : BD.t("Groupe {n}", "Group {n}", { n: g + 1 }))), list);
     });
 
     return [
@@ -512,7 +541,7 @@ BD.feature({
                 {
                   type: "button",
                   class: "bd-icon-btn",
-                  "aria-label": BD.t(`Retirer ${name}`, `Remove ${name}`),
+                  "aria-label": BD.t("Retirer {name}", "Remove {name}", { name }),
                   onclick: () => {
                     BD.settings.set("reco:blocklist", BD.settings.get("reco:blocklist", []).filter((x) => x !== name));
                     this.open("reco");
@@ -580,7 +609,7 @@ BD.feature({
         ),
         this.row(
           BD.t("Éléments de Deezer reconnus", "Deezer elements found"),
-          broken.length ? BD.t(`Introuvables : ${broken.join(", ")}`, `Not found: ${broken.join(", ")}`) : BD.t("Tout est en place.", "Everything is in place."),
+          broken.length ? BD.t("Introuvables : {list}", "Not found: {list}", { list: broken.join(", ") }) : BD.t("Tout est en place.", "Everything is in place."),
           BD.h("span", { class: "bd-pill", "data-ok": String(!broken.length) }, broken.length ? `${broken.length} ⚠` : "OK")
         ),
         BD.h(

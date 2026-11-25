@@ -64,7 +64,7 @@ Les règles (les mêmes que partout dans Better Deezer) :
 - **Trouvez les éléments de Deezer avec `BD.anchors` ou `data-testid` / ARIA**, jamais avec les classes `css-xxxx`.
 - **Ne déplacez ni ne supprimez jamais les nœuds de Deezer** : ils appartiennent à React. Marquez-les (`BD.mark(el, "value", "data-bd-…")`) et stylez la marque, ou insérez vos propres éléments à côté.
 - Votre interface : construisez-la avec `BD.h(tag, props, ...children)`, des classes préfixées `bd-`, les couleurs des variables `--bd-*` pour que tous les thèmes s'appliquent.
-- Le texte dans les deux langues : `BD.t("Français", "English")`.
+- Le texte en français et en anglais : `BD.t("Français", "English")`, avec `{nom}` pour les valeurs : `BD.t("Groupe {n}", "Group {n}", { n })`. Les autres langues se traduisent dans `src/i18n/<code>.json`, par la phrase anglaise ; une phrase absente s'affiche en anglais.
 - Pour enregistrer : `BD.settings.get(key, fallback)` / `BD.settings.set(key, value)` (stocké sous `bd:<key>`).
 - Le réseau : seulement si le module en a besoin, avec `credentials: "omit"` et un délai maximal, et dites ce qui est envoyé dans sa `description` et dans [Confidentialité](confidentialite.md).
 - Les erreurs sont rattrapées : un module qui plante est coupé pour la session et nommé dans la console, le reste continue.

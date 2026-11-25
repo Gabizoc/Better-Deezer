@@ -66,6 +66,24 @@ writeFileSync(
   JSON.stringify({ schema: 1, generated: "by scripts/build.mjs from themes/community, do not edit", themes: themes.community }, null, 2) + "\n"
 );
 
+// Translations beyond French and English (src/i18n/<code>.json, keyed by the English text).
+// A translation must keep every {placeholder} of its English key.
+const i18n = Object.fromEntries(
+  readdirSync(join(root, "src/i18n"))
+    .filter((f) => f.endsWith(".json"))
+    .sort()
+    .map((f) => {
+      const table = JSON.parse(read(`src/i18n/${f}`));
+      for (const [en, text] of Object.entries(table)) {
+        if (en === "_name") continue;
+        const need = (en.match(/\{\w+\}/g) || []).sort().join();
+        const have = (String(text).match(/\{\w+\}/g) || []).sort().join();
+        if (need !== have) throw new Error(`src/i18n/${f}: "${en}" must keep ${need || "no placeholder"}, has ${have || "none"}`);
+      }
+      return [f.replace(/\.json$/, ""), table];
+    })
+);
+
 // Vendored fonts (SIL OFL): files for the extension, base64 for the single-file payload.
 const fonts = JSON.parse(read("assets/fonts/fonts.json"));
 const fontsFor = (embed) =>
@@ -77,6 +95,7 @@ const iife = (body, withCss, embedFonts) =>
   (withCss ? `const __BD_CSS__ = ${JSON.stringify(css)};\n` : "") +
   `const __BD_FONTS__ = ${JSON.stringify(fontsFor(embedFonts))};\n` +
   `const __BD_THEMES__ = ${JSON.stringify(themes)};\n` +
+  `const __BD_I18N__ = ${JSON.stringify(i18n)};\n` +
   `${body}\n})();\n`;
 
 rmSync(join(root, "dist"), { recursive: true, force: true });
