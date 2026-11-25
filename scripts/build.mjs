@@ -106,6 +106,16 @@ mkdirSync(ext, { recursive: true });
 cpSync(join(root, "extension"), ext, { recursive: true });
 const manifest = JSON.parse(readFileSync(join(ext, "manifest.json"), "utf8"));
 manifest.version = pkg.version;
+// Store name and summary per language (extension/_locales, read by Chrome and the Chrome Web Store).
+const locales = readdirSync(join(root, "extension/_locales"));
+if (!locales.includes(manifest.default_locale)) throw new Error(`extension/_locales/${manifest.default_locale} is missing`);
+for (const locale of locales) {
+  const messages = JSON.parse(read(`extension/_locales/${locale}/messages.json`));
+  for (const [key, max] of [["extName", 75], ["extDescription", 132]]) {
+    const text = messages[key]?.message;
+    if (!text || [...text].length > max) throw new Error(`extension/_locales/${locale}: ${key} must be 1 to ${max} characters`);
+  }
+}
 mkdirSync(join(ext, "fonts"), { recursive: true });
 for (const f of readdirSync(join(root, "assets/fonts"))) {
   if (/\.(woff2|txt)$/.test(f)) cpSync(join(root, "assets/fonts", f), join(ext, "fonts", f));

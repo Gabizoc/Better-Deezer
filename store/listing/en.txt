@@ -1,0 +1,31 @@
+🎧 Better Deezer redesigns the Deezer web player and adds dozens of small touches. Unofficial extension, not affiliated with Deezer.
+
+🎨 THEMES
+• 6 built-in themes, light, dark or following your system
+• A Marketplace of community themes
+• An editor with live preview and a readability check
+
+🎤 NOW PLAYING
+• Big cover and synced lyrics, word by word when Deezer has them
+
+🪟 LAYOUT
+• Centered search (Ctrl K), floating sidebar and player
+• Album and artist headers tinted by the cover
+• Restyled menus, notifications and dialogs
+
+🎛️ COMFORT
+• Volume: one click unfolds a slider, the mouse wheel adjusts it (5%, 1% with Shift)
+• Mouse wheel on the player's cover to skip 5 s
+• Home: hide sections, pick their order, "Don't recommend" list
+• Sleep timer, compact mode, promotional banners hidden
+
+🌍 In 7 languages: English, French, Spanish, German, Italian, Portuguese and Dutch.
+
+⚙️ Everything is set in the Better Deezer settings (Ctrl ,).
+
+🔒 Privacy: no account, no analytics, no server. Your settings stay in your browser.
+
+💜 Source code (MIT license): https://github.com/Gabizoc/Better-Deezer
+💻 Also available for the Deezer Windows app.
+
+Deezer is a trademark of Deezer SA. Better Deezer is not affiliated with or endorsed by Deezer.

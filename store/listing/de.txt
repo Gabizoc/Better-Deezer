@@ -1,0 +1,31 @@
+🎧 Better Deezer gestaltet den Deezer-Webplayer neu und bringt Dutzende kleiner Verbesserungen. Inoffizielle Erweiterung, nicht mit Deezer verbunden.
+
+🎨 THEMES
+• 6 mitgelieferte Themes, hell, dunkel oder nach Systemeinstellung
+• Ein Marketplace mit Themes aus der Community
+• Ein Editor mit Live-Vorschau und Lesbarkeitsprüfung
+
+🎤 LÄUFT GERADE
+• Großes Cover und synchronisierte Songtexte, Wort für Wort, wenn Deezer sie hat
+
+🪟 LAYOUT
+• Zentrierte Suche (Strg K), schwebende Seitenleiste und schwebender Player
+• Album- und Künstler-Kopfbereiche in der Farbe des Covers
+• Überarbeitete Menüs, Benachrichtigungen und Dialoge
+
+🎛️ KOMFORT
+• Lautstärke: Ein Klick klappt einen Regler aus, das Mausrad stellt ihn ein (5 %, 1 % mit Umschalt)
+• Mausrad auf dem Cover im Player spult 5 s vor
+• Startseite: Bereiche ausblenden, Reihenfolge wählen, Liste „Nicht empfehlen“
+• Sleep-Timer, Kompaktmodus, Werbebanner ausgeblendet
+
+🌍 In 7 Sprachen: Deutsch, Englisch, Französisch, Spanisch, Italienisch, Portugiesisch und Niederländisch.
+
+⚙️ Alles lässt sich in den Better-Deezer-Einstellungen anpassen (Strg ,).
+
+🔒 Datenschutz: kein Konto, keine Statistiken, kein Server. Deine Einstellungen bleiben in deinem Browser.
+
+💜 Quellcode (MIT-Lizenz): https://github.com/Gabizoc/Better-Deezer
+💻 Auch für die Windows-App von Deezer erhältlich.
+
+Deezer ist eine Marke der Deezer SA. Better Deezer ist weder mit Deezer verbunden noch von Deezer genehmigt.

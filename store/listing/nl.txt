@@ -1,0 +1,31 @@
+🎧 Better Deezer geeft de Deezer-webspeler een nieuw ontwerp en tientallen kleine verbeteringen. Onofficiële extensie, niet verbonden aan Deezer.
+
+🎨 THEMA'S
+• 6 meegeleverde thema's, licht, donker of volgens je systeem
+• Een Marketplace met thema's uit de community
+• Een editor met live voorbeeld en leesbaarheidscontrole
+
+🎤 NU AAN HET SPELEN
+• Grote hoes en gesynchroniseerde songteksten, woord voor woord als Deezer ze heeft
+
+🪟 INDELING
+• Gecentreerd zoeken (Ctrl K), zwevende zijbalk en speler
+• Album- en artiestkoppen gekleurd door de hoes
+• Vernieuwde menu's, meldingen en vensters
+
+🎛️ GEMAK
+• Volume: één klik klapt een schuifregelaar uit, het scrollwiel stelt hem in (5%, 1% met Shift)
+• Scrollwiel op de hoes van de speler om 5 s vooruit te spoelen
+• Home: secties verbergen, volgorde kiezen, lijst „Niet aanbevelen”
+• Slaaptimer, compacte modus, promotiebanners verborgen
+
+🌍 In 7 talen: Nederlands, Engels, Frans, Spaans, Duits, Italiaans en Portugees.
+
+⚙️ Alles stel je in via de instellingen van Better Deezer (Ctrl ,).
+
+🔒 Privacy: geen account, geen statistieken, geen server. Je instellingen blijven in je browser.
+
+💜 Broncode (MIT-licentie): https://github.com/Gabizoc/Better-Deezer
+💻 Ook beschikbaar voor de Windows-app van Deezer.
+
+Deezer is een handelsmerk van Deezer SA. Better Deezer is niet verbonden aan of goedgekeurd door Deezer.

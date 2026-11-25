@@ -1,0 +1,10 @@
+{
+  "extName": {
+    "message": "Better Deezer",
+    "description": "Extension name. Do not translate."
+  },
+  "extDescription": {
+    "message": "Inoffizieller Skin für den Deezer-Webplayer: Themes, synchronisierte Songtexte, schwebender Player, Lautstärke per Mausrad und mehr.",
+    "description": "Store summary, 132 characters max."
+  }
+}
