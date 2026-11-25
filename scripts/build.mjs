@@ -91,7 +91,7 @@ const fontsFor = (embed) =>
 
 const iife = (body, withCss, embedFonts) =>
   `/*! Better Deezer v${pkg.version} | MIT | https://github.com/Gabizoc/Better-Deezer\n` +
-  ` *  Fonts: Space Grotesk, Inter (SIL Open Font License 1.1) */\n(() => {\n"use strict";\n` +
+  ` *  Fonts: ${[...new Set(fonts.map((f) => f.family))].join(", ")} (SIL Open Font License 1.1) */\n(() => {\n"use strict";\n` +
   (withCss ? `const __BD_CSS__ = ${JSON.stringify(css)};\n` : "") +
   `const __BD_FONTS__ = ${JSON.stringify(fontsFor(embedFonts))};\n` +
   `const __BD_THEMES__ = ${JSON.stringify(themes)};\n` +

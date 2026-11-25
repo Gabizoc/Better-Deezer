@@ -9,8 +9,10 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et les n
 - Lien vers la fiche du Chrome Web Store.
 - Fiche du Chrome Web Store en 8 langues : nom et résumé traduits dans l'extension (`_locales`), descriptions dans `store/listing/`.
 
+- Choix de la police dans *Réglages › Apparence* : Space Grotesk + Inter (par défaut), Bricolage Grotesque + Instrument Sans, Manrope, Sora + DM Sans, Outfit + Figtree ou Plus Jakarta Sans. Le changement se fait en fondu, sans recharger.
+
 ### Modifié
-- Nouvelles polices : Space Grotesk pour les titres, Inter pour l'interface.
+- Nouvelles polices par défaut : Space Grotesk pour les titres, Inter pour l'interface.
 
 ### Corrigé
 - Vue En écoute : le titre garde « ? », « ! », « : » et « ; » sur la même ligne que le mot précédent, et ses lignes sont équilibrées.

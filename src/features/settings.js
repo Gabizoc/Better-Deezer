@@ -266,11 +266,48 @@ BD.feature({
     return select;
   },
 
+  /** Typeface picker: one card per pair, previewed in its own fonts. */
+  fontPicker() {
+    const current = BD.fonts.pair().id;
+    const grid = BD.h("div", { class: "bd-font-grid", role: "radiogroup", "aria-label": BD.t("Police", "Typeface") });
+    for (const p of BD.fonts.pairs) {
+      BD.fonts.ensure(p.display);
+      BD.fonts.ensure(p.ui);
+      const name = p.display === p.ui ? p.display : `${p.display} + ${p.ui}`;
+      const card = BD.h(
+        "button",
+        {
+          type: "button",
+          role: "radio",
+          class: "bd-font-card",
+          "data-font": p.id,
+          "aria-checked": String(p.id === current),
+          "aria-label": name,
+          onclick: () => {
+            if (card.getAttribute("aria-checked") === "true") return;
+            BD.qa(".bd-font-card", grid).forEach((c) => c.setAttribute("aria-checked", String(c === card)));
+            BD.fonts.set(p.id);
+          }
+        },
+        BD.h("span", { class: "bd-font-sample", style: `font-family: ${BD.fonts.stack(p.display, "display")}` }, "Aa"),
+        BD.h("span", { class: "bd-font-name", style: `font-family: ${BD.fonts.stack(p.ui, "ui")}` }, name),
+        p.id === BD.fonts.DEFAULT ? BD.h("span", { class: "bd-font-tag" }, BD.t("Par défaut", "Default")) : null
+      );
+      grid.append(card);
+    }
+    return grid;
+  },
+
   tab_appearance() {
     return [
       this.section(
         BD.t("Langue", "Language"),
         this.row(BD.t("Langue de Better Deezer", "Better Deezer language"), BD.t("Les textes de Deezer restent dans la langue de votre compte.", "Deezer's own texts stay in your account's language."), this.languageSelect())
+      ),
+      this.section(
+        BD.t("Police", "Typeface"),
+        BD.h("p", { class: "bd-set-hint bd-font-hint" }, BD.t("Titres et textes de Better Deezer et de Deezer. La police par défaut laisse un thème choisir la sienne.", "Titles and text, for Better Deezer and Deezer. The default typeface lets a theme pick its own.")),
+        this.fontPicker()
       ),
       this.section(
         BD.t("Interface", "Interface"),

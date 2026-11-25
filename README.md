@@ -105,6 +105,7 @@ Installez `better-deezer.user.js` depuis les [Releases](https://github.com/Gabiz
 - **Accueil** : sections à masquer, ordre au choix, liste **Ne plus me recommander**
 - **Barre latérale** : afficher, masquer, réordonner les entrées
 - Filtre **Masquer les titres explicites**, `Q` pour la file d'attente
+- **6 polices** au choix, qui changent en fondu
 - En **7 langues** : français, anglais, espagnol, allemand, italien, portugais, néerlandais
 
 </td>
@@ -190,7 +191,7 @@ Pour contribuer : [CONTRIBUTING.md](CONTRIBUTING.md). [CHANGELOG.md](CHANGELOG.m
 
 - Paroles : [LRCLIB](https://lrclib.net), la base de paroles ouverte
 - Inspiration : [Spicetify](https://spicetify.app)
-- Polices : [Space Grotesk](https://github.com/floriankarsten/space-grotesk) et [Inter](https://github.com/rsms/inter), SIL Open Font License 1.1 ([détails](assets/fonts/README.md))
+- Polices : [Space Grotesk](https://github.com/floriankarsten/space-grotesk), [Inter](https://github.com/rsms/inter), [Bricolage Grotesque](https://github.com/ateliertriay/bricolage), [Instrument Sans](https://github.com/Instrument/instrument-sans), [Manrope](https://github.com/sharanda/manrope), [Sora](https://github.com/sora-xor/sora-font), [DM Sans](https://github.com/googlefonts/dm-fonts), [Outfit](https://github.com/Outfitio/Outfit-Fonts), [Figtree](https://github.com/erikdkennedy/figtree) et [Plus Jakarta Sans](https://github.com/tokotype/PlusJakartaSans), SIL Open Font License 1.1 ([détails](assets/fonts/README.md))
 
 ## Licence
 
