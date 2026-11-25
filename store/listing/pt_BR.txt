@@ -4,9 +4,11 @@
 • 6 temas incluídos, claro, escuro ou seguindo o sistema
 • Um Marketplace de temas da comunidade
 • Um editor com prévia ao vivo e verificação de legibilidade
+• 6 fontes para escolher, com transição suave
 
 🎤 TOCANDO AGORA
 • Capa grande e letras sincronizadas, palavra por palavra quando o Deezer as tem
+• Sem letra? A capa e os controles ficam centralizados
 
 🪟 LAYOUT
 • Busca centralizada (Ctrl K), barra lateral e player flutuantes

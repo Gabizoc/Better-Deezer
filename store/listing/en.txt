@@ -4,9 +4,11 @@
 • 6 built-in themes, light, dark or following your system
 • A Marketplace of community themes
 • An editor with live preview and a readability check
+• 6 typefaces to pick from, switched with a smooth fade
 
 🎤 NOW PLAYING
 • Big cover and synced lyrics, word by word when Deezer has them
+• No lyrics? The cover and controls move to the center
 
 🪟 LAYOUT
 • Centered search (Ctrl K), floating sidebar and player

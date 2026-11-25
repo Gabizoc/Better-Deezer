@@ -4,9 +4,11 @@
 • 6 thèmes inclus, en clair, en sombre ou selon le système
 • Une Marketplace de thèmes de la communauté
 • Un éditeur avec aperçu en direct et contrôle de lisibilité
+• 6 polices au choix, qui changent en fondu
 
 🎤 EN ÉCOUTE
 • Grande pochette et paroles synchronisées, mot à mot quand Deezer les a
+• Pas de paroles ? La pochette et les boutons se centrent
 
 🪟 MISE EN PAGE
 • Recherche centrée (Ctrl K), barre latérale et lecteur flottants

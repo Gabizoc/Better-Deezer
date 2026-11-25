@@ -4,9 +4,11 @@
 • 6 temas incluidos, en claro, en oscuro o según el sistema
 • Un Marketplace de temas de la comunidad
 • Un editor con vista previa en directo y control de legibilidad
+• 6 tipografías a elegir, con un cambio en fundido
 
 🎤 REPRODUCIENDO
 • Portada grande y letras sincronizadas, palabra por palabra cuando Deezer las tiene
+• ¿Sin letra? La portada y los controles se centran
 
 🪟 DISEÑO
 • Búsqueda centrada (Ctrl K), barra lateral y reproductor flotantes

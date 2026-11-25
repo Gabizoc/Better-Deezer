@@ -4,9 +4,11 @@
 • 6 meegeleverde thema's, licht, donker of volgens je systeem
 • Een Marketplace met thema's uit de community
 • Een editor met live voorbeeld en leesbaarheidscontrole
+• 6 lettertypen om uit te kiezen, met een zachte overgang
 
 🎤 NU AAN HET SPELEN
 • Grote hoes en gesynchroniseerde songteksten, woord voor woord als Deezer ze heeft
+• Geen songtekst? De hoes en knoppen schuiven naar het midden
 
 🪟 INDELING
 • Gecentreerd zoeken (Ctrl K), zwevende zijbalk en speler

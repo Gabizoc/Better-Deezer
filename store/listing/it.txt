@@ -4,9 +4,11 @@
 • 6 temi inclusi, chiari, scuri o in base al sistema
 • Un Marketplace di temi della community
 • Un editor con anteprima in diretta e controllo di leggibilità
+• 6 caratteri tra cui scegliere, con una dissolvenza
 
 🎤 IN RIPRODUZIONE
 • Copertina grande e testi sincronizzati, parola per parola quando Deezer li ha
+• Niente testo? Copertina e controlli si centrano
 
 🪟 LAYOUT
 • Ricerca centrata (Ctrl K), barra laterale e player fluttuanti

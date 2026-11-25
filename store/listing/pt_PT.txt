@@ -4,9 +4,11 @@
 • 6 temas incluídos, claro, escuro ou de acordo com o sistema
 • Um Marketplace de temas da comunidade
 • Um editor com pré-visualização em direto e verificação de legibilidade
+• 6 tipos de letra à escolha, com transição suave
 
 🎤 A TOCAR
 • Capa grande e letras sincronizadas, palavra a palavra quando o Deezer as tem
+• Sem letra? A capa e os controlos ficam centrados
 
 🪟 ESQUEMA
 • Pesquisa centrada (Ctrl K), barra lateral e leitor flutuantes

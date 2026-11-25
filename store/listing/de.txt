@@ -4,9 +4,11 @@
 • 6 mitgelieferte Themes, hell, dunkel oder nach Systemeinstellung
 • Ein Marketplace mit Themes aus der Community
 • Ein Editor mit Live-Vorschau und Lesbarkeitsprüfung
+• 6 Schriftarten zur Auswahl, mit sanfter Überblendung
 
 🎤 LÄUFT GERADE
 • Großes Cover und synchronisierte Songtexte, Wort für Wort, wenn Deezer sie hat
+• Keine Songtexte? Cover und Steuerung rücken in die Mitte
 
 🪟 LAYOUT
 • Zentrierte Suche (Strg K), schwebende Seitenleiste und schwebender Player
